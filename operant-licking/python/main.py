@@ -213,14 +213,16 @@ sTime = time.time()
 lastActiveLick=sTime
 
 def showdata():
-    minsLeft=int((sessionLength-lapse)/60)
-    #print (sessionLength, lapse, lastActiveLick, minsLeft)
+    if schedule=='pr':
+        minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
+    else:
+        minsLeft=int((sessionLength-lapse)/60)
     mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
     return time.time()
 
 while lapse < sessionLength:
     lapse = time.time() - sTime
-    print ("lapse", lapse)
+#   print ("lapse", lapse)
     time.sleep(0.01) # set delay to adjust sensitivity of the sensor.
     i = tsensor.readPinTouched()
     if i == 1:
@@ -259,7 +261,7 @@ while lapse < sessionLength:
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapse = time.time() - lastActiveLick 
-        print ("prlaps", lapse)
+#        print ("prlaps", lapse)
  
 # signal the motion script to stop recording
 if schedule=='pr':
