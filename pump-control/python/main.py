@@ -163,18 +163,26 @@ dlogger.createDataFile()
 gpio.output(TOUCHLED, gpio.HIGH)
 gpio.output(MOTIONLED, gpio.HIGH)
 
+#device id
+dId=open("/home/pi/deviceid")
+deviceId=dId.read().strip()
+
 # wait for RFID scanner to get RatID
 mesg("Pls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
 mesg("RatID: "+ RatID)
 print (RatID)
+# save RatID to sdcard for motions data
 with open ("/home/pi/ratid", "w") as ratid:
     ratid.write(RatID)
 
-#device id
-dId=open("/home/pi/deviceid")
-dId=dId.read()
-deviceid=dId.strip()
+# session id
+with open ("/home/pi/sessionid", "r+") as f:
+    sessionid=f.read().strip()
+    nextSession=int(sessionid)+1  
+    f.seek(0)
+    f.write(str(nextSession))
+    f.close()
 
 #turn lights off to indicate RFID recieved
 mesg("Session Started")
@@ -193,7 +201,7 @@ lapse=0
 updateTime=0
 def showdata():
 	mins=int((sessionLength-lapse)/60)
-	mesg("B" + deviceid[-2:]+  " " + str(act)+","+str(ina) + "," +str(rew)+ "=AIR\n" + RatID[-5:] + " " + str(mins) + "Min Left")
+	mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + str(act)+","+str(ina) + "=AI\n" + RatID[-6:] + " " + "R=" + str(rew) + " "+ str(mins) + "Left")
 	return time.time()
 
 while lapse < sessionLength:

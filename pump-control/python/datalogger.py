@@ -9,6 +9,7 @@ import string
 DEVID_FILEPATH = '/home/pi/deviceid'
 RATID_FILEPATH = '/home/pi/ratid'
 TDATA_FILEPRFX = '/home/pi/Pies/ETOH/ETOH_'
+SESSIONID='/home/pi/sessionid'
 # END CONSTANT DEFINITIONS
 
 class LickLogger:
@@ -23,10 +24,13 @@ class LickLogger:
 		ratidfile = open(RATID_FILEPATH)
 		self.ratid = str((ratidfile.read()).strip())
 		ratidfile.close()
+                # read sessin id
+                sessionid=open(SESSIONID)
+                sessionid=str(sessionid.read().strip())
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + '_' + str(startTime) + '.csv'
+		self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + '_S' + sessionid + '.csv'
 		# open data file
 		with open(self.datafile,"a") as f:
 			f.write("RatID\tdate\tboxid\tEventType\tseconds\n")
