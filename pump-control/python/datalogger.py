@@ -33,11 +33,11 @@ class LickLogger:
 		self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + '_S' + sessionid + '.csv'
 		# open data file
 		with open(self.datafile,"a") as f:
-			f.write("RatID\tdate\tboxid\tEventType\tseconds\n")
+			f.write("RatID\tdate\tboxid\tEventType\tratio\tseconds\n")
 			f.close()
-	def logEvent(self, EventType, timelapsed):
+	def logEvent(self, EventType, timelapsed, ratio=0):
 		# Create output string
-		outputstr = self.ratid + "\t" + time.strftime("%Y-%m-%d", time.localtime()) + "\t" + self.devid + "\t" + EventType + "\t" + str(timelapsed) + "\n"
+		outputstr = self.ratid + "\t" + time.strftime("%Y-%m-%d", time.localtime()) + "\t" + self.devid + "\t" + EventType + "\t" + str(ratio) + "\t"+ str(timelapsed) + "\n"
 		# Append to file
 		with open (self.datafile, "a") as datafile:
 			datafile.write(outputstr)
