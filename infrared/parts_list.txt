@@ -1,0 +1,11 @@
+Infrared Emitter
+Mouser P/N: 782-TSHG5410
+Mfg P/G/: TSHG5410
+
+Vishay Infrared receivers
+Mouser P/N: 782-TSOP38238
+
+Transistor 
+Mouser P/N: 863-BC547CG
+
+
