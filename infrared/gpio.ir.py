@@ -5,21 +5,13 @@ import time
 import os
 import grp
 import pwd
-from collections import defaultdict
+#from collections import defaultdict
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-'''
-#create a two dim dict for storing the timing of ir pulses
-def chan(): #channel
-	return defaultdict(int)
-def eve(): #timing of events
-	return defaultdict(chan)
-CT=defaultdict(eve)
-'''
 
-interval = 200 # half second
+interval = 200 # 20 milli second 
 threshould = 50 # minimal counts in time interval
 pinCount = input("Enter number of pins in use by IR sensors: ")
 channels = []
@@ -53,10 +45,10 @@ def intervalCounting(channel):
 	if currentTime - mili[channel] > interval :
 		mili[channel] = currentTime
 		if cnt[channel] < threshould and state[channel] == 1:
-			fo.write(str(currentTime) + " channel " + str(channel) + " blocked\n")
+			fo.write(str(currentTime) + "\tchannel " + str(channel) + "\tblocked\n")
 			state[channel] = 0 #channel blocked
 		if cnt[channel] > threshould and state[channel] == 0:
-			fo.write(str(currentTime) + " channel " + str(channel) + " open\n")
+			fo.write(str(currentTime) + "\tchannel " + str(channel) + "\topen\n")
 			state[channel] = 1 #channel open 
 		cnt[channel] = 0
 	fo.close()
