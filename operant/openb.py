@@ -68,3 +68,4 @@ def main(argv):
 if __name__ == "__main__":
    init()
    main(sys.argv[1:])
+   GPIO.cleanup()
