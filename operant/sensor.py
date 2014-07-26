@@ -23,6 +23,6 @@ while True:
     logs.write(str(humidity))
     logs.write("   |\n")
     logs.close()
-    time.sleep(3)
+    time.sleep(300)  #sleep 5 minutes
 
 
