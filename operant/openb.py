@@ -1,20 +1,18 @@
+#!/usr/bin/python
+
 import RPi.GPIO as GPIO
 import time
 import picamera
-from htu21d import HTU21D
+import os
 import sys
 import getopt
-
+import subprocess
+import signal
 
 pump=7
 l1=8
 l2=10
 light=16
-
-fr=5  # fixed ratio
-t=5  #the time for which the pump will run, based on the weight of the mouse
-c1=0 # counter for lever one
-c2=0 # counter for lever two
 
 sensor = HTU21D()
 
@@ -29,20 +27,35 @@ def init():
         GPIO.setup(light, GPIO.OUT)  #for light
 
 def main(argv):
-        c1=0
+        fixedR=5  # fixed ratio
+        injectT=5  #the time for which the pump will run, based on the weight of the mouse
+        timeout = 20 #nothing will happen on button presses
+        sessionT = 300
+        # still need to implenet the code to save button data
+        c1=0 # counter for lever one  
+        c2=0 # counter for lever two
+        
         try:
-                opts, args = getopt.getopt(argv,"hf:t:",["fr","time"])
+                opts, args = getopt.getopt(argv,"hf:it:to:st",["fr","injectTime", "timeout", "sessionT"])
         except getopt.GetoptError:
-                print("test.py -f <fixedratio> -t <exptime>")
+                print("sudo python3 openb.py -f <fixedRatio> -it <injectTime> -to <timeout> -st <sessionTime>")
                 sys.exit(2)
         for opt, arg in opts:
                 if opt == '-h':
-                        print("test.py -f <fixedratio> -t <exptime>")
+                        print("sudo python3 openb.py -f <fixedRatio> -it <injectTime>-to <timeout> -st <sessionTime>")
                         sys.exit()
                 elif opt in ("-f", "--fr"):
-                        fr = arg
-                elif opt in ("-t", "--time"):
-                        t = arg
+                        fixedR = arg
+                elif opt in ("-it", "--injectTime"):
+                        injectT = arg
+                elif opt in("-to", "--timeout"):
+                        timeout = arg
+                elif opt in("-st", "--sessionT"):
+                        if(arg>=300):
+                                sessionT=arg
+
+        sensor = subprocess.Popen("python3 sensor.py", shell=True, preexec_fn=os.setsid) # start recording temp/humidity in a file evry 5 min
+        totalT = time.time() + sessionT
         while True:
                 input1= GPIO.input(l1)
                 input2= GPIO.input(l2)
@@ -53,19 +66,21 @@ def main(argv):
                 if(input2==0):
                         c2+=1
                         time.sleep(.300)
-                if(c1>=int(fr)):
+                if(c1>=int(fixedR)):
                         GPIO.output(pump, True)
-                        sensor.reset()
-                        print(time.time(), sensor.get_temp(), sensor.get_rel_humidity())
                         print("Spinning")
                         GPIO.output(light, True)
-                        camera.capture('image.jpg')
-                        time.sleep(float(t))
+                        camera.start_recording('video.h264')
+                        time.sleep(float(injectT))
                         GPIO.output(pump, False)
-                        GPIO.output(light, False)
-                        c1=0
-                        
+                        GPIO.output(light, False)                        
+                        time.sleep(float(timeout))
+                        camera.stop_recording()
+                        if(time.time()>sessionT):
+                                os.killpg(sensor.pid, signal.SIGTERM)
+                                break
+
 if __name__ == "__main__":
-   init()
-   main(sys.argv[1:])
-   GPIO.cleanup()
+        init()
+        main(sys.argv[1:])
+        GPIO.cleanup()
