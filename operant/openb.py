@@ -14,8 +14,6 @@ l1=8
 l2=10
 light=16
 
-sensor = HTU21D()
-
 camera = picamera.PiCamera()
 
 def init():
@@ -30,8 +28,7 @@ def main(argv):
         fixedR=5  # fixed ratio
         injectT=5  #the time for which the pump will run, based on the weight of the mouse
         timeout = 20 #nothing will happen on button presses
-        sessionT = 300
-        # still need to implenet the code to save button data
+        sessionT = 300  #Length of total session
         c1=0 # counter for lever one  
         c2=0 # counter for lever two
         
@@ -60,25 +57,45 @@ def main(argv):
                 input1= GPIO.input(l1)
                 input2= GPIO.input(l2)
                 if(input1==0):
-                        print("Button Pressed ", c1)
                         c1+=1
-                        time.sleep(.300)
+                        time.sleep(.250)
                 if(input2==0):
                         c2+=1
-                        time.sleep(.300)
+                        time.sleep(.250)
                 if(c1>=int(fixedR)):
+                        print("Lever 1 is pressed ", fixedR, "times")
+                        print("No of lever 2 presses before the mouse pressed the lever 1 correct number of times: ", c2)
                         GPIO.output(pump, True)
                         print("Spinning")
                         GPIO.output(light, True)
+                        
                         camera.start_recording('video.h264')
+                        
+                        #Start recording lever presses during injection
+                        lever_during_inject = subprocess.check_output("python3 leverRecord.py " + str(injectT), shell=True)
+                        c1, c2 = processNum(lever_during_inject)
                         time.sleep(float(injectT))
                         GPIO.output(pump, False)
-                        GPIO.output(light, False)                        
+                        GPIO.output(light, False)
+                        print("Lever presses during injection: ", c1, " ", c2)
+
+                        #Start recording lever presses during timeout period
+                        lever_during_timeout = subprocess.check_output("python3 leverRecord.py " + str(timeout), shell=True)
                         time.sleep(float(timeout))
+                        c1, c2 = processNum(lever_during_timeout)
+                        print("Lever presses during timeout: ", c1, " ", c2)
+                        
                         camera.stop_recording()
-                        if(time.time()>sessionT):
-                                os.killpg(sensor.pid, signal.SIGTERM)
-                                break
+                        c1=0
+                        continue
+                if(time.time()>totalT):
+                        os.killpg(sensor.pid, signal.SIGTERM)
+                        break
+
+def processNum(a):
+        b = a.decode(encoding='UTF-8')
+        c1, c2= b.split(':')
+        return c1, c2
 
 if __name__ == "__main__":
         init()

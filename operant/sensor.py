@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from htu21d import HTU21D
 import time
 from time import gmtime, strftime
@@ -23,6 +25,6 @@ while True:
     logs.write(str(humidity))
     logs.write("   |\n")
     logs.close()
-    time.sleep(300)  #sleep 5 minutes
+    time.sleep(300)
 
 
