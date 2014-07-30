@@ -32,14 +32,14 @@ for c in channels:
 	print str(c)
 	GPIO.setup(c, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-fo = open("ir_log.txt", "a")
+fo = open("/home/pi/data/ir_log.txt", "a")
 uid = pwd.getpwnam("pi").pw_uid
 gid = grp.getgrnam("pi").gr_gid
-path = "/home/pi/ir_log.txt"
+path = "/home/pi/data/ir_log.txt"
 os.chown(path, uid, gid)
 
 def intervalCounting(channel): 
-	fo = open("ir_log.txt", "a")
+	fo = open("/home/pi/data/ir_log.txt", "a")
 	cnt[channel] += 1
 	currentTime = int(round(time.time()*1000))
 	if currentTime - mili[channel] > interval :
@@ -53,7 +53,6 @@ def intervalCounting(channel):
 		cnt[channel] = 0
 	fo.close()
 	return
-
 
 for c in channels:
 	GPIO.add_event_detect(c, GPIO.FALLING, callback = intervalCounting, bouncetime = 0)
