@@ -38,28 +38,28 @@ def main(argv):
         camera = picamera.PiCamera()
         camera.resolution = (320,240)
         try:
-                opts, args = getopt.getopt(argv,"hf:it:to:st:aid",["fr","injectTime", "timeout", "sessionT", "animalID"])
+                opts, args = getopt.getopt(argv,"hf:i:t:s:a",["fr","injectTime", "timeout", "sessionT", "animalID"])
         except getopt.GetoptError:
-                print("sudo python3 openb.py -f <fixedRatio> -it <injectTime> -to <timeout> -st <sessionTime> -aid<animalID>")
+                print("sudo python3 openb.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
                 sys.exit(2)
         for opt, arg in opts:
                 if opt == '-h':
-                        print("sudo python3 openb.py -f <fixedRatio> -it <injectTime>-to <timeout> -st <sessionTime> -aid<animalID>")
+                        print("sudo python3 openb.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
                         sys.exit()
                 elif opt in ("-f", "--fr"):
                         fixedR = arg
-                elif opt in ("-it", "--injectTime"):
+                elif opt in ("-i", "--injectTime"):
                         injectT = arg
-                elif opt in("-to", "--timeout"):
+                elif opt in("-t", "--timeout"):
                         timeout = arg
-                elif opt in("-st", "--sessionT"):
+                elif opt in("-s", "--sessionT"):
                         if(arg>=300):
                                 sessionT=arg
-                elif opt in("-aid", "--animalID"):
+                elif opt in("-a", "--animalID"):
                         animalID = arg 
 
         sensor = subprocess.Popen("python3 sensor.py " + str(animalID), shell=True, preexec_fn=os.setsid) # start recording temp/humidity in a file evry 5 min
-        totalT = time.time() + sessionT
+        totalT = time.time() + float(sessionT)
         # Need to change file name to animalID-data.txt
         data = open('data.txt', 'a')        
         data.write("\nAnimalID        Time              Event\n")
