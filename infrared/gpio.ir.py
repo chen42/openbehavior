@@ -10,19 +10,22 @@ import pwd
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-
 interval = 200 # 20 milli second 
 threshould = 50 # minimal counts in time interval
 pinCount = input("Enter number of pins in use by IR sensors: ")
 channels = []
 cnt, mili, state, diff = ({} for i in range(4))
+pin_alloc = 0
 
-
-#get pin number for each channel
-for p in range(pinCount):
+#get pins in use
+while pin_alloc < pinCount:
 	pin = input("Enter GPIO pin number: ")
-	channels.append(pin)
-
+	if pin in range (1,27) and not pin in [2, 7, 10, 13, 18, 21, 23, 25, 26]:
+		channels.append(pin)
+		pin_alloc += 1
+	else:
+		print "Invalid GPIO pin number"
+		 
 #initialize counts
 for c in channels:
 	cnt[c] = 0
@@ -65,5 +68,3 @@ except KeyboardInterrupt:
 	GPIO.cleanup()
 
 GPIO.cleanup()
-
-
