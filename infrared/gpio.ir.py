@@ -20,7 +20,7 @@ pin_alloc = 0
 #get pins in use
 while pin_alloc < pinCount:
 	pin = input("Enter GPIO pin number: ")
-	if pin in range (1,27) and not pin in [2, 7, 10, 13, 18, 21, 23, 25, 26]:
+	if pin in range (1,27) and not pin in [1, 2, 4, 6, 9, 14, 17, 20, 25]:
 		channels.append(pin)
 		pin_alloc += 1
 	else:
