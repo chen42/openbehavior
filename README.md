@@ -11,7 +11,7 @@ apt-get install msdosfs
 sudo gparted
 ```
 
-First, we'll resize our partition and create a FAT32 table.  **Be sure to back up any data you can't afford to lose.** From the gparted manual: **"These actions will alter partitions on your disk device. These actions might modify the start or end boundaries of your existing partitions. These actions might cause operating systems to fail to boot."**  Umount the partition by navigating to *Partition -> Umount* and then resize it by selecting *Resize/Move* in the same menu.  Shrink the target partition to leave enough for your desired storage space (we anticipated 500 MB).  Right click the new unallocated space and select *New*.  Size the partition and select FAT32 from the *File system* menu.  Click *Add* to finish the allocation. 
+First, we'll resize our partition and create a FAT32 table.  **Be sure to back up any data you can't afford to lose.** From the gparted manual: **"These actions will alter partitions on your disk device. These actions might modify the start or end boundaries of your existing partitions. These actions might cause operating systems to fail to boot."**  Umount the partition by navigating to *Partition -> Unmount* and resize it by selecting *Resize/Move* in the same menu.  Shrink the target partition to leave enough for your desired storage space (we anticipated 500 MB).  Right click the new unallocated space and select *New*.  Size the partition and select FAT32 from the *File system* menu.  Click *Add* to finish the allocation. 
 
 After creating an appropriately sized partition, you'll need to edit the file system tables to force the new partition to mount on boot.  
 
@@ -25,10 +25,10 @@ The fstab file should look something like this:
 proc            /proc          proc        defaults          0    0
 /dev/mmcblk0p1  /boot          vfat        defaults          0    2
 /dev/mmcblk0p2  /              ext4        defaults,noatime  0    1
-/dev/mmcblk0p3  /home/pi/data  vfat        defaults          0    0
+/dev/mmcblk0p3  /home/pi/data  vfat        defaults,uid=pi,gid=pi          0    0
 ```
 
-In this case, we created a new partition on the Pi SD card alongside the operating system and manually added the /dev/mmcblk0p3 line to the file.  If you're using a different form of removable storage or number of partitions, this name may vary.  The infrared module writes to /home/pi/data, but you can change it if you prefer.  When the Pi reboots, the device will mount to /home/pi/data and the log file will be retrievable from most operating systems. 
+In this case, we created a new partition on the Pi SD card alongside the operating system and manually added the /dev/mmcblk0p3 line to the file.  If you're using a different form of removable storage or number of partitions, this name may vary.  The infrared module writes to /home/pi/data, but you can change it if you prefer.  Be sure to add ownership changes (uid, gid) to the line options or the data writing modules will not have permission to make changes in the mount point.  When the Pi reboots, the device will mount to /home/pi/data and the log file will be retrievable from most operating systems. 
 
 
 
