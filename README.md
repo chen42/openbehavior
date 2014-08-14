@@ -3,7 +3,7 @@
 This project aims to establish a computing platform for rodent behavior research using the Raspberry Pi computer. We intend to build programs for conducting operant conditioning, as well as some infrared sensor based assays. We also intend to create an environmental sensor set that records the temperature, humidity, air pressure, ambient light, noise level, etc. 
 
 ####Data Partition
-We anticipate most of our users don't use Linux. To make data accessible on Windows/Mac OS computers, we create a FAT32 partition on the SD card that the Raspberry Pi uses. We plan to save all data into this partition so that users can plug the Raspberry Pi SD card into their computers to copy the data. We will incorporate this into the disk image we will release in the future. For now, here are the steps to create that partition, using [gparted](gparted.org).  You may also need to install the [msdosfs](http://www.freebsd.org/cgi/man.cgi?query=msdosfs&sektion=5&manpath=FreeBSD+8.4-RELEASE) formats package.
+We anticipate most of our users don't use Linux. To make data accessible on Windows/Mac OS computers, we create a FAT32 partition on the SD card that the Raspberry Pi uses. We plan to save all data into this partition so that users can plug the Raspberry Pi SD card into their computers to copy the data. We will incorporate this into the disk image we will release in the future. For now, here are the steps to create that partition, using [gparted](http://gparted.org).  You may also need to install the [msdosfs](http://www.freebsd.org/cgi/man.cgi?query=msdosfs&sektion=5&manpath=FreeBSD+8.4-RELEASE) formats package.
 
 ```
 apt-get install gparted
