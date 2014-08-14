@@ -11,7 +11,7 @@ apt-get install msdosfs
 sudo gparted
 ```
 
-First, we'll resize our partition and create a FAT32 table.  **Be sure to back up any data you can't afford to lose.** From the gparted manual: **"These actions will alter partitions on your disk device. These actions might modify the start or end boundaries of your existing partitions. These actions might cause operating systems to fail to boot."**  Umount the partition by navigating to *Partition -> Unmount* and resize it by selecting *Resize/Move* in the same menu.  Shrink the target partition to leave enough for your desired storage space (we anticipated 500 MB).  Right click the new unallocated space and select *New*.  Size the partition and select FAT32 from the *File system* menu.  Click *Add* to finish the allocation. 
+First, we'll resize our partition and create a FAT32 table.  **Be sure to back up any data you can't afford to lose.** From the gparted manual: **"These actions will alter partitions on your disk device. These actions might modify the start or end boundaries of your existing partitions. These actions might cause operating systems to fail to boot."**  Unmount the partition by navigating to *Partition -> Unmount* and resize it by selecting *Resize/Move* in the same menu.  Shrink the target partition to leave enough for your desired storage space (we anticipated 500 MB).  Right click the new unallocated space and select *New*.  Size the partition and select FAT32 from the *File system* menu.  Click *Add* to finish the allocation. 
 
 After creating an appropriately sized partition, you'll need to edit the file system tables to force the new partition to mount on boot.  
 
