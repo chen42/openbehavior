@@ -17,31 +17,22 @@ def main(argv):
     c2=0
     t1, animalID = argv.split(":")
     t = float(t1)
-    totalT = time.time() + t - 1 # minus 1 seconds as it should end a bit early than out main program
+    totalT = time.time() + t - .5 #it should end a bit early than our main program
     while True:
         input1= GPIO.input(l1)
         input2= GPIO.input(l2)
         if(input1==0):
-            c1+=1
-            data = open('data.txt', 'a')
-            data.write(animalID)
-            data.write("    ")            
             curTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            data.write(str(curTime))
-            data.write("    Lever 1    ")
-            data.write("\n")
+            c1+=1
+            data = open('data.csv', 'a')
+            data.write(animalID + "," + str(curTime) + ",Lever 1\n")
             data.close()
             time.sleep(.200)
         if(input2==0):
             c2+=1
-            data = open('data.txt', 'a')
-            data.write(animalID)
-            data.write("    ")
             curTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            data.write(str(curTime))
-            data.write("    Lever 2    ")
-            data.write("\n")
-            data.close()
+            data = open('data.csv', 'a')
+            data.write(animalID + "," + str(curTime) + ",Lever 2\n")
             time.sleep(.200)
         if(time.time()>totalT):
             print(c1,":",c2)
