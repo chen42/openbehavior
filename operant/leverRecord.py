@@ -3,6 +3,7 @@ import time
 from time import gmtime, strftime
 import sys
 
+# the pin numbers where the two levers ar connected
 l1=8
 l2=10
 
@@ -13,21 +14,21 @@ def init():
     GPIO.setup(l2, GPIO.IN)  #for lever 2
 
 def main(argv):
-    c1=0
-    c2=0
+    c1=0 # counter for number of presses on lever 1
+    c2=0 # counter for number of presses on lever 2
     t1, animalID = argv.split(":")
     t = float(t1)
     totalT = time.time() + t - .5 #it should end a bit early than our main program
     while True:
         input1= GPIO.input(l1)
         input2= GPIO.input(l2)
-        if(input1==0):
+        if(input1==0): # i.e. lever is pressed
             curTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             c1+=1
             data = open('data.csv', 'a')
             data.write(animalID + "," + str(curTime) + ",Lever 1\n")
             data.close()
-            time.sleep(.200)
+            time.sleep(.200) # debouncing 
         if(input2==0):
             c2+=1
             curTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())

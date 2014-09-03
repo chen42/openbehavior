@@ -14,11 +14,11 @@ import signal
 
 ## all  times are in seconds
 
-# GPIO setup 
-pump=7
-l1=8
-l2=10 
-light=16
+# GPIO setup.   
+pump=7 # syringe pump
+l1=8 # active lever 
+l2=10  # inactive lever
+light=16 # cue light
 
 def init():
         GPIO.setmode(GPIO.BOARD)
@@ -30,9 +30,9 @@ def init():
 
 def main(argv):
         fixedR=5  # fixed ratio
-        injectT=5  #the time for which the pump will run, based on the weight of the mouse
-        timeout = 10 #nothing will happen on lever presses
-        sessionT = 40 #300 
+        injectT=5  # the time for which the pump will run, based on the weight of the mouse
+        timeout = 10 # nothing will happen on lever presses
+        sessionT = 300 # session time will be overwritten by the parameter provided at the command line   
         c1=0 # counter for lever 1  
         c2=0 # counter for lever 2 
         i1=0 # counter for lever 1 during injection
@@ -103,7 +103,8 @@ def main(argv):
                         data.write(str(animalID) + "," + str(curTime) + ",Injection\n") 
                         print("Stimulus delivered at", curTime )
                         data.close()
-                        camera.start_recording(str(i) + 'video.h264')
+                        camera.start_recording(str(i) + 'video.h264') # we take a short video after each reward
+
                         #Start recording lever presses during injection
                         lever_during_inject = subprocess.check_output("python3 leverRecord.py " + str(injectT)+":"+str(animalID), shell=True)
                         i1, i2 = processNum(lever_during_inject)
