@@ -45,11 +45,11 @@ def main(argv):
         try:
                 opts, args = getopt.getopt(sys.argv[1:],"hf:i:t:s:a:",["fr","injectTime", "timeout", "sessionT", "animalID"])
         except getopt.GetoptError:
-                print("sudo python3 openb.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
+                print("sudo python3 operant.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
                 sys.exit(2)
         for opt, arg in opts:
                 if opt == '-h':
-                        print("sudo python3 openb.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
+                        print("sudo python3 operant.py -f <fixedRatio> -i <injectTime> -t <timeout> -s <sessionTime> -a <animalID>")
                         sys.exit()
                 elif opt in ("-f", "--fr"):
                         fixedR = arg
