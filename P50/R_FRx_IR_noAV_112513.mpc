@@ -1,0 +1,181 @@
+\Nicotine SA FR10 with 20 sec time out, saccharine as cue
+\remove tone and cuelight.
+\stops run if more than 20 licks are generated in 1 sec. (rat licks less than 10/s).
+
+\Constants:
+
+^SaccLick=1                                                                                                                  
+^WaterLick=2                                                                                                                 
+^DemoLick=3                                                
+^ObIR=4
+^DeIR=5
+^SaccPump=4                                                                                                                  
+^NicPump=3                                                                                                                   
+^Fan=8                                                                                                                       
+^Tone=2                                                                                                                      
+^CueLight=1    
+
+\Variables:
+\A = licks on sacc bottle
+\B = licks on water bottle
+\C = number of sacc / Nic infusions 
+\D = number of water infusions                         
+\E = timing of sacc licks
+\F = timing of water licks
+\G = timing of Nic injections & sacc infusion
+\H = timing of water infusion 
+\I = nicotine injection time
+\J = obir counter
+\K = deir counter
+\LMN = time
+\O = Nic dose adjusting factor 
+\P              
+\Q = time difference between active licks                
+\R = Fixed ratio  
+\S = Session time in seconds
+\T = Max session time in minutes 
+\U = timing of obir
+\V = timing of deir
+\W = bodyweight
+\X
+\Y
+\Z
+
+\Z-Pluses
+\1 sac/Nic infusion
+\2 water infusion
+\3 nic available (filling the line finished)
+\9 session end 
+
+Dim E=15000
+Dim F=10000
+Dim G=1000
+Dim H=1000
+Dim U=5000
+Dim V=5000
+
+DiskVARS = A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+VAR_ALIAS SaccLicks=A
+VAR_ALIAS FR=F
+VAR_ALIAS session length=T
+VAR_ALIAS Time in sec = S
+
+S.S.1,  \fill the line
+    S1,    
+        #START:  Time L,M,N; Z3 ---> S2
+        S2, 
+              0.01":OFF ^NicPump --->S3
+        S3,     
+              1":OFF ^NicPump --->S4
+        S4,    
+              0.01":OFF ^NicPump --->S5
+        S5,     
+              1":OFF ^NicPump --->S6
+        S6,         
+                         
+              .6":ON ^NicPump --->S7
+        S7,
+              1":OFF ^NicPump; Z3 --->S8
+ S8,
+    0.01":--->SX
+
+
+S.S.2, \Time definitions, session start, session end
+    S1, 
+         #START:  SET E(0)=-987.987;
+                  SET F(0)=-987.987;
+                  SET G(0)=-987.987;
+                  SET H(0)=-987.987;
+                  SET U(0)=-987.987;
+                  SET V(0)=-987.987;
+                  \SET R=10; \ Fixed ratio 
+            \O: o=1 for 30ug/kg/inj; o=0.5 for 15ug/kg/inj            
+            SET I=O*(W/100); \ nicotine injection time, 1 sec = 60ul using 15 rpm pump and 6ml syring
+            SET I=I";                                                    
+            SET T=240 --->S2 \session length in min         
+    S2,
+        #Z9: OFF ^Fan --->STOPABORTFLUSH
+
+
+S.S.3,  \timer and session end
+    S1, 
+        #Z3:ON ^FAN --->S2
+        S2,
+            0.1":    SET S=S+0.1;
+        
+        IF (S)>= (T*60) [@TrueEnd, @FalseContinue]
+            @TrueEnd: Z9 ---> SX
+            @FalseContinue: ---> S2
+
+S.S.4, \sacc bottle
+    S1,
+        #Z3: --->S2
+    S2,
+        R#R^SaccLick:ON ^SaccPump, ^NicPump;Z1--->S3
+    S3,
+        20":--->S2 \timeout
+
+S.S.5, \water (inactive) bottle
+    S1,
+        #Z3: --->S2
+    S2,
+        R#R^WaterLick:Z2--->S3
+    S3,
+        0.1":--->S2
+
+S.S.6, \lick counter
+    S1,
+        #Z3: --->S2                
+    S2,
+        #R^SaccLick:  Set E(A)=S;  Set Q=E(A)-E(A-29); Add A; set E(A)=-987.987 ;
+             IF (Q < 1)  AND (A > 29) [@TrueE, @FalseC]
+            @TrueE: Z9 ---> SX               
+            @FalseC: ---> S2
+                              
+        
+        #R^WaterLick: Set F(B)=S; Add B; set F(B)=-987.987 --->S2 
+        #R^DemoLick:  Add P --->S2       
+                                                 
+          
+S.S.7, \infusion counter
+    S1,
+        #Z3: --->S2
+    S2,
+        #Z1: Set G(C) = S ; Add C; set G(C)=-987.987 --->S2 
+        #Z2: Set H(D) = S ; Add D; set H(D)=-987.987 --->S2 
+
+S.S.8, \reward off
+    S1,
+        #Z1: --->S2
+    S2,    
+        I#T:OFF ^NicPump  ---> S1
+S.S.9, \sac off
+    S1,
+        #Z1: --->S2
+    S2, 
+        0.760":OFF ^SaccPump ---> S1
+
+S.S.10, \ir sensors
+    S1,
+        #Z3: --->S2
+    S2,
+        \j|q, u|v; Ob|De 
+        #R^ObIR: Set U(J)=S; Add J; set U(J)=-987.987 --->S2 
+        #R^DeIR: Set V(K)=S; Add K; set V(K)=-987.987 --->S2 
+        
+S.S.11, \screen display
+    S1,
+        #Z3:--->S2
+
+S2,
+        0.1": Show  10, MinLeft, T-S/60;
+                      show  1, MinPast, S/60;
+                      Show  3, SaccLick, A; 
+        Show 4, InactLick, B;
+        Show 5, DemoLick, P; 
+        show 6, NicInj, C; 
+        show 7, Inj@, G(C-1)/60;
+                Show 8, SAIR, J;
+        Show 9, DeIR, K;
+        Show 2, Ends@,  (T/60)+L+(M/100) -1 --->S2
+                 
