@@ -39,9 +39,11 @@ def intervalCounting(channel):
 	if GPIO.input(channel):
 		currentTime = int(round(time.time()*1000))
 		fo.write(str(currentTime) + "\tchannel " + str(channel) + "\tblocked\n")
+		print str(currentTime) + "\tchannel " + str(channel) + "\tblocked\n"
 	else:
 		currentTime = int(round(time.time()*1000))
 		fo.write(str(currentTime) + "\tchannel " + str(channel) + "\topen\n")
+		print str(currentTime) + "\tchannel " + str(channel) + "\topen\n"
 	return
 
 for c in channels:
