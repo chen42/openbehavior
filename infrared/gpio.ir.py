@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import RPi.GPIO as GPIO 
+from time import strftime
 import time
 import os
 import grp
@@ -36,14 +37,13 @@ os.chown(path, uid, gid)
 
 def intervalCounting(channel): 
 	fo = open("/home/pi/data/ir_log.txt", "a")
+	currentTime = strftime("%Y-%m-%d\t%H:%M:%S") 
 	if GPIO.input(channel):
-		currentTime = int(round(time.time()*1000))
 		fo.write(str(currentTime) + "\tchannel " + str(channel) + "\tblocked\n")
-		print str(currentTime) + "\tchannel " + str(channel) + "\tblocked\n"
+		print currentTime + "\tchannel " + str(channel) + "\tblocked\n"
 	else:
-		currentTime = int(round(time.time()*1000))
-		fo.write(str(currentTime) + "\tchannel " + str(channel) + "\topen\n")
-		print str(currentTime) + "\tchannel " + str(channel) + "\topen\n"
+		fo.write(currentTime + "\tchannel " + str(channel) + "\topen\n")
+		print currentTime + "\tchannel " + str(channel) + "\topen\n"
 	return
 
 for c in channels:
