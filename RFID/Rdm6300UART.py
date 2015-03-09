@@ -35,12 +35,13 @@ while True:
 			Zeichen = UART.read()
 			ID = ID + str(Zeichen)
 		# Endflag aus dem String loeschen
-		ID = ID.replace(Endflag, "" ); # Checksumme berechnen
+		ID = ID.replace(Endflag, "" ) # Checksumme berechnen
 		for I in range(0, 9, 2):
 			Checksumme = Checksumme ^ (((int(ID[I], 16)) << 4) + int(ID[I+1], 16))
 		Checksumme = hex(Checksumme)
 		# Tag herausfiltern
-		Tag = ((int(ID[1], 16)) << 8) + ((int(ID[2], 16)) << 4) + ((int(ID[3], 16)) << 0) Tag = hex(Tag)
+		Tag = ((int(ID[1], 16)) << 8) + ((int(ID[2], 16)) << 4) + ((int(ID[3], 16)) << 0) 
+                Tag = hex(Tag)
 		# Ausgabe der Daten
 		print "------------------------------------------"
 		print "Datensatz: ", ID
