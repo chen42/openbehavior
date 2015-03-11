@@ -20,6 +20,7 @@ import sys
 import MPL3115A2
 import TSL2561
 import Adafruit_MCP9808.MCP9808 as MCP9808
+from multiprocessing import Process, Lock
 
 tempsensor = MCP9808.MCP9808()
 tempsensor.begin()
@@ -39,10 +40,8 @@ def write_to_log(filename, data):
 		print datastring
 
 '''
-	Collects environmental  data on the time period
-	specified by the sleeptime variable.
+	Reads light levels from the light sensor
 '''
-
 def readLux():
 	count=0
 	luxTotal=0
@@ -56,22 +55,48 @@ def readLux():
 	return lux
 
 
-def prog(filename="/home/pi/behaviorRoomEnv.log", sleeptime=30):
-	while True:
-		# reset sensor and collect data for next log entry.
-		temp = tempsensor.readTempC()
-		humidity = HTU21DF.read_humidity()
-		tempPres=MPL3115A2.pressure()
-                lux=readLux() 
-                ## calculate average lux for 100 readings
+''' 
+    This function reads and logs all of our sensor data
+'''
+def sensorReadingProcess(logfileLock, filename, sleeptime):
+    while True:
+        # reset sensor and collect data for next log entry.
+        temp = tempsensor.readTempC()
+		    humidity = HTU21DF.read_humidity()
+		    tempPres=MPL3115A2.pressure()
+        lux=readLux() 
+        ## calculate average lux for 100 readings
     		datetime = strftime("%Y-%m-%d\t%H:%M:%S") 
-		data = [datetime, temp, humidity, tempPres[1], lux]
+		    data = [datetime, temp, humidity, tempPres[1], lux]
 	
-		# save new data entry
-		write_to_log(filename, data)
-	
-		# sleep until ready to collect next measurements.
-		time.sleep(sleeptime)
+		    # save new data entry, blocking I/O operation
+        logfileLock.acquire()
+		    write_to_log(filename, data)
+        logfileLock.release()
+    		# sleep until ready to collect next measurements.
+		    time.sleep(sleeptime)
+
+''' 
+    This function copies our current logfile to USB storage
+    devices that are attached to the system.
+
+    @param sleeptime - The sleeptime parameter determines
+    how long to wait between checking for new USB devices.
+'''
+def usbLoggerProcess(logfileLock, sleeptime=2):
+    while True:
+        # TODO: Implement getting usb attched and mounting it and whatnot
+        time.sleep(sleeptime)
+
+'''
+	Collects environmental data on the time period
+	specified by the sleeptime variable.
+'''
+def prog(filename="/home/pi/behaviorRoomEnv.log", sleeptime=30):
+    sensorP = Process(target=sensorReadingProcess, args=(filename, sleeptime))
+    #usbLogP = Process(target=usbLoggerProcess, args=())
+    sensorP.start()
+    #usbLogP.start()
 
 prog()
 
