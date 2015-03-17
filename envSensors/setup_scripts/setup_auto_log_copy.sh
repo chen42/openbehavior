@@ -46,4 +46,5 @@ sudo echo 'fi' >> $OUTPUTDIR
 sudo mkdir /mnt/usblog
 
 # Add entry into fstab to automount usb devices to /mnt/usblog
+# TODO: Make this smarter and make it so that only one such entry exists in our fstab
 echo "/dev/usbkey /mnt/usblog vfat ro,noauto,user,exec 0 0" >> /etc/fstab
