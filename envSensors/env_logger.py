@@ -6,11 +6,13 @@
         barometric pressure, TSL2561 for luminosity. These are all connected using 
         the I2C protocol. 
 	
+	As well log times are recorded using the Adafruit DS-1307 Real Time Clock. System time is synchronized using this clock at device startup so that the system clock can be used.
+		
 	The log will have the following structure per entry.
 	"date\ttime\ttemperature (C)\thumidity(%)\tbarometric pressure (hPa)\tLuminosity (Lux)\n"
 
 	Usage:
-		python HTU21DF_Logger.py <log filepath> <sleeptime>
+		python env_logger.py
 '''
 import time
 from time import strftime
@@ -61,20 +63,21 @@ def readLux():
 def sensorReadingProcess(logfileLock, filename, sleeptime):
     while True:
         # reset sensor and collect data for next log entry.
-        temp = tempsensor.readTempC()
-		    humidity = HTU21DF.read_humidity()
-		    tempPres=MPL3115A2.pressure()
-        lux=readLux() 
+        # TODO: Make this section of code resistant to hardware failures by inserting "nil" values for missing data when appropriate
+	temp = tempsensor.readTempC()
+	humidity = HTU21DF.read_humidity()
+	tempPres = MPL3115A2.pressure()
+        lux = readLux()
         ## calculate average lux for 100 readings
-    		datetime = strftime("%Y-%m-%d\t%H:%M:%S") 
-		    data = [datetime, temp, humidity, tempPres[1], lux]
+    	datetime = strftime("%Y-%m-%d\t%H:%M:%S") 
+	data = [datetime, temp, humidity, tempPres[1], lux]
 	
-		    # save new data entry, blocking I/O operation
+	# save new data entry, blocking I/O operation
         logfileLock.acquire()
-		    write_to_log(filename, data)
+	write_to_log(filename, data)
         logfileLock.release()
-    		# sleep until ready to collect next measurements.
-		    time.sleep(sleeptime)
+    	# sleep until ready to collect next measurements.
+	time.sleep(sleeptime)
 
 ''' 
     This function copies our current logfile to USB storage
@@ -93,7 +96,8 @@ def usbLoggerProcess(logfileLock, sleeptime=2):
 	specified by the sleeptime variable.
 '''
 def prog(filename="/home/pi/behaviorRoomEnv.log", sleeptime=30):
-    sensorP = Process(target=sensorReadingProcess, args=(filename, sleeptime))
+    logfileLock = Lock()
+    sensorP = Process(target=sensorReadingProcess, args=(logfileLock, filename, sleeptime))
     #usbLogP = Process(target=usbLoggerProcess, args=())
     sensorP.start()
     #usbLogP.start()
