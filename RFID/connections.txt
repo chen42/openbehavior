@@ -1,0 +1,6 @@
+The antenna can be connected in either direction
+connect the Tx on the RPi (i.e. pin 8)  to Rx on the board (i.e. PIN 2) 
+connect the Rx on the RPi (i.e. pin 10) to Tx on the board (i.e. PIN 1)  
+connect the ground on the RPi (i.e. pin 6) to the ground on the board (i.e. Pin 4)
+connect the 5V on the RPi (i.e. pin 2) to the power in on the board (i.e. Pin 5)
+

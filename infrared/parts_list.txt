@@ -1,0 +1,11 @@
+items from sparkfun.
+
+Infrared Emitter & Detector Set:
+SEN-00241
+
+Emitter:
+LTE-302
+
+Detector:
+LTR-301
+
