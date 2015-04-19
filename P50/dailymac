@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+#system("~/bin/medpc test nosoffice"); 
+$in=$ARGV[0];
+
+#$in="/home/hao/ns016.csv" if (!$in);
+$in="/home/hao/ns016.schedule.csv" if (!$in);
+
+system("rm mpc.warning");
+system("rm /home/hao/Dropbox/HaoLabShare/macro/*mac");
+system("rm /home/hao/Dropbox/HaoLabShare/macro/singleAnimal/*mac");
+system("rm /home/hao/Dropbox/HaoLabShare/schedule.2014-*-*.pdf");
+#system("rm ~/2014-*-*.csv");
+
+
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);                                           
+$year += 1900; ## $year contains no. of years since 1900, to add 1900 to make Y2K compliant                           
+$mon++;                                                                                                               
+$mon="0".$mon if (length($mon) ==1);
+$mday++ if ($ARGV[0]==1);
+
+$mday="0".$mday if (length($mday) ==1);
+my $day="$year\-$mon\-$mday";   
+
+
+open (IN, $in) || die;
+$ampm="AM";
+while (<IN>){
+	$day="2014-$1-$2" if ($_=~/(\d\d)\/(\d\d)\/14/);
+	$_=~s/"//g;
+	next if ($_!~/^,\d|^\?/);
+#	next if ($_~=/^"w/);
+	print $_;
+#	print "...$l[1]\n";
+	@l=split(/,/,$_);
+	$fn=$day.$l[2] if $l[1]==1;
+	$out.=$_;
+	$strain="rat" if ($_=~/ns\d|hs\d/);
+	$strain="mice" if ($_=~/mn\d|mln\d/);
+	$strain="rat" if ($l[3]=~/^F\d\d\d\d|^M\d\d\d\d/);
+	$endOfTable=1 if (($strain eq "rat") && ($l[1]==14)) ;
+	$endOfTable=1 if (($strain eq "mice") && ($l[1]==16)) ;
+#print "$_ $strain\t $l[1] end $endOfTable\n";
+	if ($endOfTable) {	
+		$fn=~s/"//g;
+		open (OUT, ">$fn.csv") || die;
+		print OUT $out;
+		print "\n$fn.csv generated\n";
+		#print $out, "\n\n";
+		close (OUT);
+		$out="";
+		undef(@l);
+		#system("/home/hao/bin/medmacro.old.pl $fn.csv $ampm");
+		system("/home/hao/bin/medmacro.pl $fn.csv $ampm");
+		$ampm="PM";
+	}
+	undef($endOfTable);
+}
+
+system("cp /home/hao/PDF/ns016_schedule.pdf /home/hao/mac/schedule.$day.pdf");
+system("cp /home/hao/PDF/ns016_schedule.pdf /home/hao/Dropbox/HaoLabShare/schedule.$day.pdf");
+system("okular /home/hao/Dropbox/HaoLabShare/schedule.$day.pdf &");
+system ("cat mpc.warning");
+

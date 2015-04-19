@@ -11,5 +11,5 @@ sudo chmod 666   /sys/module/i2c_bcm2708/parameters/combined
 sudo echo -n 1 > /sys/module/i2c_bcm2708/parameters/combined
 sudo pigpiod
 
-
-
+## Setup our DS1307 Clock
+./setup_ds1307.sh
