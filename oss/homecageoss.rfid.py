@@ -3,15 +3,16 @@ import time
 from time import strftime, localtime
 import sys
 import RPi.GPIO as gpio
+import Adafruit_MPR121.MPR121 as MPR121
 from random import randint
 import serial
 from operator import xor 
 import multiprocessing
 
 
-sessionLength=20
+sessionLength=3600
 start=time.time()
-datafile='oss_'+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime())+".csv"
+datafile='/home/pi/ossbox1_'+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime())+".csv"
 
 green=11
 red=7
@@ -24,7 +25,16 @@ gpio.setup(red, gpio.OUT)
 gpio.setup(sessionLed,gpio.OUT)
 gpio.output(red,False)
 gpio.output(green,False)
-gpio.output(sessionLed,True)
+
+UART = serial.Serial("/dev/ttyAMA0", 9600) 
+UART.close()
+UART.open()
+
+
+with open(datafile,"w") as f:
+	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+	f.close()
+
 
 def blink(pins):
 	whichpin=randint(0,3)
@@ -36,9 +46,9 @@ def blink(pins):
 		pin=pins
 	else:
 		pin=[pins[0],pins[1],9]
-
 	numTimes=randint(1,3)
 	speed=randint(1,9)/float(9)
+	gpio.output(36,False)
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
@@ -65,12 +75,14 @@ def blink(pins):
 			gpio.output(pin[0],True)
 			time.sleep(speed)
 			gpio.output(pin[0],False)
+	gpio.output(sessionLed,True)
+	pin=str(pin)
+	pin=str.replace(pin, ",",":")
+	pin=str.replace(pin, "7","red")
+	pin=str.replace(pin, "11","green")
+	pin=str.replace(pin, "9","both")
 	return {'pins':pin, 'times':numTimes, 'speed':speed}
 
-
-UART = serial.Serial("/dev/ttyAMA0", 9600) 
-UART.close();
-UART.open()
 def activerfid():
 	while True:
 		# UART
@@ -103,9 +115,9 @@ def activerfid():
 			time.sleep(5)
 
 
-
 if __name__ == '__main__':
 	p=multiprocessing.Process(target=activerfid, name="Active")
+	gpio.output(sessionLed,True)
 	p.start()
 
 	time.sleep(sessionLength)
