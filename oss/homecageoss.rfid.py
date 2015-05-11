@@ -3,7 +3,6 @@ import time
 from time import strftime, localtime
 import sys
 import RPi.GPIO as gpio
-#import Adafruit_MPR121.MPR121 as MPR121
 from random import randint
 import serial
 from operator import xor 
