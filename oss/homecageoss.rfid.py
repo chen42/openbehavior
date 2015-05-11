@@ -1,31 +1,31 @@
-import RPi.GPIO as gpio
-import time
-from random import randint
 import os
-
-import sys
 import time
-import Adafruit_MPR121.MPR121 as MPR121
-
-
-
-
+from time import strftime, localtime
+import sys
+import RPi.GPIO as gpio
+#import Adafruit_MPR121.MPR121 as MPR121
+from random import randint
 import serial
 from operator import xor 
+import multiprocessing
 
 
-
+sessionLength=20
 start=time.time()
+datafile='oss_'+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime())+".csv"
 
 green=11
 red=7
+sessionLed=36
 pins=[green,red]
 
 gpio.setmode(gpio.BOARD)
 gpio.setup(green, gpio.OUT)
 gpio.setup(red, gpio.OUT)
+gpio.setup(sessionLed,gpio.OUT)
 gpio.output(red,False)
 gpio.output(green,False)
+gpio.output(sessionLed,True)
 
 def blink(pins):
 	whichpin=randint(0,3)
@@ -40,9 +40,8 @@ def blink(pins):
 
 	numTimes=randint(1,3)
 	speed=randint(1,9)/float(9)
-
 	if len(pin)==3:
-		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + "speed") 
+		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
 			time.sleep(speed)
 			gpio.output(pin[0],True)
@@ -52,7 +51,7 @@ def blink(pins):
 			time.sleep(speed)
 			gpio.output(pin[1],False)
 	elif len(pin)==2:
-		print ("blink both pins "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + "speed") 
+		print ("blink both pins "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
 			time.sleep(speed)
 			gpio.output(pin[1],True)
@@ -61,7 +60,7 @@ def blink(pins):
 			gpio.output(pin[0],False)
 			gpio.output(pin[1],False)
 	else:
-		print ("blink pin "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + "speed") 
+		print ("blink pin "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
 			time.sleep(speed)
 			gpio.output(pin[0],True)
@@ -69,26 +68,6 @@ def blink(pins):
 			gpio.output(pin[0],False)
 	return {'pins':pin, 'times':numTimes, 'speed':speed}
 
-
-cap = MPR121.MPR121()
-if not cap.begin():
-    print 'Error initializing MPR121.  Check your wiring!'
-    sys.exit(1)
-
-
-
-def active():
-#last_touched = cap.touched()
-	while True:
-	#	current_touched = cap.touched()
-		# Check each pin's last and current state to see if it was pressed or released.
-		if cap.is_touched(1):
-			lapsed=time.time()-start
-			para=blink(pins)
-			print (lapsed,para['pins'],para['times'],para['speed'])
-			with open("oss.data.csv","a") as f:
-				f.write("active"+"\t"+str(lapsed)+"\t"+str(para['pins'])+"\t"+str(para['times'])+"\t"+str(para['speed'])+"\n")
-			time.sleep(0.02)
 
 UART = serial.Serial("/dev/ttyAMA0", 9600) 
 UART.close();
@@ -104,8 +83,8 @@ def activerfid():
 		Startflag = "\x02"
 		Endflag = "\x03"
 		# UART oeffnen
-
 		Zeichen = UART.read()
+		lapsed=time.time()-start
 		if Zeichen == Startflag:
 			for Counter in range(13):
 				Zeichen = UART.read()
@@ -116,35 +95,23 @@ def activerfid():
 			Checksumme = hex(Checksumme)
 			Tag = ((int(ID[1], 16)) << 8) + ((int(ID[2], 16)) << 4) + ((int(ID[3], 16)) << 0) 
 			Tag = hex(Tag)
-			print "RFID detected: ", ID
-			lapsed=time.time()-start
+			print ("RFID detected: ", ID, " lapsed ", lapsed)
 			para=blink(pins)
-			time.sleep(1)
+			with open(datafile,"a") as f:
+					f.write("active\t"+time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\t"+str(lapsed)+"\t"+ID+"\t"+str(para['pins'])+"\t"+str(para['times'])+"\t"+str(para['speed'])+"\n")
+			f.close()
 			UART.flushInput()
-			print (lapsed,para['pins'],para['times'],para['speed'])
-			with open("oss.data.csv","a") as f:
-				f.write("rfidactive"+"\t"+str(lapsed)+"\t"+str(para['pins'])+"\t"+str(para['times'])+"\t"+str(para['speed'])+"\n")
+			time.sleep(5)
 
 
-			#print "Tag: ", Tag
-			#print "ID: ", ID[4:10], " - ", int(ID[4:10], 16)
-			#print "Checksumme: ", Checksumme
-			#print "------------------------------------------"
+
+if __name__ == '__main__':
+	p=multiprocessing.Process(target=activerfid, name="Active")
+	p.start()
+
+	time.sleep(sessionLength)
+	gpio.output(sessionLed,False)
+	p.terminate()
+	p.join()
 
 
-def inactive():
-	while True:
-		if cap.is_touched(0):
-			lapsed=time.time()-start
-			with open("oss.data.csv","a") as f:
-				f.write("inactive"+"\t"+str(lapsed)+"\n")
-			time.sleep(0.02)
-
-pid=os.fork()
-
-while True:
-	if pid >0:
-		activerfid()
-		#active()
-	else:
-		inactive()
