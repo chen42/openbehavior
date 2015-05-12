@@ -12,7 +12,12 @@ import multiprocessing
 
 sessionLength=3600
 start=time.time()
-datafile='/home/pi/ossbox1_'+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime())+".csv"
+
+idfile=open("/home/pi/ossboxid")
+boxid=idfile.read()
+boxid=boxid.strip()
+
+datafile='/home/pi/oss'+ boxid + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
 
 sessionLed=36
 RFIDLed=32
@@ -54,7 +59,7 @@ def inactiverfid():
 			Tag = hex(Tag)
 			print ("RFID detected: ", ID, " lapsed ", lapsed)
 			with open(datafile,"a") as f:
-					f.write("inactive\t"+time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\t"+str(lapsed)+"\t"+ID+"\t\t\t\n")
+					f.write("inactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t"+str(lapsed) + "\t" + ID + boxid +"\t\t\t\n")
 			f.close()
 			UART.flushInput()
 			time.sleep(5)

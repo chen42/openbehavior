@@ -3,16 +3,21 @@ import time
 from time import strftime, localtime
 import sys
 import RPi.GPIO as gpio
-import Adafruit_MPR121.MPR121 as MPR121
 from random import randint
 import serial
 from operator import xor 
 import multiprocessing
 
 
+idfile=open("/home/pi/ossboxid")
+boxid=idfile.read()
+boxid=boxid.strip()
+
+datafile='/home/pi/oss'+ boxid + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
+
 sessionLength=3600
 start=time.time()
-datafile='/home/pi/ossbox1_'+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime())+".csv"
+
 
 green=11
 red=7
@@ -109,7 +114,7 @@ def activerfid():
 			print ("RFID detected: ", ID, " lapsed ", lapsed)
 			para=blink(pins)
 			with open(datafile,"a") as f:
-					f.write("active\t"+time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\t"+str(lapsed)+"\t"+ID+"\t"+str(para['pins'])+"\t"+str(para['times'])+"\t"+str(para['speed'])+"\n")
+					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" + ID + boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
 			f.close()
 			UART.flushInput()
 			time.sleep(5)
