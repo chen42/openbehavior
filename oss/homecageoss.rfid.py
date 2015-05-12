@@ -13,7 +13,7 @@ idfile=open("/home/pi/ossboxid")
 boxid=idfile.read()
 boxid=boxid.strip()
 
-datafile='/home/pi/oss'+ boxid + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
+datafile='/home/pi/oss'+ boxid + "_"+ time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
 
 sessionLength=3600
 start=time.time()
@@ -114,7 +114,7 @@ def activerfid():
 			print ("RFID detected: ", ID, " lapsed ", lapsed)
 			para=blink(pins)
 			with open(datafile,"a") as f:
-					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" + ID + boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
+					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" + ID + "\t"+ boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
 			f.close()
 			UART.flushInput()
 			time.sleep(5)
