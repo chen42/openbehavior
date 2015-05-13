@@ -1,0 +1,13 @@
+## source:  http://ciaduck.blogspot.com/2014/12/mpl3115a2-sensor-with-raspberry-pi.html
+
+the MPL3115A2 requires a proper repeated start command in it's I2C communication. Raspberry Pi doesn't do this out of the box, but there is a kernel module that can be enabled to make it perform repeated start correctly. Run the following commands to enable repeated start on the Pi:
+
+
+sudo su -
+echo -n 1 > /sys/module/i2c_bcm2708/parameters/combined
+exit
+
+
+More details about the repeated start problem can be found here:
+http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=15840&start=25
+
