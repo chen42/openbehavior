@@ -39,7 +39,6 @@ pins=[greenLed,redLed]
 gpio.setmode(gpio.BOARD)
 gpio.setup(greenLed, gpio.OUT)
 gpio.setup(redLed, gpio.OUT)
-gpio.setup(sessionLed,gpio.OUT)
 gpio.setup(sessionLed1,gpio.OUT)
 gpio.setup(sessionLed2,gpio.OUT)
 gpio.setup(RFIDLed,gpio.OUT)
@@ -66,7 +65,7 @@ time_out = 0.05
 
 # open data file
 with open(datafile,"a") as f:
-	f.write("Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
 	f.close()
 
 ## blinks the greenLed and/or redLed at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
@@ -109,7 +108,7 @@ def blink(pins):
 			gpio.output(pin[0],True)
 			time.sleep(speed)
 			gpio.output(pin[0],False)
-	gpio.output(sessionLed,True)
+	#gpio.output(RFIDLed,True)
 	pin=str(pin)
 	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
 	pin=str.replace(pin, "7","red") # replace pin with LED color
@@ -145,7 +144,8 @@ def activerfid(uart):
 			#Checksumme = hex(Checksumme)
 			#Tag = ((int(ID[1], 16)) << 8) + ((int(ID[2], 16)) << 4) + ((int(ID[3], 16)) << 0) 
 			#Tag = hex(Tag)
-			print ("RFID 2 detected: ", ID, " lapsed ", lapsed)
+			print ("RFID 1 detected: ", ID, " lapsed ", lapsed)
+			para=blink(pins)
 			with open(datafile,"a") as f:
 					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" + ID + "\t"+ boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
 			f.close()
@@ -153,12 +153,12 @@ def activerfid(uart):
 			uart.flushOutput()
 			time.sleep(5)
 
-def inactiverfid(uart)
+def inactiverfid(uart):
+	while True:
 		Zeichen = 0
 		Checksumme = 0
 		Tag = 0
 		ID = ""
-		# uart2 oeffnen
 		Zeichen = uart2.read()
 		lapsed=time.time()-start
 		if Zeichen == Startflag:
@@ -182,26 +182,22 @@ def inactiverfid(uart)
 			gpio.output(RFIDLed,True)
 
 
-
-
 if __name__ == '__main__':
 
 	# set path to rfid sensors
 	path_to_rfid_one = "/dev/ttyAMA0"
-	path_to_rfid_two = "/dev/ttyUSB1"
+	path_to_rfid_two = "/dev/ttyUSB0"
 
 	# disable python automatic garbage collect
 	# for greater sensitivity
 	gc.disable()
 
-	# initialize uart 1
+	# initialize uart 1 & 2
 	uart1 = initialize_uart(path_to_rfid_one) 
-
-	# intitialize uart 2
 	uart2 = initialize_uart(path_to_rfid_two) 
 
-	p1=multiprocessing.Process(target=activerfid(uart1), name="Active")
-	p2=multiprocessing.Process(target=inactiverfid(uart2), name="Inactive")
+	p1=multiprocessing.Process(target=activerfid, args=(uart1,))
+	p2=multiprocessing.Process(target=inactiverfid, args=(uart2,))
 	gpio.output(sessionLed1,True)
 	gpio.output(sessionLed2,True)
 	gpio.output(RFIDLed,True)
@@ -217,6 +213,11 @@ if __name__ == '__main__':
 
 	# reactivate automatic garbage collection
 	# and clean objects so no memory leaks
+
+	# open data file
+	with open(datafile,"a") as f:
+		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+		f.close()
 
 	gc.enable()
 	gc.collect()
