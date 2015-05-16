@@ -43,9 +43,6 @@ gpio.setup(sessionLed1,gpio.OUT)
 gpio.setup(sessionLed2,gpio.OUT)
 gpio.setup(RFIDLed,gpio.OUT)
 
-gpio.output(redLed,False)
-gpio.output(greenLed,False)
-
 # Flags ## DO NOT CHANGE ####
 #############################
 Startflag = "\x02"
@@ -81,34 +78,35 @@ def blink(pins):
 		pin=[pins[0],pins[1],9] # 9 = both pins
 	numTimes=randint(1,3)
 	speed=randint(1,9)/float(9)
-	gpio.output(36,False)
+	gpio.output(sessionLed1,False)
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
-			time.sleep(speed)
 			gpio.output(pin[0],True)
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			gpio.output(pin[1],True)
 			time.sleep(speed)
 			gpio.output(pin[1],False)
+			time.sleep(speed)
 	elif len(pin)==2:
 		print ("blink both pins "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
-			time.sleep(speed)
 			gpio.output(pin[1],True)
 			gpio.output(pin[0],True)
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			gpio.output(pin[1],False)
+			time.sleep(speed)
 	else:
 		print ("blink pin "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
-			time.sleep(speed)
 			gpio.output(pin[0],True)
 			time.sleep(speed)
 			gpio.output(pin[0],False)
-	#gpio.output(RFIDLed,True)
+			time.sleep(speed)
+	time.sleep(5-speed*numTimes)
+	gpio.output(sessionLed1,True)
 	pin=str(pin)
 	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
 	pin=str.replace(pin, "7","red") # replace pin with LED color
@@ -139,6 +137,7 @@ def activerfid(uart):
 				Zeichen = uart.read()
 				ID = ID + str(Zeichen)
 			ID = ID.replace(Endflag, "" ) # Checksumme berechnen
+			gpio.output(RFIDLed,True)
 			#for I in range(0, 9, 2):
 			#	Checksumme = Checksumme ^ (((int(ID[I], 16)) << 4) + int(ID[I+1], 16))
 			#Checksumme = hex(Checksumme)
@@ -151,6 +150,7 @@ def activerfid(uart):
 			f.close()
 			uart.flushInput()
 			uart.flushOutput()
+			gpio.output(RFIDLed,False)
 			time.sleep(5)
 
 def inactiverfid(uart):
@@ -166,6 +166,7 @@ def inactiverfid(uart):
 				Zeichen = uart.read()
 				ID = ID + str(Zeichen)
 			ID = ID.replace(Endflag, "" ) # Checksumme berechnen
+			gpio.output(RFIDLed,True)
 			#for I in range(0, 9, 2):
 			#	Checksumme = Checksumme ^ (((int(ID[I], 16)) << 4) + int(ID[I+1], 16))
 			#Checksumme = hex(Checksumme)
@@ -178,8 +179,9 @@ def inactiverfid(uart):
 			time.sleep(amount_to_sleep)
 			uart.flushInput()
 			uart.flushOutput()
-			time.sleep(5)
-			gpio.output(RFIDLed,True)
+			time.sleep(1)
+			gpio.output(RFIDLed,False)
+			time.sleep(4)
 
 
 if __name__ == '__main__':
@@ -196,11 +198,15 @@ if __name__ == '__main__':
 	uart1 = initialize_uart(path_to_rfid_one) 
 	uart2 = initialize_uart(path_to_rfid_two) 
 
-	p1=multiprocessing.Process(target=activerfid, args=(uart1,))
-	p2=multiprocessing.Process(target=inactiverfid, args=(uart2,))
+	## Initial LED status
+	gpio.output(redLed,False)
+	gpio.output(greenLed,False)
+	gpio.output(RFIDLed,False)
 	gpio.output(sessionLed1,True)
 	gpio.output(sessionLed2,True)
-	gpio.output(RFIDLed,True)
+
+	p1=multiprocessing.Process(target=activerfid, args=(uart1,))
+	p2=multiprocessing.Process(target=inactiverfid, args=(uart2,))
 	p1.start()
 	p2.start()
 	time.sleep(sessionLength)
