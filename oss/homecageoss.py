@@ -27,10 +27,10 @@ boxid=boxid.strip()
 datafile='/home/pi/oss'+ boxid + "_" + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
 
 # session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
-sessionLed1=36
-sessionLed2=36
+sessionLed1=33
+sessionLed2=37
 # RFID LED is on when RFID is detected
-RFIDLed=32 
+RFIDLed=35 
 # green and red Leds are for sensation seeking
 greenLed=11
 redLed=7
@@ -113,7 +113,7 @@ def blink(pins):
 	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
 	pin=str.replace(pin, "7","red") # replace pin with LED color
 	pin=str.replace(pin, "11","green")
-	pin=str.replace(pin, "9","both")
+	pin=str.replace(pin, "7, 11, 9","both")
 	return {'pins':pin, 'times':numTimes, 'speed':speed}
 
 
