@@ -27,13 +27,16 @@ import Adafruit_BMP.BMP085 as BMP085
 import RPi.GPIO as gpio
 
 
-#time.sleep(30)
-
 led=7
 gpio.setmode(gpio.BOARD)
 gpio.setup(led, gpio.OUT)
 gpio.output(led,False)
 
+
+
+idfile=open("/home/pi/locationid")
+location=idfile.read()
+location=location.strip()
 
 tempsensor = MCP9808.MCP9808()
 tempsensor.begin()
@@ -44,14 +47,13 @@ HTU21DF.htu_reset
 barometer = BMP085.BMP085(mode=BMP085.BMP085_ULTRAHIGHRES)
 
   
-
 '''
 	Writes data to the logfile located at the location specified
 	by the filename variable.
 '''
 def write_to_log(filename, data):
 	with open(filename, "a") as logfile:
-		datastring = str(data[0]) + "\t" + str(data[1]) + "\t" + str(data[2]) + "\t" + str(data[3]) + "\t" + str(data[3])+"\n"
+		datastring = str(data[0]) + "\t" + location + "\t" +  str(data[1]) + "\t" + str(data[2]) + "\t" + str(data[3]) + "\t" + str(data[4])+"\n"
 		logfile.write(datastring)
 		print datastring
 
@@ -68,12 +70,13 @@ def readLux():
 	return lux
 
 
-def prog(filename="/home/pi/behaviorRoomEnv.log"):
+
+def prog(filename):
     # reset sensor and collect data.
     gpio.output(led,True)
     temp=tempsensor.readTempC()
     humidity=HTU21DF.read_humidity()
-	pressure=barometer.read_pressure()
+    pressure=barometer.read_pressure()
     lux=readLux()
     datetime=strftime("%Y-%m-%d\t%H:%M:%S")
     data=[datetime,temp,humidity,pressure,lux]
@@ -81,5 +84,6 @@ def prog(filename="/home/pi/behaviorRoomEnv.log"):
     write_to_log(filename,data)
     gpio.output(led,False)
 
-prog()
+filename="/home/pi/"+location+"Env.log"
+prog(filename)
 
