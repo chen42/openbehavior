@@ -19,9 +19,10 @@ from time import strftime
 import datetime
 import HTU21DF
 import sys
-import MPL3115A2
+#import MPL3115A2
 import TSL2561
 import Adafruit_MCP9808.MCP9808 as MCP9808
+import Adafruit_BMP.BMP085 as BMP085
 
 import RPi.GPIO as gpio
 
@@ -40,6 +41,8 @@ temp = tempsensor.readTempC()
 LightSensor = TSL2561.Adafruit_TSL2561()
 LightSensor.enableAutoGain(True)
 HTU21DF.htu_reset
+barometer = BMP085.BMP085(mode=BMP085.BMP085_ULTRAHIGHRES)
+
   
 
 '''
@@ -48,7 +51,7 @@ HTU21DF.htu_reset
 '''
 def write_to_log(filename, data):
 	with open(filename, "a") as logfile:
-		datastring = str(data[0]) + "\t" + str(data[1]) + "\t" + str(data[2]) + "\t" + str(data[3]) + "\t" + str(data[4])+"\n"
+		datastring = str(data[0]) + "\t" + str(data[1]) + "\t" + str(data[2]) + "\t" + str(data[3]) + "\t" + str(data[3])+"\n"
 		logfile.write(datastring)
 		print datastring
 
@@ -70,11 +73,11 @@ def prog(filename="/home/pi/behaviorRoomEnv.log"):
     gpio.output(led,True)
     temp=tempsensor.readTempC()
     humidity=HTU21DF.read_humidity()
-    tempPres=MPL3115A2.pressure()
+	pressure=barometer.read_pressure()
     lux=readLux()
     datetime=strftime("%Y-%m-%d\t%H:%M:%S")
-    data=[datetime,temp,humidity,tempPres[1],lux]
-    #savenewdataentry
+    data=[datetime,temp,humidity,pressure,lux]
+    # savenewdataentry
     write_to_log(filename,data)
     gpio.output(led,False)
 
