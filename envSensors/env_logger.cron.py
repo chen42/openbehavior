@@ -21,7 +21,7 @@ import HTU21DF
 import sys
 #import MPL3115A2
 import TSL2561
-import Adafruit_MCP9808.MCP9808 as MCP9808
+#import MPL3115A2import Adafruit_MCP9808.MCP9808 as MCP9808
 import Adafruit_BMP.BMP085 as BMP085
 
 import RPi.GPIO as gpio
@@ -33,14 +33,11 @@ gpio.setup(led, gpio.OUT)
 gpio.output(led,False)
 
 
-
 idfile=open("/home/pi/locationid")
 location=idfile.read()
 location=location.strip()
 
-tempsensor = MCP9808.MCP9808()
-tempsensor.begin()
-temp = tempsensor.readTempC()
+#import MPL3115A2 tempsensor = MCP9808.MCP9808() tempsensor.begin() temp = tempsensor.readTempC()
 LightSensor = TSL2561.Adafruit_TSL2561()
 LightSensor.enableAutoGain(True)
 HTU21DF.htu_reset
@@ -74,9 +71,12 @@ def readLux():
 def prog(filename):
     # reset sensor and collect data.
     gpio.output(led,True)
-    temp=tempsensor.readTempC()
+    # reset sensor and collect data.  temp=tempsensor.readTempC()
     humidity=HTU21DF.read_humidity()
+    temp1=HTU21DF.read_temperature()
     pressure=barometer.read_pressure()
+    temp2=barometer.read_temperature()
+    temp=(temp1+temp2)/2
     lux=readLux()
     datetime=strftime("%Y-%m-%d\t%H:%M:%S")
     data=[datetime,temp,humidity,pressure,lux]
