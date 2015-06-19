@@ -19,31 +19,12 @@ from time import strftime
 import datetime
 import HTU21DF
 import sys
-#import MPL3115A2
 import TSL2561
-#import MPL3115A2import Adafruit_MCP9808.MCP9808 as MCP9808
 import Adafruit_BMP.BMP085 as BMP085
-
 import RPi.GPIO as gpio
 
 
-led=7
-gpio.setmode(gpio.BOARD)
-gpio.setup(led, gpio.OUT)
-gpio.output(led,False)
 
-
-idfile=open("/home/pi/locationid")
-location=idfile.read()
-location=location.strip()
-
-#import MPL3115A2 tempsensor = MCP9808.MCP9808() tempsensor.begin() temp = tempsensor.readTempC()
-LightSensor = TSL2561.Adafruit_TSL2561()
-LightSensor.enableAutoGain(True)
-HTU21DF.htu_reset
-barometer = BMP085.BMP085(mode=BMP085.BMP085_ULTRAHIGHRES)
-
-  
 '''
 	Writes data to the logfile located at the location specified
 	by the filename variable.
@@ -55,35 +36,48 @@ def write_to_log(filename, data):
 		print datastring
 
 def readLux():
+	LightSensor = TSL2561.Adafruit_TSL2561()
+	LightSensor.enableAutoGain(True)
 	count=0
 	luxTotal=0
 	while True:
- 		if (count <=100):
+		if (count <=100):
 				 luxTotal=LightSensor.calculateLux() + luxTotal 
- 				 count+=1
- 		else:
-     		 lux=round(luxTotal/100)
-    	 	 break
+				 count+=1
+		else:
+			 lux=round(luxTotal/100)
+			 break
 	return lux
 
 
 
 def prog(filename):
-    # reset sensor and collect data.
-    gpio.output(led,True)
-    # reset sensor and collect data.  temp=tempsensor.readTempC()
-    humidity=HTU21DF.read_humidity()
-    temp1=HTU21DF.read_temperature()
-    pressure=barometer.read_pressure()
-    temp2=barometer.read_temperature()
-    temp=(temp1+temp2)/2
-    lux=readLux()
-    datetime=strftime("%Y-%m-%d\t%H:%M:%S")
-    data=[datetime,temp,humidity,pressure,lux]
-    # savenewdataentry
-    write_to_log(filename,data)
-    gpio.output(led,False)
+	# reset sensor and collect data.
+	# reset sensor and collect data.  temp=tempsensor.readTempC()
+	HTU21DF.htu_reset
+	humidity=HTU21DF.read_humidity()
+	temp1=HTU21DF.read_temperature()
+	barometer = BMP085.BMP085(mode=BMP085.BMP085_ULTRAHIGHRES)
+	pressure=barometer.read_pressure()
+	temp2=barometer.read_temperature()
+	temp=(temp1+temp2)/2
+	lux=readLux()
+	datetime=strftime("%Y-%m-%d\t%H:%M:%S")
+	data=[datetime,temp,humidity,pressure,lux]
+	# savenewdataentry
+	write_to_log(filename,data)
 
-filename="/home/pi/"+location+"Env.log"
-prog(filename)
+try:
+	led=8
+	gpio.setmode(gpio.BOARD)
+	gpio.setup(led, gpio.OUT)
+	#gpio.output(led,False)
+	idfile=open("/home/pi/locationid")
+	location=idfile.read()
+	location=location.strip()
+	filename="/home/pi/"+location+"Env.log"
+	prog(filename)
+	gpio.output(led,True)
+except: 
+	gpio.output(led,False)
 
