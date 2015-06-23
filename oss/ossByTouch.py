@@ -7,13 +7,13 @@ import gc
 import sys
 import Adafruit_MPR121.MPR121 as MPR121
 import multiprocessing
-
+import subprocess
 
 sessionLength=3600
 start=time.time()
 
 # Each box has its own ID
-idfile=open("/home/pi/ossboxid")
+idfile=open("/home/pi/boxid")
 boxid=idfile.read()
 boxid=boxid.strip()
 
@@ -35,12 +35,11 @@ gpio.setup(redLed, gpio.OUT)
 gpio.setup(sessionLed1,gpio.OUT)
 gpio.setup(sessionLed2,gpio.OUT)
 gpio.setup(RFIDLed,gpio.OUT)
-#gpio.output(sessionLed1, True)
-#gpio.output(sessionLed2, True)
 
 # open data file
 with open(datafile,"a") as f:
 	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+	f.write("hole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\n")
 	f.close()
 
 
@@ -49,7 +48,6 @@ cap = MPR121.MPR121()
 if not cap.begin():
     print 'Error initializing MPR121.  Check your wiring!'
     sys.exit(1)
-
 
 
 ## blinks the greenLed and/or redLed at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
@@ -92,7 +90,7 @@ def blink(pins):
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			time.sleep(speed)
-	time.sleep(5-speed*numTimes)
+#	time.sleep(5-speed*numTimes)
 	gpio.output(sessionLed1,True)
 	pin=str(pin)
 	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
@@ -101,29 +99,37 @@ def blink(pins):
 	pin=str.replace(pin, "7, 11, 9","both")
 	return {'pins':pin, 'times':numTimes, 'speed':speed}
 
-
 def active():
-#last_touched = cap.touched()
+	timeout=5
+	rewardtime=start
 	while True:
 		if cap.is_touched(1):
-			gpio.output(RFIDLed, True)
-			para=blink(pins)
-			with open(datafile,"a") as f:
-				lapsed=time.time()-start
-				f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
-				f.close()
-			gpio.output(RFIDLed,False)
+			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
+			if (time.time()-rewardtime>timeout):
+				rewardtime=time.time()
+				subprocess.call(['sudo python /home/pi/oss/blink.py', '-datafile', datafile,  '-start', start])
+#				para=blink(pins)
+#				with open(datafile,"a") as f:
+#					lapsed=time.time()-start
+#					f.write("reward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
+#					f.close()
+			else:
+				with open(datafile,"a") as f:
+					lapsed=time.time()-start
+					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
+					f.close()
+			time.sleep(0.5)
+
 
 def inactive():
 	while True:
 		if cap.is_touched(0):
-			gpio.output(RFIDLed,True)
+			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			with open(datafile,"a") as f:
 				lapsed=time.time()-start
-				f.write("inactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\n")
+				f.write("inactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
 				f.close()
-			time.sleep(5)
-			gpio.output(RFIDLed,False)
+			time.sleep(0.5)
 
 
 if __name__ == '__main__':
@@ -163,14 +169,3 @@ if __name__ == '__main__':
 	gc.collect()
 
 
-
-
-
-
-#pid=os.fork()
-
-#while True:
-#	if pid >0:
-#		active()
-#	else:
-#		inactive()
