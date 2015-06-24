@@ -104,15 +104,9 @@ def active():
 	rewardtime=start
 	while True:
 		if cap.is_touched(1):
-			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
 				rewardtime=time.time()
-				subprocess.call(['sudo python /home/pi/oss/blink.py', '-datafile', datafile,  '-start', start])
-#				para=blink(pins)
-#				with open(datafile,"a") as f:
-#					lapsed=time.time()-start
-#					f.write("reward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(para['pins']) + "\t" + str(para['times']) + "\t" + str(para['speed']) + "\n")
-#					f.close()
+				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  datafile + " -start " +  start  + " &", shell=True)
 			else:
 				with open(datafile,"a") as f:
 					lapsed=time.time()-start
