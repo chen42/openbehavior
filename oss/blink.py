@@ -5,8 +5,8 @@ from random import randint
 import argparse
 
 parser=argparse.ArgumentParser()
-parser.add_argument('datafile',  type=str)
-parser.add_argument('start',  type=float)
+parser.add_argument('-datafile',  type=str)
+parser.add_argument('-start',  type=float)
 args=parser.parse_args()
 print ("\n")
 print ("\n")
