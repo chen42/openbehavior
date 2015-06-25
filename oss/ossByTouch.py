@@ -47,6 +47,7 @@ with open(datafile,"a") as f:
 cap = MPR121.MPR121()
 if not cap.begin():
     print 'Error initializing MPR121.  Check your wiring!'
+	subprocess.call("sudo python /home/pi/oss/errorled.py &")
     sys.exit(1)
 
 
@@ -101,19 +102,19 @@ def blink(pins):
 
 def active():
 	timeout=5
-	rewardtime=start
+	rewardtime=start-timeout #to ensoure the first touch of the session triggers the reward immediately
 	while True:
 		if cap.is_touched(1):
+			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
 				rewardtime=time.time()
-				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  datafile + " -start " +  start  + " &", shell=True)
+				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  datafile + " -start " + str(start)  + " &", shell=True)
 			else:
 				with open(datafile,"a") as f:
 					lapsed=time.time()-start
 					f.write("active\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
 					f.close()
 			time.sleep(0.5)
-
 
 def inactive():
 	while True:
@@ -125,9 +126,7 @@ def inactive():
 				f.close()
 			time.sleep(0.5)
 
-
 if __name__ == '__main__':
-
 	# disable python automatic garbage collect
 	# for greater sensitivity
 	gc.disable()
