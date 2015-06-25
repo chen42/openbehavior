@@ -46,9 +46,9 @@ with open(datafile,"a") as f:
 ### initiate touch sensor
 cap = MPR121.MPR121()
 if not cap.begin():
-    print 'Error initializing MPR121.  Check your wiring!'
+	print 'Error initializing MPR121.  Check your wiring!'
 	subprocess.call("sudo python /home/pi/oss/errorled.py &")
-    sys.exit(1)
+	sys.exit(1)
 
 
 ## blinks the greenLed and/or redLed at a randomly selected frequency for a randomly selected time period, repeat 1-3 times

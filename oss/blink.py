@@ -42,6 +42,11 @@ def blink(pins):
 		pin=[pins[0],pins[1],9] # 9 = both pins
 	numTimes=randint(1,3)
 	speed=randint(1,9)/float(9)
+	with open(args.datafile,"a") as f:
+		lapsed=time.time()-args.start
+		#lapsed=time.time()
+		f.write("reward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
+		f.close()
 	gpio.output(sessionLed1,False)
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
@@ -76,10 +81,5 @@ def blink(pins):
 	pin=str.replace(pin, "11","red") # replace pin with LED color
 	pin=str.replace(pin, "7","green")
 	pin=str.replace(pin, "7, 11, 9","both")
-	with open(args.datafile,"a") as f:
-		#lapsed=time.time()-args.start
-		lapsed=time.time()
-		f.write("reward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
-		f.close()
 
 blink(pins)
