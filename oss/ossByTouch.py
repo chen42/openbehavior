@@ -141,6 +141,12 @@ if __name__ == '__main__':
 	gpio.setup(touchLed,gpio.OUT)
 	gpio.setup(pirPin, gpio.IN)        
 	gpio.setup(motionLed, gpio.OUT)       
+	## Initial LED status
+	gpio.output(redLed,False)
+	gpio.output(greenLed,False)
+	gpio.output(touchLed,False)
+	gpio.output(sessionLed1,True)
+	gpio.output(sessionLed2,True)
 	# initiate the touch sensor
 	cap=initTouch()
 	## session starts when the RFID is detected
@@ -155,12 +161,6 @@ if __name__ == '__main__':
 	gpio.output(touchLed, False)
 	gpio.output(motionLed, False)
 	start=time.time()
-	## Initial LED status
-	gpio.output(redLed,False)
-	gpio.output(greenLed,False)
-	gpio.output(touchLed,False)
-	gpio.output(sessionLed1,True)
-	gpio.output(sessionLed2,True)
 	##
 	p1=multiprocessing.Process(target=active)
 	p2=multiprocessing.Process(target=inactive)
