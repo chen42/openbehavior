@@ -148,6 +148,12 @@ if __name__ == '__main__':
 	uart = initUART(path) 
 	RatID = readRFID(uart)
 	print RatID
+	## blink both the touchLed and motionLed to indicate the RFID is detected
+	gpio.output(touchLed, True)
+	gpio.output(motionLed, True)
+	time.sleep(2)
+	gpio.output(touchLed, False)
+	gpio.output(motionLed, False)
 	start=time.time()
 	## Initial LED status
 	gpio.output(redLed,False)
