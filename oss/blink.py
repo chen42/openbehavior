@@ -7,10 +7,12 @@ import argparse
 parser=argparse.ArgumentParser()
 parser.add_argument('-datafile',  type=str)
 parser.add_argument('-start',  type=float)
+parser.add_argument('-RatID',  type=str)
 args=parser.parse_args()
 print ("\n")
 print ("\n")
 print (args.datafile)
+print (args.RatID)
 print (args.start )
 print ("\n")
 
@@ -45,7 +47,7 @@ def blink(pins):
 	with open(args.datafile,"a") as f:
 		lapsed=time.time()-args.start
 		#lapsed=time.time()
-		f.write("reward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
+		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
 		f.close()
 	gpio.output(sessionLed1,False)
 	if len(pin)==3:
