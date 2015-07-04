@@ -109,17 +109,6 @@ if __name__ == '__main__':
 	# disable python automatic garbage collect for greater sensitivity
 	gc.disable()
 
-	# Each box has its own ID
-	idfile=open("/home/pi/boxid")
-	boxid=idfile.read()
-	boxid=boxid.strip()
-	# data file names
-
-	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", localtime()))
-	touchDataFile='/home/pi/oss'+ boxid + "_" + startTime + ".csv"
-	motionDataFile='/home/pi/motion'+ boxid + "_" + startTime + ".csv"
-	createDataFiles()
-
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
 	# touchLed is on when touch sensor is activated  
 	# green and red Leds are for sensation seeking
@@ -154,6 +143,15 @@ if __name__ == '__main__':
 	uart = initUART(path) 
 	RatID = readRFID(uart)
 	print RatID
+	## creat data files, Each box has its own ID
+	idfile=open("/home/pi/boxid")
+	boxid=idfile.read()
+	boxid=boxid.strip()
+	# data file names
+	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", localtime()))
+	touchDataFile='/home/pi/oss'+ boxid + "_" + startTime + ".csv"
+	motionDataFile='/home/pi/motion'+ boxid + "_" + startTime + ".csv"
+	createDataFiles()
 	## blink both the touchLed and motionLed to indicate the RFID is detected
 	gpio.output(touchLed, True)
 	gpio.output(motionLed, True)
