@@ -97,9 +97,9 @@ def motion():
 				f.write(RatID+"\t"+boxid +"\t"+ str(lapsed) +"\n")
 				f.close()
 			gpio.output(motionLed, True)
-			time.sleep(0.05)
+			time.sleep(0.5)
 			gpio.output(motionLed, False)
-			time.sleep(0.05)
+			time.sleep(0.5)
 			cnt=cnt+1
 			#return cnt
 
