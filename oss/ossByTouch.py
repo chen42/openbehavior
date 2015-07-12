@@ -57,6 +57,7 @@ def initTouch():
 		print 'Error initializing MPR121.  Check your wiring!'
 		subprocess.call("sudo python /home/pi/oss/errorled.py &")
 		sys.exit(1)
+	cap.set_thresholds(200,200)
 	return cap
 
 
