@@ -73,8 +73,8 @@ def prog(filename):
 	# savenewdataentry
 	write_to_log(filename,data)
 	hour=strftime("%H")
-        if hour < 23 
-            write_lux("lux.csv",lux) 
+        if float(hour) < 7: 
+            write_lux("/home/pi/lux.csv",lux) 
 
 
 try:
