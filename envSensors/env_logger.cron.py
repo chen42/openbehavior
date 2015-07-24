@@ -35,6 +35,12 @@ def write_to_log(filename, data):
 		logfile.write(datastring)
 		print datastring
 
+def write_lux(filename, data):
+	with open(filename, "a") as luxfile:
+		datastring= str(data)+"\n"
+		luxfile.write(datastring)
+
+
 def readLux():
 	LightSensor = TSL2561.Adafruit_TSL2561()
 	LightSensor.enableAutoGain(True)
@@ -66,6 +72,10 @@ def prog(filename):
 	data=[datetime,temp,humidity,pressure,lux]
 	# savenewdataentry
 	write_to_log(filename,data)
+	hour=strftime("%H")
+        if hour < 23 
+            write_lux("lux.csv",lux) 
+
 
 try:
 	led=8
