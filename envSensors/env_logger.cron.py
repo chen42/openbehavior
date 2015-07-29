@@ -6,7 +6,7 @@
         barometric pressure, TSL2561 for luminosity. These are all connected using 
         the I2C protocol. 
 
-        This is scheduled to run via cron jobs. An LED connected to GPIO pin 7 is turned on when the script is ran 
+        This is scheduled to run via cron jobs. An LED connected to GPIO pin 8 is turned on when the script is ran 
 	
 	The log will have the following structure per entry.
 	"date\ttime\ttemperature\thumidity\n"
@@ -14,14 +14,22 @@
 	Usage:
 		python HTU21DF_Logger.py 
 '''
+
 import time
 from time import strftime
 import datetime
-import HTU21DF
 import sys
+import RPi.GPIO as gpio
+
+## moved this block here to turn off the LED when program starts
+led=8
+gpio.setmode(gpio.BOARD)
+gpio.setup(led, gpio.OUT)
+gpio.output(led,False)
+
+import HTU21DF
 import TSL2561
 import Adafruit_BMP.BMP085 as BMP085
-import RPi.GPIO as gpio
 
 
 
@@ -78,9 +86,6 @@ def prog(filename):
 
 
 try:
-	led=8
-	gpio.setmode(gpio.BOARD)
-	gpio.setup(led, gpio.OUT)
 	#gpio.output(led,False)
 	idfile=open("/home/pi/locationid")
 	location=idfile.read()
