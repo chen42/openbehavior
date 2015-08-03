@@ -27,6 +27,7 @@ sessionLed1=33
 pins=[greenLed,redLed]
 
 gpio.setmode(gpio.BOARD)
+gpio.setwarnings(False)
 gpio.setup(greenLed, gpio.OUT)
 gpio.setup(redLed, gpio.OUT)
 gpio.setup(sessionLed1, gpio.OUT)

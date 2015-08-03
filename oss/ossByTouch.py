@@ -48,7 +48,6 @@ def touchSensor():
 	rewardtime=start-timeout #to ensoure the first touch of the session triggers the reward immediately
 	while time.time() - start < sessionLength:
 		sessiontime = time.time() - start
-		print sessiontime
 		if cap.is_touched(1):
 			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
@@ -63,7 +62,7 @@ def touchSensor():
 					f.write(RatID + "\tactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
 					f.close()
 				time.sleep(0.20)
-		elif cap.is_touched(3):
+		elif cap.is_touched(0):
 			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			print "inactive is touched"
 			with open(touchDataFile,"a") as f:

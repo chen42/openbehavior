@@ -32,15 +32,15 @@ with open(motionDataFile,"a") as f:
 
 while time.time()-start < sessionLength:
 	if gpio.input(pirPin):
-		print time.strftime("%Y-%m-%d\t%H:%M:%S")
+		#print time.strftime("%Y-%m-%d\t%H:%M:%S")
 		with open(motionDataFile,"a") as f:
 			lapsed=time.time()-start
 			f.write(args.RatID+"\t"+boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
 		gpio.output(motionLed, True)
-		time.sleep(0.2)
+		time.sleep(0.5)
 		gpio.output(motionLed, False)
-		time.sleep(0.2)
+		time.sleep(0.5)
 
 with open(motionDataFile, "a") as f:
 	f.write("#session Ended at " + time.strftime("%H:%M:%S", localtime())+"\n")
