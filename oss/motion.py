@@ -27,7 +27,7 @@ start=time.time()
 motionDataFile='/home/pi/mot'+ boxid + "_" + startTime + ".csv"
 with open(motionDataFile,"a") as f:
 	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
-	f.write("RatID\tboxid\tseconds\n")
+	f.write("RatID\tdate\tboxid\tseconds\n")
 	f.close()
 
 while time.time()-start < sessionLength:
@@ -35,7 +35,7 @@ while time.time()-start < sessionLength:
 		#print time.strftime("%Y-%m-%d\t%H:%M:%S")
 		with open(motionDataFile,"a") as f:
 			lapsed=time.time()-start
-			f.write(args.RatID+"\t"+boxid +"\t"+ str(lapsed) +"\n")
+			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", localtime()) + boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
 		gpio.output(motionLed, True)
 		time.sleep(0.5)
