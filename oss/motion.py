@@ -24,7 +24,7 @@ boxid=idfile.read()
 boxid=boxid.strip()
 startTime=time.strftime("%Y-%m-%d_%H:%M:%S", localtime())
 start=time.time()
-motionDataFile='/home/pi/mot'+ boxid + "_" + startTime + ".csv"
+motionDataFile='/home/pi/pies/motion/mot'+ boxid + "_" + startTime + ".csv"
 with open(motionDataFile,"a") as f:
 	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
 	f.write("RatID\tdate\tboxid\tseconds\n")
