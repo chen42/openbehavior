@@ -113,7 +113,7 @@ if __name__ == '__main__':
 	boxid=boxid.strip()
 	# data file names
 	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", localtime()))
-	touchDataFile='/home/pi/oss'+ boxid + "_" + startTime + ".csv"
+	touchDataFile='/home/pi/pies/oss/oss'+ boxid + "_" + startTime + ".csv"
 	createDataFiles()
 	subprocess.call("sudo python /home/pi/oss/motion.py " + " -RatID " + RatID + " &", shell=True)
 	## blink the touchLed indicate the RFID is detected
