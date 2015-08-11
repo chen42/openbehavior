@@ -36,4 +36,7 @@ if [ -d /etc/profile.d ]; then
   unset i
 fi
 
+## Run the comman after auto log in as the pi
+## run CopyConsole from rc.local resulted in 'curl could not push data' error. 
+## enable auto log in solved the issue 
 /home/pi/copy/CopyConsole -daemon
