@@ -107,6 +107,8 @@ if __name__ == '__main__':
 	gpio.output(sessionLed2,True)
 	# initiate the touch sensor
 	RatID=ReadRFID("/dev/ttyUSB0")
+	## terminate syncthing after detecting RFID (i.e. session starts)
+	subprocess.call("sudo killall syncthing", shell=True)
 	## creat data files, Each box has its own ID
 	idfile=open("/home/pi/boxid")
 	boxid=idfile.read()
@@ -133,5 +135,6 @@ if __name__ == '__main__':
 	# reactivate automatic garbage collection and clean objects so no memory leaks
 	gc.enable()
 	gc.collect()
-
+	# restart syncthing once session is finished
+	subprocess.call("/home/pi/syncthing -no-browser -home=\"/home/pi/.config/syncthing\"", shell=True)
 
