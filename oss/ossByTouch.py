@@ -44,7 +44,7 @@ def initTouch():
 	return cap
 
 def touchSensor():
-	timeout=5
+	timeout=10
 	rewardtime=start-timeout #to ensoure the first touch of the session triggers the reward immediately
 	while time.time() - start < sessionLength:
 		sessiontime = time.time() - start
@@ -85,9 +85,9 @@ if __name__ == '__main__':
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
 	# touchLed is on when touch sensor is activated  
 	# green and red Leds are for sensation seeking
-	sessionLed1=33
+	houseLight1=33
 	touchLed=35 
-	sessionLed2=37
+	houseLight2=37
 	greenLed=11
 	redLed=7
 	pins=[greenLed,redLed]
@@ -96,15 +96,15 @@ if __name__ == '__main__':
 	gpio.setmode(gpio.BOARD)
 	gpio.setup(greenLed, gpio.OUT)
 	gpio.setup(redLed, gpio.OUT)
-	gpio.setup(sessionLed1,gpio.OUT)
-	gpio.setup(sessionLed2,gpio.OUT)
+	gpio.setup(houseLight1,gpio.OUT)
+	gpio.setup(houseLight2,gpio.OUT)
 	gpio.setup(touchLed,gpio.OUT)
 	## Initial LED status
 	gpio.output(redLed,False)
 	gpio.output(greenLed,False)
 	gpio.output(touchLed,False)
-	gpio.output(sessionLed1,True)
-	gpio.output(sessionLed2,True)
+	gpio.output(houseLight1,True)
+	gpio.output(houseLight2,True)
 	# initiate the touch sensor
 	RatID=ReadRFID("/dev/ttyUSB0")
 	## terminate syncthing after detecting RFID (i.e. session starts)
@@ -125,8 +125,8 @@ if __name__ == '__main__':
 	start=time.time()
 	cap=initTouch()
 	touchSensor()
-	gpio.output(sessionLed1,False)
-	gpio.output(sessionLed2,False)
+	gpio.output(houseLight1,False)
+	gpio.output(houseLight2,False)
 	# finishing the data files
 	#open data file
 	with open(touchDataFile,"a") as f:

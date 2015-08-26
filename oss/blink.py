@@ -23,14 +23,16 @@ boxid=boxid.strip()
 # green and red Leds are for sensation seeking
 greenLed=7
 redLed=11
-sessionLed1=33
+houseLight1=33
+houseLight2=37
 pins=[greenLed,redLed]
 
 gpio.setmode(gpio.BOARD)
 gpio.setwarnings(False)
 gpio.setup(greenLed, gpio.OUT)
 gpio.setup(redLed, gpio.OUT)
-gpio.setup(sessionLed1, gpio.OUT)
+gpio.setup(houseLight1, gpio.OUT)
+gpio.setup(houseLight2, gpio.OUT)
 
 ## blinks the greenLed and/or redLed at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
 def blink(pins):
@@ -50,7 +52,8 @@ def blink(pins):
 		#lapsed=time.time()
 		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
 		f.close()
-	gpio.output(sessionLed1,False)
+	gpio.output(houseLight1,False)
+	gpio.output(houseLight2,False)
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
@@ -77,8 +80,9 @@ def blink(pins):
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			time.sleep(speed)
-#	time.sleep(5-speed*numTimes)
-	gpio.output(sessionLed1,True)
+	time.sleep(20-speed*numTimes)
+	gpio.output(houseLight1,True)
+	gpio.output(houseLight2,True)
 	pin=str(pin)
 	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
 	pin=str.replace(pin, "11","red") # replace pin with LED color
