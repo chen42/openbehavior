@@ -103,10 +103,10 @@ if __name__ == '__main__':
 	gpio.output(redLed,False)
 	gpio.output(greenLed,False)
 	gpio.output(touchLed,False)
-	gpio.output(houseLight1,True)
-	gpio.output(houseLight2,True)
 	# initiate the touch sensor
 	RatID=ReadRFID("/dev/ttyUSB0")
+	gpio.output(houseLight1,True)
+	gpio.output(houseLight2,True)
 	## terminate syncthing after detecting RFID (i.e. session starts)
 	subprocess.call("sudo killall syncthing", shell=True)
 	## creat data files, Each box has its own ID
