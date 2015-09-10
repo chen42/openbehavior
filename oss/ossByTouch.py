@@ -102,7 +102,7 @@ if __name__ == '__main__':
 	## Initial LED status
 	gpio.output(redLed,False)
 	gpio.output(greenLed,False)
-	gpio.output(touchLed,False)
+	gpio.output(touchLed,True)
 	# initiate the touch sensor
 	RatID=ReadRFID("/dev/ttyUSB0")
 	gpio.output(houseLight1,True)
@@ -118,9 +118,7 @@ if __name__ == '__main__':
 	touchDataFile='/home/pi/pies/oss/oss'+ boxid + "_" + startTime + ".csv"
 	createDataFiles()
 	subprocess.call("sudo python /home/pi/oss/motion.py " + " -RatID " + RatID + " &", shell=True)
-	## blink the touchLed indicate the RFID is detected
-	gpio.output(touchLed, True)
-	time.sleep(2)
+	## turn the touchLed off when the RFID is detected
 	gpio.output(touchLed, False)
 	start=time.time()
 	cap=initTouch()
