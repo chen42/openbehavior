@@ -78,13 +78,24 @@ def createDataFiles():
 		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\n")
 		f.close()
 
+def doneSignal():
+	while True:
+		gpio.output(touchLed,True)
+		gpio.output(motionLight,False)
+		time.sleep(0.2)
+		gpio.output(touchLed,False)
+		gpio.output(motionLight,True)
+		time.sleep(0.3)
+
 if __name__ == '__main__':
 	sessionLength=3600
+	sessionLength=3
 	# disable python automatic garbage collect for greater sensitivity
 	gc.disable()
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
 	# touchLed is on when touch sensor is activated  
 	# green and red Leds are for sensation seeking
+	motionLight=31 
 	houseLight1=33
 	touchLed=35 
 	houseLight2=37
@@ -99,6 +110,7 @@ if __name__ == '__main__':
 	gpio.setup(houseLight1,gpio.OUT)
 	gpio.setup(houseLight2,gpio.OUT)
 	gpio.setup(touchLed,gpio.OUT)
+	gpio.setup(motionLight,gpio.OUT)
 	## Initial LED status
 	gpio.output(redLed,False)
 	gpio.output(greenLed,False)
@@ -134,5 +146,7 @@ if __name__ == '__main__':
 	gc.enable()
 	gc.collect()
 	# restart syncthing once session is finished
-	subprocess.call("/home/pi/syncthing -no-browser -home=\"/home/pi/.config/syncthing\"", shell=True)
+	subprocess.call("/home/pi/syncthing -no-browser -home=\"/home/pi/.config/syncthing\" & ", shell=True)
+	doneSignal()
+
 
