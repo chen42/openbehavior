@@ -49,11 +49,12 @@ def touchSensor():
 	while time.time() - start < sessionLength:
 		sessiontime = time.time() - start
 		if cap.is_touched(1):
-			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
+			#subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
-				print "reward is given"
 				rewardtime=time.time()
-				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start)  + " &", shell=True)
+				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start) + " -interval " + str(timeout)  + " &", shell=True)
+				timeout=randint(1,30) ## generate next timeout period 
+				print ("reward given, next interval is" + str(timeout)) 
 				time.sleep(0.20)
 			else:
 				print "active pin is touched"
@@ -63,7 +64,7 @@ def touchSensor():
 					f.close()
 				time.sleep(0.20)
 		elif cap.is_touched(0):
-			subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
+			#subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			print "inactive is touched"
 			with open(touchDataFile,"a") as f:
 				lapsed=time.time()-start
@@ -75,7 +76,7 @@ def createDataFiles():
 	# open touch data file
 	with open(touchDataFile,"a") as f:
 		f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
-		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\n")
+		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\tinterval\thouseLight1\thouseLight2\thouseOffSec\n")
 		f.close()
 
 def doneSignal():
