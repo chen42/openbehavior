@@ -76,7 +76,7 @@ def createDataFiles():
 	# open touch data file
 	with open(touchDataFile,"a") as f:
 		f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
-		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\tinterval\thouseLight1\thouseLight2\thouseOffSec\n")
+		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\tinterval\thouseLight\thouseOffSec\n")
 		f.close()
 
 def doneSignal():

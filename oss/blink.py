@@ -51,18 +51,21 @@ def blink(pins):
 		pin=[pins[0],pins[1],9] # 9 = blink alternatively 
 		Pin="Alt."
 	numTimes=randint(1,3)
-	speed=randint(1,9)/float(9)
+	speed=randint(1,9)/float(18)
 	lapsed=time.time()-args.start
 	# which house light to turn off?
-	hL1=1
-	hL2=1
+	hL=1
 	if randint(0,9)< 5 :
-		hL1=0
-		gpio.output(houseLight1,False)
-	if randint(0,9)> 4:
-		hL2=0
-		gpio.output(houseLight2,False)
-		#lapsed=time.time()
+		hL=0
+		print "blink house lights"
+		for i in range (0, randint(2,4)):
+			print (str(i))
+			gpio.output(houseLight1,False)
+			gpio.output(houseLight2,False)
+			time.sleep(randint(1,4)/float(8))
+			gpio.output(houseLight1,True)
+			gpio.output(houseLight2,True)
+			time.sleep(randint(1,4)/float(8))
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
@@ -99,7 +102,7 @@ def blink(pins):
 #	pin=str.replace(pin, "11","red") # replace pin with LED color
 #	pin=str.replace(pin, "7","green")
 	with open(args.datafile,"a") as f:
-		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + Pin + "\t" + str(numTimes) + "\t" + str(speed) + "\t" + str(args.interval) + "\t" + str(hL1) + "\t"+  str(hL2)+  "\t" + str(houseOff) + "\n")
+		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + Pin + "\t" + str(numTimes) + "\t" + str(speed) + "\t" + str(args.interval) + "\t" + str(hL) + "\t" + str(houseOff) + "\n")
 		f.close()
 
 blink(pins)
