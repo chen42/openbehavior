@@ -52,8 +52,11 @@ def blink(pins):
 		#lapsed=time.time()
 		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + str(pin) + "\t" + str(numTimes) + "\t" + str(speed) + "\n")
 		f.close()
-	gpio.output(houseLight1,False)
-	gpio.output(houseLight2,False)
+	
+        if randint(0,3) < 1: ### 25% chance
+            gpio.output(houseLight1,False)
+        if randint(0,3) < 1:
+            gpio.output(houseLight2,False)
 	if len(pin)==3:
 		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
