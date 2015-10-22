@@ -60,7 +60,7 @@ def touchSensor():
 				print "active pin is touched"
 				with open(touchDataFile,"a") as f:
 					lapsed=time.time()-start
-					f.write(RatID + "\tactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
+					f.write(RatID + "\tactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
 					f.close()
 				time.sleep(0.20)
 		elif cap.is_touched(0):
@@ -68,7 +68,7 @@ def touchSensor():
 			print "inactive is touched"
 			with open(touchDataFile,"a") as f:
 				lapsed=time.time()-start
-				f.write(RatID+"\tinactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\n")
+				f.write(RatID+"\tinactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
 				f.close()
 			time.sleep(0.20)
 
