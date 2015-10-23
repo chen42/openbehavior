@@ -1,0 +1,1 @@
+This is an improved version of the implant for jugular catheter surgery originally described in our <a href="http://journal.frontiersin.org/article/10.3389/fnbeh.2014.00437/full#h1" target=_new> Front Behav Neurosci paper </a>. 
