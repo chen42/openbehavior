@@ -1,0 +1,1 @@
+These two part fit together to divide a mouse box into three parts. This allows three mice to be put in the same box after surgery. So they can still have social interaction and not bite each other's wound.

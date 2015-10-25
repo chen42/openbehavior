@@ -89,7 +89,7 @@ def doneSignal():
 		time.sleep(0.3)
 
 if __name__ == '__main__':
-	sessionLength=3600
+	sessionLength=1800
 	# disable python automatic garbage collect for greater sensitivity
 	gc.disable()
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
