@@ -10,7 +10,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument('-RatID',  type=str)
 args=parser.parse_args()
 
-sessionLength=3600
+sessionLength=1800
 pirPin=12
 motionLed=31
 gpio.setwarnings(False)
