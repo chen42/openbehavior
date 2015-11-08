@@ -1,6 +1,7 @@
+# Abigail Salinero, a summer student, contributed this code.
+
 import RPi.GPIO as GPIO
 import time
-
 
 pin=11
 GPIO.setmode(GPIO.BOARD)

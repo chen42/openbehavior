@@ -2,17 +2,10 @@
 	Author: Ethan Willis, Hao Chen
 	Description: This program will log temperature, humidity, and barometric pressure
 	and luminosity to a log file with a given frequency.
-        The seonsor are MCP9808 for temperature, HTU21DF for humidity, MPL3115A2 for  
-        barometric pressure, TSL2561 for luminosity. These are all connected using 
-        the I2C protocol. 
-
+       
         This is scheduled to run via cron jobs. An LED connected to GPIO pin 8 is turned on when the script is ran 
 	
-	The log will have the following structure per entry.
-	"date\ttime\ttemperature\thumidity\n"
 
-	Usage:
-		python HTU21DF_Logger.py 
 '''
 
 import time
