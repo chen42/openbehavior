@@ -18,6 +18,11 @@
 
 import pumpcontrol
 
+# Helper function to clear the screen and reset the cursor
+def clearScreen():
+	print(chr(27) + "[2J")
+	print(chr(27) + "[H")
+
 # BEGIN CLASS PumpInterface
 class PumpInterface:
 	def __init__(self, pumpToInterface):
@@ -57,6 +62,7 @@ class PumpInterface:
 		(self.pump).move(self.steps)
 	# BEGIN Program Main Loop
 	def mainLoop(self):
+		clearScreen()
 		while(True):
 			self.useropt = 'derp'
 			self.dispMenu()
@@ -75,5 +81,6 @@ class PumpInterface:
 				raise SystemExit
 			else:
 				print("Invalid choice. Please enter again.")
+			clearScreen()
 	# END Program Main Loop
 # END CLASS PumpInterface
