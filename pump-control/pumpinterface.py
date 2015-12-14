@@ -24,16 +24,16 @@ class PumpInterface:
 		self.pump = pumpToInterface
 		self.steps = 0
 	# BEGIN Main Menu Display Method
-	def dispMenu():
+	def dispMenu(self):
 		print("--------------------------------------------------------------------------------")
 		print("| Pump Control | Ver. 0.01 | Edit parameters below |")
 		print("--------------------------------------------------------------------------------")
-		print("1) Steps: " + self.movement)
-		print("2) Speed: " + (self.pump).getMlPerS() + " ml/s")
-		print("3) Pitch: " + (self.pump).getPitch())
-		print("4) ml per mm: " + (self.pump).getMlPerMm())
-		print("M) Begin stepping")
-		print("X) Exit program")
+		print("1) Steps: " + str(self.steps))
+		print("2) Speed: " + str((self.pump).getMlPerS()) + " ml/s")
+		print("3) Pitch: " + str((self.pump).getPitch()))
+		print("4) ml per mm: " + str((self.pump).getMlPerMm()))
+		print("5) Begin stepping")
+		print("6) Exit program")
 	# END Main Menu Display Method
 	# BEGIN User Input Section
 	def readSteps(self):
@@ -56,21 +56,20 @@ class PumpInterface:
 		while(True):
 			self.useropt = 'derp'
 			self.dispMenu()
-			self.useropt = input()
-			while self.useropt != 'M':
-				if self.useropt == '1':
-					self.readSteps()
-				elif self.useropt == '2':
-					self.readSpeed()
-				elif self.useropt == '3':
-					self.readPitch()
-				elif self.useropt == '4':
-					self.readMlPerMm()
-				elif self.useropt == 'M':
-					self.startMovement()
-				elif self.useropt == 'X':
-					raise SystemExit
-				else
-					print("Invalid choice. Please enter again.")
+			self.useropt = str(input())
+			if self.useropt == '1':
+				self.readSteps()
+			elif self.useropt == '2':
+				self.readSpeed()
+			elif self.useropt == '3':
+				self.readPitch()
+			elif self.useropt == '4':
+				self.readMlPerMm()
+			elif self.useropt == '5':
+				self.startMovement()
+			elif self.useropt == '6':
+				raise SystemExit
+			else:
+				print("Invalid choice. Please enter again.")
 	# END Program Main Loop
 # END CLASS PumpInterface
