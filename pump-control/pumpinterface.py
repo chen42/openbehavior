@@ -84,3 +84,8 @@ class PumpInterface:
 			clearScreen()
 	# END Program Main Loop
 # END CLASS PumpInterface
+
+if __name__ == "__main__":
+	p = pumpcontrol.Pump()
+	pi = PumpInterface(p)
+	pi.mainLoop()
