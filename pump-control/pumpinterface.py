@@ -25,15 +25,19 @@ class PumpInterface:
 		self.steps = 0
 	# BEGIN Main Menu Display Method
 	def dispMenu(self):
-		print("--------------------------------------------------------------------------------")
+		print("----------------------------------------------------")
 		print("| Pump Control | Ver. 0.01 | Edit parameters below |")
-		print("--------------------------------------------------------------------------------")
+		print("----------------------------------------------------")
 		print("1) Steps: " + str(self.steps))
 		print("2) Speed: " + str((self.pump).getMlPerS()) + " ml/s")
 		print("3) Pitch: " + str((self.pump).getPitch()))
 		print("4) ml per mm: " + str((self.pump).getMlPerMm()))
 		print("5) Begin stepping")
 		print("6) Exit program")
+		print("----------------------------------------------------")
+		print("POSITION: " + str((self.pump).getPosition()) + " mm")
+		print("STEPS PER MM: " + str((self.pump)getStepsPerMm()))
+		print("----------------------------------------------------")
 	# END Main Menu Display Method
 	# BEGIN User Input Section
 	def readSteps(self):
