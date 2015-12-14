@@ -41,7 +41,7 @@ class PumpInterface:
 		print("6) Exit program")
 		print("----------------------------------------------------")
 		print("POSITION: " + str((self.pump).getPosition()) + " mm")
-		print("STEPS PER MM: " + str((self.pump)getStepsPerMm()))
+		print("STEPS PER MM: " + str((self.pump).getStepsPerMm()))
 		print("----------------------------------------------------")
 	# END Main Menu Display Method
 	# BEGIN User Input Section
