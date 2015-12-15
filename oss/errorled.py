@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import RPi.GPIO as gpio
 import time
 
