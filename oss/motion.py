@@ -1,14 +1,9 @@
 #!/usr/bin/env python2
 
 import RPi.GPIO as gpio
-import argparse
 import time
 import os
 import sys
-
-parser=argparse.ArgumentParser()
-parser.add_argument('-RatID',  type=str)
-args=parser.parse_args()
 
 sessionLength=1800
 pirPin=12
@@ -35,7 +30,7 @@ while time.time()-start < sessionLength:
 		#print time.strftime("%Y-%m-%d\t%H:%M:%S")
 		with open(motionDataFile,"a") as f:
 			lapsed=time.time()-start
-			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
+			f.write(time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
 		gpio.output(motionLed, True)
 		time.sleep(0.5)
