@@ -1,7 +1,5 @@
 import RPi.GPIO as gpio
 import time
-from time import strftime, localtime
-
 
 ErrorLed=35 
 gpio.setmode(gpio.BOARD)

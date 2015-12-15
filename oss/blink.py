@@ -1,6 +1,5 @@
 import RPi.GPIO as gpio
 import time
-from time import strftime, localtime
 from random import randint
 import argparse
 
@@ -102,7 +101,7 @@ def blink(pins):
 #	pin=str.replace(pin, "11","red") # replace pin with LED color
 #	pin=str.replace(pin, "7","green")
 	with open(args.datafile,"a") as f:
-		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + Pin + "\t" + str(numTimes) + "\t" + str(speed) + "\t" + str(args.interval) + "\t" + str(hL) + "\t" + str(houseOff) + "\n")
+		f.write(args.RatID+"\treward\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + str(lapsed) + "\t" +  boxid + "\t" + Pin + "\t" + str(numTimes) + "\t" + str(speed) + "\t" + str(args.interval) + "\t" + str(hL) + "\t" + str(houseOff) + "\n")
 		f.close()
 
 blink(pins)

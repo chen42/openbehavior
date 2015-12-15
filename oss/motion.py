@@ -3,8 +3,6 @@ import argparse
 import time
 import os
 import sys
-from time import strftime, localtime
-
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-RatID',  type=str)
@@ -22,11 +20,11 @@ gpio.setup(motionLed, gpio.OUT)
 idfile=open("/home/pi/boxid")
 boxid=idfile.read()
 boxid=boxid.strip()
-startTime=time.strftime("%Y-%m-%d_%H:%M:%S", localtime())
+startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 start=time.time()
 motionDataFile='/home/pi/pies/motion/mot'+ boxid + "_" + startTime + ".csv"
 with open(motionDataFile,"a") as f:
-	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 	f.write("RatID\tdate\tboxid\tseconds\n")
 	f.close()
 
@@ -35,7 +33,7 @@ while time.time()-start < sessionLength:
 		#print time.strftime("%Y-%m-%d\t%H:%M:%S")
 		with open(motionDataFile,"a") as f:
 			lapsed=time.time()-start
-			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", localtime()) + boxid +"\t"+ str(lapsed) +"\n")
+			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
 		gpio.output(motionLed, True)
 		time.sleep(0.5)
@@ -43,7 +41,7 @@ while time.time()-start < sessionLength:
 		time.sleep(0.5)
 
 with open(motionDataFile, "a") as f:
-	f.write("#session Ended at " + time.strftime("%H:%M:%S", localtime())+"\n")
+	f.write("#session Ended at " + time.strftime("%H:%M:%S", time.localtime())+"\n")
 	f.close
 
 

@@ -1,7 +1,5 @@
 import RPi.GPIO as gpio
 import time
-from time import strftime, localtime
-
 
 def touchLED():
 	RFIDLed=35 

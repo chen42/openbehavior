@@ -6,7 +6,6 @@ import gc
 import sys
 import Adafruit_MPR121.MPR121 as MPR121
 import subprocess
-from time import strftime, localtime
 from operator import xor 
 from random import randint
 
@@ -60,7 +59,7 @@ def touchSensor():
 				print "active pin is touched"
 				with open(touchDataFile,"a") as f:
 					lapsed=time.time()-start
-					f.write(RatID + "\tactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
+					f.write(RatID + "\tactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
 					f.close()
 				time.sleep(0.20)
 		elif cap.is_touched(0):
@@ -68,14 +67,14 @@ def touchSensor():
 			print "inactive is touched"
 			with open(touchDataFile,"a") as f:
 				lapsed=time.time()-start
-				f.write(RatID+"\tinactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
+				f.write(RatID+"\tinactive\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + str(lapsed) + "\t" + boxid + "\t\t\t\t\t\t\n")
 				f.close()
 			time.sleep(0.20)
 
 def createDataFiles():
 	# open touch data file
 	with open(touchDataFile,"a") as f:
-		f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+		f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.write("RatID\thole\tdate\ttime\tlapsed\tboxid\tleds\ttimes\tspeed\tinterval\thouseLight\thouseOffSec\n")
 		f.close()
 
@@ -126,7 +125,7 @@ if __name__ == '__main__':
 	boxid=idfile.read()
 	boxid=boxid.strip()
 	# data file names
-	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", localtime()))
+	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
 	touchDataFile='/home/pi/pies/oss/oss'+ boxid + "_" + startTime + ".csv"
 	createDataFiles()
 	subprocess.call("sudo python /home/pi/oss/motion.py " + " -RatID " + RatID + " &", shell=True)
@@ -140,7 +139,7 @@ if __name__ == '__main__':
 	# finishing the data files
 	#open data file
 	with open(touchDataFile,"a") as f:
-		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.close()
 	# reactivate automatic garbage collection and clean objects so no memory leaks
 	gc.enable()
