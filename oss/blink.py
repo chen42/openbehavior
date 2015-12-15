@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import time
-from random import randint
+import random
 import argparse
 
 parser=argparse.ArgumentParser()
@@ -36,7 +36,7 @@ gpio.setup(houseLight2, gpio.OUT)
 
 ## blinks the green LED and/or red LED at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
 def blink(pins):
-	whichpin=randint(0,3)
+	whichpin=random.randint(0,3)
 	if whichpin==0:
 		pin=[pins[0]]
 		Pin="Red"
@@ -49,22 +49,22 @@ def blink(pins):
 	else:
 		pin=[pins[0],pins[1],9] # 9 = blink alternatively 
 		Pin="Alt."
-	numTimes=randint(1,3)
-	speed=randint(1,9)/float(18)
+	numTimes=random.randint(1,3)
+	speed=random.randint(1,9)/float(18)
 	lapsed=time.time()-args.start
 	# which house light to turn off?
 	hL=1
-	if randint(0,9)< 5 :
+	if random.randint(0,9)< 5 :
 		hL=0
 		print "blink house lights"
-		for i in range (0, randint(2,4)):
+		for i in range (0, random.randint(2,4)):
 			print (str(i))
 			gpio.output(houseLight1,False)
 			gpio.output(houseLight2,False)
-			time.sleep(randint(1,4)/float(8))
+			time.sleep(random.randint(1,4)/float(8))
 			gpio.output(houseLight1,True)
 			gpio.output(houseLight2,True)
-			time.sleep(randint(1,4)/float(8))
+			time.sleep(random.randint(1,4)/float(8))
 	if len(pin)==3:
 		print ("blink pins alternately "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
@@ -91,7 +91,7 @@ def blink(pins):
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			time.sleep(speed)
-	houseOff=randint(0,args.interval) ## house light off is no longer than inteval
+	houseOff=random.randint(0,args.interval) ## house light off is no longer than inteval
 	time.sleep(houseOff)
 	gpio.output(houseLight1,True)
 	gpio.output(houseLight2,True)

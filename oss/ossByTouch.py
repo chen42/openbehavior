@@ -6,9 +6,8 @@ import gc
 import sys
 import Adafruit_MPR121.MPR121 as MPR121
 import subprocess
+import random
 from operator import xor 
-from random import randint
-
 
 def ReadRFID(path_to_sensor) :
 	baud_rate = 9600 
@@ -52,7 +51,7 @@ def touchSensor():
 			if (time.time()-rewardtime>timeout):
 				rewardtime=time.time()
 				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start) + " -interval " + str(timeout)  + " &", shell=True)
-				timeout=randint(1,30) ## generate next timeout period 
+				timeout=random.andint(1,30) ## generate next timeout period 
 				print ("reward given, next interval is" + str(timeout)) 
 				time.sleep(0.20)
 			else:
