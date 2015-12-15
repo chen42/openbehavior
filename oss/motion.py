@@ -22,7 +22,7 @@ start=time.time()
 motionDataFile='/home/pi/pies/motion/mot'+ boxid + "_" + startTime + ".csv"
 with open(motionDataFile,"a") as f:
 	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
-	f.write("RatID\tdate\tboxid\tseconds\n")
+	f.write("date\tboxid\tseconds\n")
 	f.close()
 
 while time.time()-start < sessionLength:
