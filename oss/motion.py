@@ -18,7 +18,7 @@ gpio.setmode(gpio.BOARD)
 gpio.setup(pirPin, gpio.IN)        
 gpio.setup(motionLed, gpio.OUT)        
 
-## creat data files, Each box has its own ID
+## create data files, Each box has its own ID
 idfile=open("/home/pi/boxid")
 boxid=idfile.read()
 boxid=boxid.strip()

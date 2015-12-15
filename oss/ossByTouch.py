@@ -45,7 +45,7 @@ def initTouch():
 
 def touchSensor():
 	timeout=10
-	rewardtime=start-timeout #to ensoure the first touch of the session triggers the reward immediately
+	rewardtime=start-timeout #to ensure the first touch of the session triggers the reward immediately
 	while time.time() - start < sessionLength:
 		sessiontime = time.time() - start
 		if cap.is_touched(1):
@@ -90,7 +90,7 @@ def doneSignal():
 
 if __name__ == '__main__':
 	sessionLength=1800
-	# disable python automatic garbage collect for greater sensitivity
+	# disable python automatic garbage collection for greater sensitivity
 	gc.disable()
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
 	# touchLed is on when touch sensor is activated  

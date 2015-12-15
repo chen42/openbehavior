@@ -21,7 +21,7 @@ idfile=open("/home/pi/boxid")
 boxid=idfile.read()
 boxid=boxid.strip()
 
-# green and red Leds are for sensation seeking
+# green and red LEDs are for sensation seeking
 greenLed=7
 redLed=11
 houseLight1=33
@@ -35,7 +35,7 @@ gpio.setup(redLed, gpio.OUT)
 gpio.setup(houseLight1, gpio.OUT)
 gpio.setup(houseLight2, gpio.OUT)
 
-## blinks the greenLed and/or redLed at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
+## blinks the green LED and/or red LED at a randomly selected frequency for a randomly selected time period, repeat 1-3 times
 def blink(pins):
 	whichpin=randint(0,3)
 	if whichpin==0:
@@ -67,7 +67,7 @@ def blink(pins):
 			gpio.output(houseLight2,True)
 			time.sleep(randint(1,4)/float(8))
 	if len(pin)==3:
-		print ("blink  pins alternativly "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
+		print ("blink pins alternately "+str(pin)+" for "+str(numTimes)+" times at "+str(speed) + " speed") 
 		for i in range(0,numTimes):
 			gpio.output(pin[0],True)
 			time.sleep(speed)
@@ -92,12 +92,12 @@ def blink(pins):
 			time.sleep(speed)
 			gpio.output(pin[0],False)
 			time.sleep(speed)
-	houseOff=randint(0,args.interval) ## houe light off is no longer than inteval
+	houseOff=randint(0,args.interval) ## house light off is no longer than inteval
 	time.sleep(houseOff)
 	gpio.output(houseLight1,True)
 	gpio.output(houseLight2,True)
 #	pin=str(pin)
-#	pin=str.replace(pin, ",",":") # comma in data file cause confusion with the csv format
+#	pin=str.replace(pin, ",",":") # comma in data file causes confusion with the csv format
 #	pin=str.replace(pin, "7: 11: 9","both")
 #	pin=str.replace(pin, "11","red") # replace pin with LED color
 #	pin=str.replace(pin, "7","green")
