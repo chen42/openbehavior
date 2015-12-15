@@ -7,7 +7,6 @@ import sys
 import Adafruit_MPR121.MPR121 as MPR121
 import subprocess
 import random
-from operator import xor 
 
 def ReadRFID(path_to_sensor) :
 	baud_rate = 9600 
