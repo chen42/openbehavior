@@ -18,7 +18,6 @@
 
 use strict; use warnings;
 use XML::LibXML;
-use 
 
 # Path to configuration file on Linux
 my $configfile = '/home/' . $ENV{LOGNAME} . '/.config/syncthing/config.xml';
@@ -106,6 +105,12 @@ sub RemDeviceID {
 		$configuration->removeChild($device);
 	    }
 	}
+	foreach my $folderdev($doc->findnodes('/configuration/folder/device')) {
+	    if($folderdev->getAttribute('id') eq $id) {
+		my $folder = $folderdev->parentNode;
+		$folder->removeChild($folderdev);
+	    }
+	}
     } else {
 	&PrintUsage();
 	print STDERR "ERROR: invalid device id\n";
@@ -121,7 +126,7 @@ sub ShareFoldersToAll {
     foreach my $folder($doc->findnodes('/configuration/folder')) {
 	foreach my $device(@devices) {
 	    # Create the device node
-	    my $devnode = XML::Lib::Element->new('device');
+	    my $devnode = XML::LibXML::Element->new('device');
 	    $devnode->setAttribute('id', $device->getAttribute('id'));
 	    # Attach it to the folder
 	    $folder->addChild($devnode);
