@@ -18,6 +18,7 @@
 
 use strict; use warnings;
 use XML::LibXML;
+use 
 
 # Path to configuration file on Linux
 my $configfile = '/home/' . $ENV{LOGNAME} . '/.config/syncthing/config.xml';
@@ -111,6 +112,38 @@ sub RemDeviceID {
     }
 }
 
+# Subroutine to share all folders to connected devices
+sub ShareFoldersToAll {
+    my $doc = $_[0];
+    # Get all connected device IDs
+    my @devices = $doc->findnodes('/configuration/device');
+    # Add each device to each folder
+    foreach my $folder($doc->findnodes('/configuration/folder')) {
+	foreach my $device(@devices) {
+	    # Create the device node
+	    my $devnode = XML::Lib::Element->new('device');
+	    $devnode->setAttribute('id', $device->getAttribute('id'));
+	    # Attach it to the folder
+	    $folder->addChild($devnode);
+	}
+    }
+}
+
+# Subroutine to stop and restart the syncthing service
+sub RestartSyncthing {
+    # Stop the daemon
+    system("systemctl --user stop syncthing.service");
+    # Start the daemon
+    system("systemctl --user start syncthing.service");
+}
+
+# Subroutine to write to config file
+sub WriteConfig {
+    my $doc = $_[0];
+    open(my $fh, ">", $configfile) or die "ERROR: Could not open configuration file for writing";
+    print $fh $doc->toString();
+}
+
 # Parse the XML
 my $xmlparser = XML::LibXML->new();
 my $confdoc = $xmlparser->parse_file($configfile);
@@ -127,12 +160,13 @@ if($action =~ /list/){
     &ThisDeviceID($confdoc);
 } elsif ($action =~ /add/) {
     &AddDeviceID($id, $confdoc);
-    open(my $fh, ">", $configfile) or die "ERROR: Could not open configuration file for writing";
-    print $fh $confdoc->toString();
+    &ShareFoldersToAll($confdoc);
+    &WriteConfig($confdoc);
+    &RestartSyncthing();
 } elsif ($action =~ /remove/) {
     &RemDeviceID($id, $confdoc);
-    open(my $fh, ">", $configfile) or die "ERROR: Could not open configuration file for writing";
-    print $fh $confdoc->toString();
+    &WriteConfig($confdoc);
+    &RestartSyncthing();
 } else {
     &PrintUsage();
 }
