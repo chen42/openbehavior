@@ -4,4 +4,4 @@ Description=MotionSense
 [Service]
 Type=forking
 ExecStart=/home/pi/openbehavior/oss/motion.py
-ExecStop=/usr/bin/pkill python
+ExecStop=/usr/bin/pkill motion.py
