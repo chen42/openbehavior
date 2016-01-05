@@ -1,3 +1,5 @@
+# systemd unit for starting the motion sensor on boot
+# for use in user mode only pls
 [Unit]
 Description=MotionSense
 
