@@ -7,9 +7,13 @@ This project  adds a motion sensor to the commercial MedPC operant chambers. The
 ## Parts list
 
 Molex connector for 28V. Mfg P/N: 03-06-2032 [Mouser] ( http://www.mouser.com/ProductDetail/Molex/03-06-2032/?qs=%2fha2pyFadugvI%2fznVBilJA6N4bQxmqBpdBoCzb%2f9bbY%3d)  
+
 Molex pin. Mfg P/N: 02-06-2103 [Mouser] (http://www.mouser.com/ProductDetail/Molex/02-06-2103/?qs=%2fha2pyFaduhC0HER4S2%2flGJ0%2fQN3qzJ5F27g%252bKWL4TY%3d)
+
 Motion sensor. [Amazon] (http://www.amazon.com/gp/product/B00FDPO9B8) 
+
 EdiMax WiFi USB. [Amazon] (http://www.amazon.com/gp/product/B003MTTJOY)
+
 Step-down LM2596 power converter [eBay] (http://http://www.ebay.com/itm/161476280982)  
 
 
