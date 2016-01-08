@@ -14,6 +14,6 @@ Motion sensor. [Amazon] (http://www.amazon.com/gp/product/B00FDPO9B8)
 
 EdiMax WiFi USB. [Amazon] (http://www.amazon.com/gp/product/B003MTTJOY)
 
-Step-down LM2596 power converter [eBay] (http://http://www.ebay.com/itm/161476280982)  
+Step-down LM2596 power converter. [eBay] (http://www.ebay.com/itm/161476280982)  
 
 
