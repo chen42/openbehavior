@@ -16,7 +16,7 @@ gpio.setup(onPin, gpio.IN)
 gpio.setup(motionLed, gpio.OUT)        
 
 while(True):
-	if (gpio.input(onPin) == False):
+	if gpio.input(onPin):
 		idfile=open("/home/pi/boxid")
 		boxid=idfile.read()
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
