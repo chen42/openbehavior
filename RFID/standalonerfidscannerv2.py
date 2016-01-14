@@ -17,7 +17,7 @@ def printIDtoLCD(lcd, idstring):
 	lcd.clear()
 	lcd.message("ID:\n")
 	lcd.message("READING...")
-	sleep(1)
+	time.sleep(1)
 	lcd.clear()
 	lcd.message("ID:\n")
 	lcd.message(idstring)
@@ -35,7 +35,7 @@ def main():
 	lcd.clear()
 	lcd.message("a posse ad esse\n")
 	lcd.message("a posse ad esse\n")
-	sleep(2)
+	time.sleep(2)
 	
 	# open the reader through UART
 	UART = serial.Serial("/dev/ttyAMA0", 9600)
