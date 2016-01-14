@@ -9,4 +9,4 @@ lcd.begin(16,1)
 # Display some stuff
 lcd.clear()
 lcd.message("Scientia est\n")
-lcd.message("\tluxlucis")
+lcd.message("    lux lucis")
