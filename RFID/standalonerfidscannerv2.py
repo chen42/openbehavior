@@ -74,3 +74,5 @@ def main():
 				f.write(time.strftime("%Y-%m-%d\t%H:%M:%S\t") + idstring + "\n")
 			f.close()
 			UART.flushInput()
+
+main()
