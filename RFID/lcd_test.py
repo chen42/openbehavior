@@ -3,7 +3,7 @@
 import Adafruit_CharLCD
 
 # create new lcd object
-lcd = Adafruit_CharLCD()
+lcd = Adafruit_CharLCD.Adafruit_CharLCD()
 
 # Display some stuff
 lcd.clear()
