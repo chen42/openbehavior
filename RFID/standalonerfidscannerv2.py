@@ -48,6 +48,7 @@ def main():
 	
 	# Main program loop
 	while True:
+		time.sleep(0.25)
 		# zero out the variables
 		checksum = 0
 		tag = 0
