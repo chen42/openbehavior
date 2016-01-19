@@ -1,0 +1,12 @@
+# systemd unit for starting RFID scanner on boot
+[Unit]
+Description=RFIDscanner
+
+[Service]
+Type=simple
+ExecStart=/home/pi/openbehavior/RFID/standalonerfidscannerv2.py
+ExecStop=/usr/bin/pkill standalonerfidscannerv2.py
+
+[Install]
+WantedBy=getty.target
+DefaultInstance=tty1
