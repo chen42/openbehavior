@@ -4,8 +4,8 @@ Description=RFIDscanner
 
 [Service]
 Type=simple
-ExecStart=/home/pi/openbehavior/RFID/standalonerfidscannerv2.py
-ExecStop=/usr/bin/pkill standalonerfidscannerv2.py
+ExecStart=/home/pi/openbehavior/RFID/rfidscanner.py
+ExecStop=/usr/bin/pkill rfidscanner.py
 
 [Install]
 WantedBy=getty.target
