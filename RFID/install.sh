@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Clone the openbehavior repository to the home directory of user 'pi' and
 # then run this script with root permissions to install RFID scanner
