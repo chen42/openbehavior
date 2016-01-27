@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(1);
+render_part(9);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -34,6 +34,8 @@ module render_part(part_to_render) {
 	if (part_to_render == 7) {syringe_plunger_retainer();}
 
 	if (part_to_render == 8) syringe_bungie();
+        
+    if (part_to_render == 9) cage_mount();
 }
 
 // [x, y, z] = [l, w, t]
@@ -513,4 +515,9 @@ module syringe_bungie() {
 				cylinder(r = t_hook / 2 + 0.5, h = t_hook + 1, center = true);
 
 	}
+}
+
+/* Module for mounting syringe pump on the cage assembly */
+module cage_mount() {
+    
 }
