@@ -93,9 +93,6 @@ class Pump:
 	def setMlPerMm(self, ml_per_mm):
 		self.ml_per_mm = ml_per_mm
     # END Setter and getter methods
-	# Nevermind I know how this works and it's dumb
-	def calibrate(self, ml_per_mm):
-		self.ml_per_mm = ml_per_mm * 1.
 	def goto(self, ml):
 		self.move(ml - self.position)
 	def move(self, ml):
