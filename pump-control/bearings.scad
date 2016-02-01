@@ -26,7 +26,8 @@ l_lm8uu = 24.5; // measured 24
 bearing_lm8uu = [od_lm8uu, id_lm8uu, l_lm8uu];
 
 // lm6uu bearing dims
-od_lm6uu = 12.8; // measured 12
+//od_lm6uu = 12.8; // measured 12
+od_lm6uu = 13.4;
 id_lm6uu = 6;
 l_lm6uu = 19;
 bearing_lm6uu = [od_lm6uu, id_lm6uu, l_lm6uu];

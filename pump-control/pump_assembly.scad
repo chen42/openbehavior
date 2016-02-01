@@ -172,10 +172,10 @@ module carriage_relief() {
 			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			cylinder(r = (guide_bearing[0] / 2) + 2, h = guide_bearing[2] + 2, center = true);
+			cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 2, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2), -(guide_bearing[0] / 2 - 2), , 0])
-				cylinder(r = (guide_bearing[0] / 2) + 2, h = guide_bearing[2] + 2, center = true);
+				cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 2, center = true);
 	}
 
 	// nut trap for fixed nut
@@ -530,5 +530,5 @@ module cage_mount() {
 }
 
 module carriage_cut() {
-    
+    cube(50);
 }
