@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(4);
+render_part(10);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -36,6 +36,10 @@ module render_part(part_to_render) {
 	if (part_to_render == 8) syringe_bungie();
         
     if (part_to_render == 9) cage_mount();
+        
+    if (part_to_render == 10) end_idler_mod();
+        
+    if (part_to_render == 11) rubber_band_hook();
 }
 
 // [x, y, z] = [l, w, t]
@@ -529,6 +533,36 @@ module cage_mount() {
     }
 }
 
-module carriage_cut() {
-    cube(50);
+module end_idler_mod() {
+    union() {
+    difference() {
+        union() {
+            end_idler();
+            translate([-(t_idler_end/2),(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end,(t_idler_end/2),t_idler_end]);
+        }
+        translate([0,17,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r1 = 8.18, r2 = 8.18);
+    }
+    
+    translate([-22,t_idler_end-2,-8]) rubber_band_hook();
+    translate([-22,t_idler_end-2,-2]) rubber_band_hook();
+    translate([22,t_idler_end-2,-6]) reverse_rubber_band_hook();
+    translate([22,t_idler_end-2,0]) reverse_rubber_band_hook();
+    }
+}
+
+module rubber_band_hook() {
+    union() {
+        difference() {
+            difference() {
+                cylinder(h=1.5, r=2);
+                cylinder(h=1.5, r=1);
+            }
+            translate([-7,-0.5,0]) cube([7,1,3]);
+        }
+        translate([0,-2,0.7]) rotate([90,0,0]) cylinder(h=2, r=0.5);
+    }
+}
+
+module reverse_rubber_band_hook() {
+    rotate([0,180,0]) rubber_band_hook();
 }
