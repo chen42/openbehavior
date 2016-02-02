@@ -40,6 +40,8 @@ module render_part(part_to_render) {
     if (part_to_render == 10) end_idler_mod();
         
     if (part_to_render == 11) rubber_band_hook();
+        
+    if (part_to_render == 12) rubber_band_post();
 }
 
 // [x, y, z] = [l, w, t]
@@ -538,31 +540,33 @@ module end_idler_mod() {
     difference() {
         union() {
             end_idler();
-            translate([-(t_idler_end/2),(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end,(t_idler_end/2),t_idler_end]);
+            translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
         }
-        translate([0,17,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r1 = 8.18, r2 = 8.18);
+        translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r = 8.6);
     }
     
-    translate([-22,t_idler_end-2,-8]) rubber_band_hook();
-    translate([-22,t_idler_end-2,-2]) rubber_band_hook();
-    translate([22,t_idler_end-2,-6]) reverse_rubber_band_hook();
-    translate([22,t_idler_end-2,0]) reverse_rubber_band_hook();
+    translate([-22,t_idler_end-2.5,-3.5]) rubber_band_hook();
     }
+    translate([23, t_idler_end-7,3.5])rubber_band_post();
 }
 
 module rubber_band_hook() {
     union() {
         difference() {
             difference() {
-                cylinder(h=1.5, r=2);
-                cylinder(h=1.5, r=1);
+                cylinder(h=7, r=4);
+                cylinder(h=7, r=1.5);
             }
-            translate([-7,-0.5,0]) cube([7,1,3]);
+            translate([-7,-0.5,0]) cube([7,1,7]);
         }
-        translate([0,-2,0.7]) rotate([90,0,0]) cylinder(h=2, r=0.5);
+        *translate([0,-1.5,0.75]) rotate([90,0,0]) cylinder(h=4, r=0.7);
     }
 }
 
-module reverse_rubber_band_hook() {
-    rotate([0,180,0]) rubber_band_hook();
+module rubber_band_post() {
+    rotate([0,180,0])
+    union() {
+        cube([3,4,7]);
+        translate([-2,4,0]) cube([5,3,7]);
+    }
 }
