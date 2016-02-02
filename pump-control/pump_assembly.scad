@@ -83,7 +83,7 @@ idler = bearing_625;
 t_idler_end = 20;
 
 //t_carriage = guide_bearing[2] + 6;
-t_carriage = guide_bearing[2] + 8;
+t_carriage = guide_bearing[2] + 7.2;
 
 d_clamp_screw = d_M3_screw;
 d_clamp_screw_cap = d_M3_cap;
@@ -146,7 +146,7 @@ module end_idler() {
 		}
 
 		// outboard idler bearing
-		translate([0, 0, -t_idler_end / 2])
+		*translate([0, 0, -t_idler_end / 2])
 			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2, center = true);
 
 		// inboard idler bearing
@@ -546,8 +546,9 @@ module end_idler_mod() {
     }
     
     translate([-22,t_idler_end-2.5,-3.5]) rubber_band_hook();
-    }
     translate([23, t_idler_end-7,3.5])rubber_band_post();
+    }
+    
 }
 
 module rubber_band_hook() {
@@ -567,6 +568,6 @@ module rubber_band_post() {
     rotate([0,180,0])
     union() {
         cube([3,4,7]);
-        translate([-2,4,0]) cube([5,3,7]);
+        translate([-4,4,0]) cube([7,3,7]);
     }
 }
