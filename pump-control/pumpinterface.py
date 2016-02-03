@@ -43,6 +43,7 @@ class PumpInterface:
 		print("4) ml per mm: " + str((self.pump).getMlPerMm()))
 		print("5) Begin stepping")
 		print("6) Exit program")
+		print("D) DEBUG: " + str((self.pump).readSwitch()))
 		print("----------------------------------------------------")
 		print("POSITION: " + str((self.pump).getPosition()) + " mm")
 		print("STEPS PER MM: " + str((self.pump).getStepsPerMm()))
@@ -84,9 +85,6 @@ class PumpInterface:
 				self.startMovement()
 			elif self.useropt == '6':
 				raise SystemExit
-			elif self.switch1 == 1:
-				self.steps = 10
-				self.startMovement()
 			else:
 				print("Invalid choice. Please enter again.")
 			clearScreen()
