@@ -119,6 +119,8 @@ class Pump:
 		self.ml_per_s = ml_per_s
 	def sleep(self):
 		gpio.output(SLEEP, gpio.LOW)
+	def readSwitch(self):
+		return gpio.input(SW1)
 # END CLASS Pump
 
 if __name__ == "__main__":

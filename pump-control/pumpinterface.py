@@ -68,9 +68,6 @@ class PumpInterface:
 	def mainLoop(self):
 		clearScreen()
 		while(True):
-			if(gpio.input(37)):
-				self.steps = 10
-				self.startMovement()
 			self.useropt = 'derp'
 			self.dispMenu()
 			self.useropt = str(input())
@@ -86,6 +83,9 @@ class PumpInterface:
 				self.startMovement()
 			elif self.useropt == '6':
 				raise SystemExit
+			elif ((self.pump).readSwitch()):
+				self.steps = 10
+				self.startMovement()
 			else:
 				print("Invalid choice. Please enter again.")
 			clearScreen()
