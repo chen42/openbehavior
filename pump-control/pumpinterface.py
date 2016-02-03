@@ -71,6 +71,7 @@ class PumpInterface:
 			self.useropt = 'derp'
 			self.dispMenu()
 			self.useropt = str(input())
+			self.switch1 = (self.pump).readSwitch()
 			if self.useropt == '1':
 				self.readSteps()
 			elif self.useropt == '2':
@@ -83,7 +84,7 @@ class PumpInterface:
 				self.startMovement()
 			elif self.useropt == '6':
 				raise SystemExit
-			elif ((self.pump).readSwitch()):
+			elif self.switch1 == 1:
 				self.steps = 10
 				self.startMovement()
 			else:
