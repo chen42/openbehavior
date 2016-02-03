@@ -48,12 +48,14 @@ SLEEP = int(15) #int(config['sleep-pin'])
 MS3 = int(19) #int(config['ms3-pin'])
 MS2 = int(21) #int(config['ms2-pin'])
 MS1 = int(23) #int(config['ms1-pin'])
+SW1 = int(37)
 gpio.setup(SLEEP, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(STEP, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(DIR, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(MS1, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(MS2, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(MS3, gpio.OUT, initial = gpio.HIGH)
+gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # END Pin configuration
 
 # BEGIN CLASS Pump
@@ -118,3 +120,11 @@ class Pump:
 	def sleep(self):
 		gpio.output(SLEEP, gpio.LOW)
 # END CLASS Pump
+
+if __name__ == "__main__":
+	p = Pump()
+	p.setSteps(10)
+	while(True):
+		if(gpio.input(SW1)):
+			p.move(10)
+		
