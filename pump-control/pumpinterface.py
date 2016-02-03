@@ -30,8 +30,8 @@ class PumpInterface:
 		self.pump = pumpToInterface
 		self.steps = 0
 		gpio.setwarnings(False)
-		gpio.setmode(GPIO.BOARD)
-		gpio.setup(37, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		gpio.setmode(gpio.BOARD)
+		gpio.setup(37, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 	# BEGIN Main Menu Display Method
 	def dispMenu(self):
 		print("----------------------------------------------------")
