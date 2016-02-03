@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(10);
+render_part(4);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -83,7 +83,7 @@ idler = bearing_625;
 t_idler_end = 20;
 
 //t_carriage = guide_bearing[2] + 6;
-t_carriage = guide_bearing[2] + 7.2;
+t_carriage = guide_bearing[2] + 6;
 
 d_clamp_screw = d_M3_screw;
 d_clamp_screw_cap = d_M3_cap;
@@ -178,10 +178,10 @@ module carriage_relief() {
 			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 2, center = true);
+			cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 1.0, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2), -(guide_bearing[0] / 2 - 2), , 0])
-				cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 2, center = true);
+				cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 1.0, center = true);
 	}
 
 	// nut trap for fixed nut
@@ -189,7 +189,7 @@ module carriage_relief() {
 		for (i = [0, -1])
 			translate([0, i * t_carriage, -t_carriage / 2 + 2])
 				rotate([0, 0, 30])
-					cylinder(r = d_lead_nut / 2, h = h_lead_nut, $fn = 6);
+					cylinder(r = d_lead_nut / 2, h = h_lead_nut + 1.0, $fn = 6);
 
 	// lead nuts and anti-backlash spring
 	hull()
