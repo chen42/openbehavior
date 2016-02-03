@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pumpcontrol
+import RPi.GPIO as gpio
 
 # Helper function to clear the screen and reset the cursor
 def clearScreen():
@@ -28,6 +29,9 @@ class PumpInterface:
 	def __init__(self, pumpToInterface):
 		self.pump = pumpToInterface
 		self.steps = 0
+		gpio.setwarnings(False)
+		gpio.setmode(GPIO.BOARD)
+		gpio.setup(37, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 	# BEGIN Main Menu Display Method
 	def dispMenu(self):
 		print("----------------------------------------------------")
@@ -64,6 +68,9 @@ class PumpInterface:
 	def mainLoop(self):
 		clearScreen()
 		while(True):
+			if(gpio.input(37)):
+				self.steps = 10
+				self.startMovement()
 			self.useropt = 'derp'
 			self.dispMenu()
 			self.useropt = str(input())
