@@ -11,4 +11,7 @@
 #define MS1_PIN 14
 #define SW1_PIN 25
 
+/* Function declarations */
+int setupPumpPins(void);
+
 #endif /* PUMPCONTROL_H */
