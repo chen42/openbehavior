@@ -32,7 +32,7 @@ module NEMA_X_mount(
 
 	c_d_mount = r_mounts(motor[3]); // distance from shaft center to mount hole
 
-	cylinder(r = motor[1] / 2, h = height, center = true);
+	cylinder(r = (motor[1] / 2) + 1.0, h = height, center = true);
 
 	for (i=[0:3]) {
 		rotate([0, 0, i * 90])
