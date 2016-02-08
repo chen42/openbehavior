@@ -34,7 +34,7 @@ int setupPumpPins(void) {
 int initPumpState(pumpControlState *ps) {
   ps->position = 0.0f;
   ps->pitch = 0.8f;
-  ps->steps = 3200f;
+  ps->steps = 3200.0f;
   ps->stepsPerMm = (ps->steps) / (ps->pitch);
   ps->mlPerS = 0.7f;
   ps->mlPerMm = 0.1635531002398778f;
@@ -46,23 +46,23 @@ int initPumpState(pumpControlState *ps) {
 int move(float ml) {
   digitalWrite(SLEEP_PIN, LOW);
   digitalWrite(DIR_PIN, ((ml < 0) ? HIGH : LOW));
-  float sPerHalfStep = (pcstate.mlPerMm) / (pcstate.stepsPerMm) / (pcstate.mlPerS) / 2.0;
-  pcstate.steps = int(ml / pcstate.mlPerMm * pcstate.stepsPerMm + 0.5f);
-  int target = int(time(NULL));
+  float sPerHalfStep = ((pcstate.mlPerMm) / (pcstate.stepsPerMm) / (pcstate.mlPerS) / 2.0);
+  pcstate.steps = ml / pcstate.mlPerMm * pcstate.stepsPerMm + 0.5f;
+  int target = time(NULL);
   for(int i = 0; i < abs(pcstate.steps); ++i) {
     digitalWrite(STEP_PIN, HIGH);
-    target += int(sPerHalfStep);
+    target += sPerHalfStep;
     while(time(NULL) < target) {
       sleep(0);
     }
     digitalWrite(STEP_PIN, LOW);
-    target += int(sPerHalfStep);
+    target += sPerHalfStep;
     while(time(NULL) < target) {
       sleep(0);
     }
     pcstate.position += ml;
-    return 0;
   }
+  return 0;
 }
 
 int gotoAbsolutePos(float ml) {
@@ -72,6 +72,7 @@ int gotoAbsolutePos(float ml) {
 
 int motorSleep(void) {
   digitalWrite(SLEEP_PIN, LOW);
+  return 0;
 }
 
 motor_cmd parseSwitchState(pumpControlState *ps) {
@@ -94,6 +95,7 @@ void *querySwitches(void *p) {
     ps->sw1State = switchOne;
     ps->sw2State = switchTwo;
   }
+  return;
 }
 
 int main(void) {
