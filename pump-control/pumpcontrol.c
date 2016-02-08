@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "pumpcontrol.h"
 
 // Static global variable to store pump controller state
@@ -44,7 +45,7 @@ int initPumpState(pumpControlState *ps) {
 }
 
 int move(float ml) {
-  digitalWrite(SLEEP_PIN, LOW);
+  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(DIR_PIN, ((ml < 0) ? HIGH : LOW));
   float sPerHalfStep = ((pcstate.mlPerMm) / (pcstate.stepsPerMm) / (pcstate.mlPerS) / 2.0);
   pcstate.steps = ml / pcstate.mlPerMm * pcstate.stepsPerMm + 0.5f;
@@ -53,12 +54,12 @@ int move(float ml) {
     digitalWrite(STEP_PIN, HIGH);
     target += sPerHalfStep;
     while(time(NULL) < target) {
-      sleep(0);
+      ;
     }
     digitalWrite(STEP_PIN, LOW);
     target += sPerHalfStep;
     while(time(NULL) < target) {
-      sleep(0);
+      ;
     }
     pcstate.position += ml;
   }
@@ -76,15 +77,8 @@ int motorSleep(void) {
 }
 
 motor_cmd parseSwitchState(pumpControlState *ps) {
-  if(ps->sw1State ^ ps->sw2State) {
-    return IDLE;
-  } else if (ps->sw1State) {
-    return REVERSE;
-  } else if (ps->sw2State) {
-    return FORWARD;
-  } else {
-    return UNDEFINED;
-  }
+  int sw1 = ps->sw1State, sw2 = ps->sw2State;
+  return (sw1 ^ sw2) ? IDLE : (sw1) ? REVERSE : (sw2) ? FORWARD : UNDEFINED;
 }
 
 void *querySwitches(void *p) {
@@ -95,22 +89,23 @@ void *querySwitches(void *p) {
     ps->sw1State = switchOne;
     ps->sw2State = switchTwo;
   }
-  return;
+  return p;
 }
 
 int main(void) {
   // array to track threads being used by the program
   pthread_t threads[MAX_NUM_THREADS];
-  // integer identifier for the thread that polls the switches
-  int pollThread;
   // stores the current command for the motor
   motor_cmd currCmd = IDLE;
   // Initialize the pump controller state
   initPumpState(&pcstate);
   // Setup the pins
   setupPumpPins();
-  // create new thread to continuously poll the switches
-  pollThread = pthread_create(&threads[0], NULL, querySwitches, (void *) &pcstate);
+  // create new thread, making sure it was created successfully
+  if(pthread_create(&threads[0], NULL, querySwitches, (void *) &pcstate)) {
+    fputs("ERROR - Couldn't spawn thread with pthread_create\n", stderr);
+    exit(EXIT_FAILURE);
+  }
   while(1) {
     // halt polling temporarily to get consistent switch state
     pollingEnabled = false;
