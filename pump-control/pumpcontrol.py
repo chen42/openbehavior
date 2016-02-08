@@ -63,11 +63,11 @@ gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # BEGIN constant definitions
 DEFAULT_POSITION = float(0.0)
 DEFAULT_PITCH = float(0.8)
-DEFAULT_STEPS = float(3200)
+DEFAULT_STEPS = float(3200.0)
 DEFAULT_STEPS_PER_MM = DEFAULT_STEPS / DEFAULT_PITCH
 DEFAULT_ML_PER_S = float(0.7)
 DEFAULT_ML_PER_MM = float(0.1635531002398778)
-DEFAULT_MOVEMENT = int(1)
+DEFAULT_MOVEMENT = float(1.0)
 # END constant definitions
 
 # BEGIN CLASS Pump
@@ -137,7 +137,7 @@ class Pump:
 		self.sw1state = gpio.input(SW1)
 		self.sw2state = gpio.input(SW2)
 	def parseSwitchState(self):
-		if (self.sw1state ^ self.sw2state):
+		if (self.sw1state == 0 and self.sw2state == 0) or (self.sw1state == 1 and self.sw2state == 1):
 			return 'i'
 		elif (self.sw1state):
 			return 'r'
@@ -151,9 +151,12 @@ class Pump:
 			print("DEBUG -- sw1state: %s\t sw2state: %s\n" % (self.sw1state, self.sw2state))
 			motorCmd = self.parseSwitchState()
 			print("DEBUG -- motorCmd: %s\n" % motorCmd)
-			moveCoefficient = 1 if (motorCmd == 'f') else -1 if (motorCmd == 'r') else 0
-			print("DEBUG -- moveCoefficient: %s\n" % moveCoefficient)
-			self.move(DEFAULT_MOVEMENT * moveCoefficient)
+			if motorCmd == 'r':
+				self.move(-1)
+			elif motorCmd == 'f':
+				self.move(1)
+			else:
+				pass
 # END CLASS Pump
 
 if __name__ == "__main__":
