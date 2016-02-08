@@ -5,10 +5,9 @@ EXEFILE = pumpcontrol
 OBJFILE = pumpcontrol.o
 
 all: pumpcontrol.c
-	gcc -o $(EXEFILE) $(LIBS)
 
 pumpcontrol.c:
-	$(CC) -c pumpcontrol.c $(CFLAGS)
+	$(CC) -o $(EXEFILE) pumpcontrol.c $(LIBS) $(CFLAGS)
 
 clean:
 	rm -f $(EXENAME) $(OBJFILE)
