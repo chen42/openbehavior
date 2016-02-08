@@ -1,12 +1,15 @@
 #include <wiringPi.h>
+#include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <stdbool.h>
 #include "pumpcontrol.h"
 
-static double pump_pos = 0.0;
-static double pump_pitch = 0.8;
-static double pump_steps = 3200;
-static double pump_steps_per_mm = pump_steps / pump_pitch;
-static double pump_ml_per_s = 0.7;
-static double pump_ml_per_mm = 0.1635531002398778;
+// Static global variable to store pump controller state
+static pumpControlState pcstate;
+// Mutexes to control execution of switch polling thread
+static bool pollingEnabled = true;
 
 int setupPumpPins(void) {
   // initialize the wiringPi library
@@ -18,16 +21,117 @@ int setupPumpPins(void) {
   pinMode(MS3_PIN, OUTPUT);
   pinMode(MS2_PIN, OUTPUT);
   pinMode(MS1_PIN, OUTPUT);
-  // set mode for the input pin
+  // set mode for the input pins
   pinMode(SW1_PIN, INPUT);
-  // enable pull-down resistor for switch pin
+  pinMode(SW2_PIN, INPUT);
+  // enable pull-down resistor for switch pins
   pullUpDnControl(SW1_PIN, PUD_DOWN);
+  pullUpDnControl(SW2_PIN, PUD_DOWN);
   // return 0 for no errors
   return 0;
 }
 
+int initPumpState(pumpControlState *ps) {
+  ps->position = 0.0f;
+  ps->pitch = 0.8f;
+  ps->steps = 3200f;
+  ps->stepsPerMm = (ps->steps) / (ps->pitch);
+  ps->mlPerS = 0.7f;
+  ps->mlPerMm = 0.1635531002398778f;
+  ps->sw1State = 0;
+  ps->sw2State = 0;
+  return 0;
+}
+
+int move(float ml) {
+  digitalWrite(SLEEP_PIN, LOW);
+  digitalWrite(DIR_PIN, ((ml < 0) ? HIGH : LOW));
+  float sPerHalfStep = (pcstate.mlPerMm) / (pcstate.stepsPerMm) / (pcstate.mlPerS) / 2.0;
+  pcstate.steps = int(ml / pcstate.mlPerMm * pcstate.stepsPerMm + 0.5f);
+  int target = int(time(NULL));
+  for(int i = 0; i < abs(pcstate.steps); ++i) {
+    digitalWrite(STEP_PIN, HIGH);
+    target += int(sPerHalfStep);
+    while(time(NULL) < target) {
+      sleep(0);
+    }
+    digitalWrite(STEP_PIN, LOW);
+    target += int(sPerHalfStep);
+    while(time(NULL) < target) {
+      sleep(0);
+    }
+    pcstate.position += ml;
+    return 0;
+  }
+}
+
+int gotoAbsolutePos(float ml) {
+  move(ml - pcstate.position);
+  return 0;
+}
+
+int motorSleep(void) {
+  digitalWrite(SLEEP_PIN, LOW);
+}
+
+motor_cmd parseSwitchState(pumpControlState *ps) {
+  if(ps->sw1State ^ ps->sw2State) {
+    return IDLE;
+  } else if (ps->sw1State) {
+    return REVERSE;
+  } else if (ps->sw2State) {
+    return FORWARD;
+  } else {
+    return UNDEFINED;
+  }
+}
+
+void *querySwitches(void *p) {
+  while(pollingEnabled) {
+    pumpControlState *ps = (pumpControlState *) p;
+    int switchOne = digitalRead(SW1_PIN);
+    int switchTwo = digitalRead(SW2_PIN);
+    ps->sw1State = switchOne;
+    ps->sw2State = switchTwo;
+  }
+}
+
 int main(void) {
+  // array to track threads being used by the program
+  pthread_t threads[MAX_NUM_THREADS];
+  // integer identifier for the thread that polls the switches
+  int pollThread;
+  // stores the current command for the motor
+  motor_cmd currCmd = IDLE;
+  // Initialize the pump controller state
+  initPumpState(&pcstate);
   // Setup the pins
   setupPumpPins();
+  // create new thread to continuously poll the switches
+  pollThread = pthread_create(&threads[0], NULL, querySwitches, (void *) &pcstate);
+  while(1) {
+    // halt polling temporarily to get consistent switch state
+    pollingEnabled = false;
+    // parse the switch state to determine command for motor
+    currCmd = parseSwitchState(&pcstate);
+    // resume polling
+    pollingEnabled = true;
+    // perform action indicated by currCmd
+    switch(currCmd) {
+    	case FORWARD:
+	  move(1);
+	  break;
+    	case REVERSE:
+	  move(-1);
+	  break;
+    	case IDLE:
+	  move(0);
+	  break;
+    	default:
+	  break;
+    }
+  }
+  // Clean up threads
+  pthread_exit(NULL);
   return 0;
 }
