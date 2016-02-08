@@ -67,7 +67,7 @@ DEFAULT_STEPS = float(3200.0)
 DEFAULT_STEPS_PER_MM = DEFAULT_STEPS / DEFAULT_PITCH
 DEFAULT_ML_PER_S = float(0.7)
 DEFAULT_ML_PER_MM = float(0.1635531002398778)
-DEFAULT_MOVEMENT = float(1.0)
+DEFAULT_MOVEMENT = float(0.05)
 # END constant definitions
 
 # BEGIN CLASS Pump
@@ -148,13 +148,11 @@ class Pump:
 	def mainLoop(self):
 		while(True):
 			self.readSwitch()
-			print("DEBUG -- sw1state: %s\t sw2state: %s\n" % (self.sw1state, self.sw2state))
 			motorCmd = self.parseSwitchState()
-			print("DEBUG -- motorCmd: %s\n" % motorCmd)
 			if motorCmd == 'r':
-				self.move(-1)
+				self.move(DEFAULT_MOVEMENT)
 			elif motorCmd == 'f':
-				self.move(1)
+				self.move(DEFAULT_MOVEMENT * -1.0)
 			else:
 				pass
 # END CLASS Pump
