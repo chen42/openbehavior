@@ -148,8 +148,11 @@ class Pump:
 	def mainLoop(self):
 		while(True):
 			self.readSwitch()
+			print("DEBUG -- sw1state: %s\t sw2state: %s\n" % (self.sw1state, self.sw2state))
 			motorCmd = self.parseSwitchState()
+			print("DEBUG -- motorCmd: %s\n" % motorCmd)
 			moveCoefficient = 1 if (motorCmd == 'f') else -1 if (motorCmd == 'r') else 0
+			print("DEBUG -- moveCoefficient: %s\n" % moveCoefficient)
 			self.move(DEFAULT_MOVEMENT * moveCoefficient)
 # END CLASS Pump
 
