@@ -49,6 +49,7 @@ MS3 = int(19) #int(config['ms3-pin'])
 MS2 = int(21) #int(config['ms2-pin'])
 MS1 = int(23) #int(config['ms1-pin'])
 SW1 = int(37)
+SW2 = int(38)
 gpio.setup(SLEEP, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(STEP, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(DIR, gpio.OUT, initial = gpio.HIGH)
@@ -56,18 +57,31 @@ gpio.setup(MS1, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(MS2, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(MS3, gpio.OUT, initial = gpio.HIGH)
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # END Pin configuration
+
+# BEGIN constant definitions
+DEFAULT_POSITION = float(0.0)
+DEFAULT_PITCH = float(0.8)
+DEFAULT_STEPS = float(3200)
+DEFAULT_STEPS_PER_MM = DEFAULT_STEPS / DEFAULT_PITCH
+DEFAULT_ML_PER_S = float(0.7)
+DEFAULT_ML_PER_MM = float(0.1635531002398778)
+DEFAULT_MOVEMENT = int(1)
+# END constant definitions
 
 # BEGIN CLASS Pump
 class Pump:
     # BEGIN Constructor method
 	def __init__(self):
-		self.position = 0.
-		self.pitch = float(0.8)
-		self.steps = float(3200)
-		self.steps_per_mm = self.steps / self.pitch
-		self.ml_per_s = float(0.7)
-		self.ml_per_mm = float(0.1635531002398778)
+		self.position = DEFAULT_POSITION
+		self.pitch = DEFAULT_PITCH
+		self.steps = DEFAULT_STEPS
+		self.steps_per_mm = DEFAULT_STEPS_PER_MM
+		self.ml_per_s = DEFAULT_ML_PER_S
+		self.ml_per_mm = DEFAULT_ML_PER_MM
+		self.sw1state = None
+		self.sw2state = None
     # END Constructor method
     # BEGIN Setter and getter methods
 	def getPosition(self):
@@ -120,13 +134,26 @@ class Pump:
 	def sleep(self):
 		gpio.output(SLEEP, gpio.LOW)
 	def readSwitch(self):
-		return gpio.input(SW1)
+		self.sw1state = gpio.input(SW1)
+		self.sw2state = gpio.input(SW2)
+	def parseSwitchState(self):
+		if (self.sw1state ^ self.sw2state):
+			return 'i'
+		elif (self.sw1state):
+			return 'r'
+		elif (self.sw2state):
+			return 'f'
+		else:
+			return None
+	def mainLoop(self):
+		while(True):
+			self.readSwitch()
+			motorCmd = self.parseSwitchState()
+			moveCoefficient = 1 if (motorCmd == 'f') else -1 if (motorCmd == 'r') else 0
+			self.move(DEFAULT_MOVEMENT * moveCoefficient)
 # END CLASS Pump
 
 if __name__ == "__main__":
 	p = Pump()
-	p.setSteps(10)
-	while(True):
-		if(gpio.input(SW1)):
-			p.move(10)
+	p.mainLoop()
 		
