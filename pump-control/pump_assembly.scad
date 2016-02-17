@@ -579,15 +579,15 @@ module rubber_band_post() {
 module syringe_slot() {
     difference() {
         difference() {
-            cylinder(r = 12.0, h = 5.0);
+            cylinder(r = 14.0, h = 7.0);
             translate([0, 0, 1.5]) union () {
-                cylinder(r = 9.25, h = 1.7);
-                translate([-(18.5 / 2.0), 0, 0]) cube([18.5, 18.5, 1.7]);
+                cylinder(r = 13.0, h = 4.0);
+                translate([-13.0, 0, 0]) cube([26.0, 26.0, 4.0]);
             }
         }
         union() {    
-            cylinder(r = 6.70, h = 1.5);
-            translate([-(13.4 / 2.0), 0, 0]) cube([13.4, 13.4, 1.5]);
+            cylinder(r = 7.0, h = 1.5);
+            translate([-7.0, 0, 0]) cube([14.0, 14.0, 1.5]);
         }
     }
 }
@@ -633,7 +633,7 @@ module carriage_with_syringe_slot() {
 		*carriage_support();
         
         // slotted recess to hold syringe in place
-        translate([0, 20.0, -15.5]) syringe_slot();
+        translate([0, 18.0, -18.0]) syringe_slot();
 	}
     
 }
