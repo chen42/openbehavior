@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(1);
+render_part(4);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -42,6 +42,8 @@ module render_part(part_to_render) {
     if (part_to_render == 11) rubber_band_hook();
         
     if (part_to_render == 12) rubber_band_post();
+        
+    if (part_to_render == 13) carriage_with_syringe_slot();
 }
 
 // [x, y, z] = [l, w, t]
@@ -58,7 +60,7 @@ Secure plunger
 
 d_nozzle = 0.75;
 
-motor = NEMA11;
+motor = NEMA17;
 cc_guides = 50;
 
 d_lead_screw = d_M5_screw;
@@ -570,4 +572,8 @@ module rubber_band_post() {
         cube([3,4,7]);
         translate([-4,4,0]) cube([7,3,7]);
     }
+}
+
+module carriage_with_syringe_slot() {
+    carriage_syringe_pump();
 }
