@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(14);
+render_part(10);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -62,7 +62,7 @@ Secure plunger
 
 d_nozzle = 0.75;
 
-motor = NEMA17;
+motor = NEMA11;
 cc_guides = 50;
 
 d_lead_screw = d_M5_screw;
@@ -161,7 +161,7 @@ module end_idler() {
 		translate([0, 0, idler[2] + 0.2])
 			cylinder(r = d_lead_screw / 2, h = t_idler_end, center = true);
 
-		end_mount_holes(t_idler_end + 1, d_M3_screw);
+		*end_mount_holes(t_idler_end + 1, d_M3_screw);
 	}	
 }
 
