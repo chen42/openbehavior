@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(4);
+render_part(14);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -43,7 +43,9 @@ module render_part(part_to_render) {
         
     if (part_to_render == 12) rubber_band_post();
         
-    if (part_to_render == 13) carriage_with_syringe_slot();
+    if (part_to_render == 13) syringe_slot();
+        
+    if (part_to_render == 14) carriage_with_syringe_slot();
 }
 
 // [x, y, z] = [l, w, t]
@@ -574,6 +576,64 @@ module rubber_band_post() {
     }
 }
 
+module syringe_slot() {
+    difference() {
+        difference() {
+            cylinder(r = 12.0, h = 5.0);
+            translate([0, 0, 1.5]) union () {
+                cylinder(r = 9.25, h = 1.7);
+                translate([-(18.5 / 2.0), 0, 0]) cube([18.5, 18.5, 1.7]);
+            }
+        }
+        union() {    
+            cylinder(r = 6.70, h = 1.5);
+            translate([-(13.4 / 2.0), 0, 0]) cube([13.4, 13.4, 1.5]);
+        }
+    }
+}
+
 module carriage_with_syringe_slot() {
-    carriage_syringe_pump();
+	t_holder = 6; // thickness of the cylindrical portion of the pusher
+
+	union() {
+		difference() {
+			union() {
+				carriage_body();
+
+				// pusher for the plunger
+				translate([0, (idler[0] + d_syringe) / 2, (t_holder - t_carriage) / 2])
+					rounded_box(
+						l1 = cc_guides - d_guide_rod,
+						l2 = d_syringe,
+						r_corner = 3,
+						height = t_holder);
+
+				translate([0, guide_bearing[0] / 2 + pad_guide_bearing_radius + offset_guides, t_holder / 2])
+					cylinder(r1 = d_syringe / 2, r2 = 0, h = t_carriage - t_holder, center = true);
+
+			}
+
+			// lead screw, bearings, etc.
+			carriage_relief();
+
+			// screw hole for plunger lock
+            /*
+			for (i = [-1, 1])
+					translate([i * ((d_plunger_retainer - (d_plunger_retainer - d_plunger_max) + d_M3_screw) / 2), (idler[0] + d_syringe) / 2, (t_holder - t_carriage) / 2]) {
+						cylinder(r = d_M3_screw / 2, h = t_holder + 1, center = true);
+
+						translate([0, 0, t_holder - 2 * h_M3_nut])
+							rotate([0, 0, 30])
+								cylinder(r = d_M3_nut / 2, h = 2 * h_M3_nut, $fn = 6);
+					}
+            */
+		}
+
+		// support structure to facilitate printing
+		*carriage_support();
+        
+        // slotted recess to hold syringe in place
+        translate([0, 20.0, -15.5]) syringe_slot();
+	}
+    
 }
