@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(10);
+render_part(1);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -150,7 +150,7 @@ module end_idler() {
 		}
 
 		// outboard idler bearing
-		*translate([0, 0, -t_idler_end / 2])
+		translate([0, 0, -t_idler_end / 2])
 			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2, center = true);
 
 		// inboard idler bearing
@@ -302,11 +302,11 @@ module clamp_relief(
 
 						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
+								cylinder(r = (d_clamp_screw_cap / 2) + 0.5, h = 8, center = true);
 
 						translate([0, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, $fn = 6, center = true);
+								cylinder(r = (d_clamp_screw_nut / 2) + 0.5, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
 					}
 			}
 
@@ -615,18 +615,7 @@ module carriage_with_syringe_slot() {
 
 			// lead screw, bearings, etc.
 			carriage_relief();
-
-			// screw hole for plunger lock
-            /*
-			for (i = [-1, 1])
-					translate([i * ((d_plunger_retainer - (d_plunger_retainer - d_plunger_max) + d_M3_screw) / 2), (idler[0] + d_syringe) / 2, (t_holder - t_carriage) / 2]) {
-						cylinder(r = d_M3_screw / 2, h = t_holder + 1, center = true);
-
-						translate([0, 0, t_holder - 2 * h_M3_nut])
-							rotate([0, 0, 30])
-								cylinder(r = d_M3_nut / 2, h = 2 * h_M3_nut, $fn = 6);
-					}
-            */
+           
 		}
 
 		// support structure to facilitate printing
