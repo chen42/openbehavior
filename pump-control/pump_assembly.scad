@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(1);
+render_part(10);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -302,11 +302,11 @@ module clamp_relief(
 
 						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = (d_clamp_screw_cap / 2) + 0.5, h = 8, center = true);
+								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
 
 						translate([0, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = (d_clamp_screw_nut / 2) + 0.5, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
+								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
 					}
 			}
 
@@ -540,19 +540,23 @@ module cage_mount() {
 }
 
 module end_idler_mod() {
-    union() {
     difference() {
-        union() {
-            end_idler();
-            translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
+    union() {
+        difference() {
+            union() {
+                end_idler();
+                translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
+            }
+            translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r = 8.6);
         }
-        translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r = 8.6);
+        
+        translate([-22,t_idler_end-2.5,-7.5]) rubber_band_hook();
+        translate([23, t_idler_end-7,0])rubber_band_post();
     }
     
-    translate([-22,t_idler_end-2.5,-3.5]) rubber_band_hook();
-    translate([23, t_idler_end-7,3.5])rubber_band_post();
+    translate([-22,8.2,1]) cube([d_clamp_screw_nut,d_clamp_screw_nut,d_clamp_screw_nut+4.0]);
+    translate([15.7,8.2,1]) cube([d_clamp_screw_nut,d_clamp_screw_nut,d_clamp_screw_nut+4.0]);
     }
-    
 }
 
 module rubber_band_hook() {
