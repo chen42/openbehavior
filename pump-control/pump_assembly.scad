@@ -282,7 +282,7 @@ module clamp_relief(
 			// guide rods have backing, so are off the end of the body
 			for (i = [-1, 1])
 				translate([i * cc_guides / 2, offset_guides, pad_ends])
-					cylinder(r = d_guide_rod / 2, h = thickness, center = true);
+					cylinder(r = (d_guide_rod / 2) - 0.5, h = thickness, center = true);
 
 			// slots for clamping guide rods
 			for (i = [-1, 1])
@@ -540,7 +540,6 @@ module cage_mount() {
 }
 
 module end_idler_mod() {
-    difference() {
     union() {
         difference() {
             union() {
@@ -554,9 +553,6 @@ module end_idler_mod() {
         translate([23, t_idler_end-7,0])rubber_band_post();
     }
     
-    translate([-22,8.2,1]) cube([d_clamp_screw_nut,d_clamp_screw_nut,d_clamp_screw_nut+4.0]);
-    translate([15.7,8.2,1]) cube([d_clamp_screw_nut,d_clamp_screw_nut,d_clamp_screw_nut+4.0]);
-    }
 }
 
 module rubber_band_hook() {
