@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(10);
+render_part(14);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -579,15 +579,15 @@ module rubber_band_post() {
 module syringe_slot() {
     difference() {
         difference() {
-            cylinder(r = 14.0, h = 7.0);
-            translate([0, 0, 1.5]) union () {
-                cylinder(r = 13.0, h = 4.0);
-                translate([-13.0, 0, 0]) cube([26.0, 26.0, 4.0]);
+            cylinder(r = 14.0, h = 8.0);
+            translate([0, 0, 2.5]) union () {
+                cylinder(r = 13.0, h = 3.0);
+                translate([-13.0, 0, 0]) cube([26.0, 26.0, 3.0]);
             }
         }
         union() {    
-            cylinder(r = 7.0, h = 1.5);
-            translate([-7.0, 0, 0]) cube([14.0, 14.0, 1.5]);
+            cylinder(r = 7.0, h = 2.5);
+            translate([-7.0, 0, 0]) cube([14.0, 14.0, 2.5]);
         }
     }
 }
