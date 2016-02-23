@@ -23,6 +23,7 @@ import pumpcontrol
 # END IMPORT PRELUDE
 
 # BEGIN CONSTANT DEFINITIONS
+TIR = int(36)
 SW1 = int(37)
 SW2 = int(38)
 # END CONSTANT DEFINITIONS
@@ -31,9 +32,18 @@ SW2 = int(38)
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 
+# Setup switch pins
+gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
 
-# Move pump
-pump.move(10)
+cap = MPR121.MPR121()
+cap.begin()
+
+while True:
+	if not gpio.input(TIR):
+		print("Touch detected!")
 
