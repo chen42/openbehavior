@@ -57,7 +57,7 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			touchcount++
+			touchcount += 1
 			if touchcount == 10:
 				touchcount = 0
 				pump.move(-1)
