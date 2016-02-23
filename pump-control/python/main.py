@@ -30,6 +30,10 @@ SW1 = int(37)
 SW2 = int(38)
 # END CONSTANT DEFINITIONS
 
+# BEGIN GLOBAL VARIABLES
+touchcount = 0
+# END GLOBAL VARIABLES
+
 # Initialize GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
@@ -53,4 +57,7 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			pump.move(-1)
+			touchcount++
+			if touchcount == 10:
+				touchcount = 0
+				pump.move(-1)
