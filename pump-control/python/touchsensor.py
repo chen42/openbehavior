@@ -34,7 +34,7 @@ class TouchSensor:
 		self.touched = self.cap.touched()
 		for i in range(12):
 			pinbit = 1 << i
-			if self.touched & pinbit and not self.last_touched & pinbit:
+			if self.touched & pinbit and not self.lasttouched & pinbit:
 				return i
-			if not self.touched & pinbit and self.last_touched & pinbit:
+			if not self.touched & pinbit and self.lasttouched & pinbit:
 				return -i
