@@ -28,7 +28,7 @@ class TouchSensor:
 			sys.exit(1)
 		# Get last touched
 		self.lasttouched = self.cap.touched()
-		self.touched = last_touched
+		self.touched = self.lasttouched
 	def readPinTouched(self):
 		self.lasttouched = self.touched
 		self.touched = self.cap.touched()
