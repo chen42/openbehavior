@@ -48,5 +48,5 @@ tsensor = touchsensor.TouchSensor()
 while True:
 	if not gpio.input(TIR):
 		i = tsensor.readPinTouched()
-		if i == 0:
+		if i == 1:
 			pump.move(-1)
