@@ -21,6 +21,7 @@ import sys
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
+import touchsensor
 # END IMPORT PRELUDE
 
 # BEGIN CONSTANT DEFINITIONS
@@ -42,19 +43,10 @@ gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 pump = pumpcontrol.Pump(gpio)
 
 # Initialize touch sensor
-touchsensor = MPR121.MPR121()
-if not touchsensor.begin():
-	print('Error initializing MPR121.  Check your wiring!')
-	sys.exit(1)
-	
-def readPinTouched():
-	tvalue = touchsensor.touched()
-	for i in range(12):
-		pinbit = 1 << i
-		if tvalue & pinbit:
-			return i
+tsensor = touchsensor.TouchSensor()
 
 while True:
 	if not gpio.input(TIR):
-		touched = readPinTouched()
-		pump.move(1)
+		i = tsensor.readPinTouched()
+		if i == 0:
+			pump.move(-1)

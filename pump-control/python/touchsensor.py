@@ -17,7 +17,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Adafruit_MPR121.MPR121 as MPR121
+import sys
 
 class TouchSensor:
 	def __init__(self):
+		# Initialize hardware
 		self.cap = MPR121.MPR121()
+		if not self.cap.begin():
+			print('Error initializing MPR121.  Check your wiring!')
+			sys.exit(1)
+		# Get last touched
+		self.lasttouched = self.cap.touched()
+		self.touched = last_touched
+	def readPinTouched(self):
+		self.lasttouched = self.touched
+		self.touched = self.cap.touched()
+		for i in range(12):
+			pinbit = 1 << i
+			if self.touched & pinbit and not self.last_touched & pinbit:
+				return i
+			if not self.touched & pinbit and self.last_touched & pinbit:
+				return -i
