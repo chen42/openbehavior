@@ -22,29 +22,19 @@
 # BEGIN IMPORT PRELUDE
 import sys
 import time
-import RPi.GPIO as gpio
-import Adafruit_MPR121.MPR121 as MPR121
 # END IMPORT PRELUDE
 
 # BEGIN Pin configuration
-gpio.setwarnings(False)
-gpio.setmode(gpio.BOARD)
 DIR = int(11) #int(config['dir-pin'])
 STEP = int(13) #int(config['step-pin'])
 SLEEP = int(15) #int(config['sleep-pin'])
 MS3 = int(19) #int(config['ms3-pin'])
 MS2 = int(21) #int(config['ms2-pin'])
 MS1 = int(23) #int(config['ms1-pin'])
-SW1 = int(37)
-SW2 = int(38)
-gpio.setup(SLEEP, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(STEP, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(DIR, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(MS1, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(MS2, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(MS3, gpio.OUT, initial = gpio.HIGH)
-gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
-gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+#SW1 = int(37)
+#SW2 = int(38)
+#gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+#gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # END Pin configuration
 
 # BEGIN constant definitions
@@ -60,15 +50,21 @@ DEFAULT_MOVEMENT = float(0.05)
 # BEGIN CLASS Pump
 class Pump:
     # BEGIN Constructor method
-	def __init__(self):
+	def __init__(self, gpio):
 		self.position = DEFAULT_POSITION
 		self.pitch = DEFAULT_PITCH
 		self.steps = DEFAULT_STEPS
 		self.steps_per_mm = DEFAULT_STEPS_PER_MM
 		self.ml_per_s = DEFAULT_ML_PER_S
 		self.ml_per_mm = DEFAULT_ML_PER_MM
-		self.sw1state = None
-		self.sw2state = None
+		self.gpio = gpio
+		# Set up the GPIO for the pump
+		self.gpio.setup(SLEEP, self.gpio.OUT, initial = self.gpio.HIGH)
+		self.gpio.setup(STEP, self.gpio.OUT, initial = self.gpio.HIGH)
+		self.gpio.setup(DIR, self.gpio.OUT, initial = self.gpio.HIGH)
+		self.gpio.setup(MS1, self.gpio.OUT, initial = self.gpio.HIGH)
+		self.gpio.setup(MS2, self.gpio.OUT, initial = self.gpio.HIGH)
+		self.gpio.setup(MS3, self.gpio.OUT, initial = self.gpio.HIGH)
     # END Constructor method
     # BEGIN Setter and getter methods
 	def getPosition(self):
@@ -99,18 +95,18 @@ class Pump:
 	def goto(self, ml):
 		self.move(ml - self.position)
 	def move(self, ml):
-		gpio.output(SLEEP, gpio.HIGH)
-		gpio.output(DIR, gpio.HIGH if ml < 0 else gpio.LOW)
+		self.gpio.output(SLEEP, self.gpio.HIGH)
+		self.gpio.output(DIR, self.gpio.HIGH if ml < 0 else self.gpio.LOW)
 		s_per_half_step = self.ml_per_mm / self.steps_per_mm / self.ml_per_s / 2
 		self.steps = int(ml / self.ml_per_mm * self.steps_per_mm + .5)
 		target = time.time()
 		for t in range(abs(self.steps)):
-			gpio.output(STEP, gpio.HIGH)
+			self.gpio.output(STEP, self.gpio.HIGH)
 			target += s_per_half_step
 			while time.time() < target:
 				# Yes, this is a busy wait.
 				pass
-			gpio.output(STEP, gpio.LOW)
+			self.gpio.output(STEP, self.gpio.LOW)
 			target += s_per_half_step
 			while time.time() < target:
 				# Yes, this is a busy wait.
@@ -119,32 +115,6 @@ class Pump:
 	def speed(self, ml_per_s):
 		self.ml_per_s = ml_per_s
 	def sleep(self):
-		gpio.output(SLEEP, gpio.LOW)
-	def readSwitch(self):
-		self.sw1state = gpio.input(SW1)
-		self.sw2state = gpio.input(SW2)
-	def parseSwitchState(self):
-		if (self.sw1state == 0 and self.sw2state == 0) or (self.sw1state == 1 and self.sw2state == 1):
-			return 'i'
-		elif (self.sw1state):
-			return 'r'
-		elif (self.sw2state):
-			return 'f'
-		else:
-			return None
-	def mainLoop(self):
-		while(True):
-			self.readSwitch()
-			motorCmd = self.parseSwitchState()
-			if motorCmd == 'r':
-				self.move(DEFAULT_MOVEMENT)
-			elif motorCmd == 'f':
-				self.move(DEFAULT_MOVEMENT * -1.0)
-			else:
-				pass
+		self.gpio.output(SLEEP, self.gpio.LOW)
 # END CLASS Pump
-
-if __name__ == "__main__":
-	p = Pump()
-	p.mainLoop()
 		
