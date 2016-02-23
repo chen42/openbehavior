@@ -22,26 +22,13 @@
 # BEGIN IMPORT PRELUDE
 import sys
 import time
-try:
-	import RPi.GPIO as gpio
-	gpio.setwarnings(False)
-	gpio.setmode(gpio.BOARD)
-except:
-	sys.stderr.write('Warning: using emulation because RPi.GPIO could not be used\n')
-	class gpio:
-		LOW = 0
-		HIGH = 1
-		IN = 0
-		OUT = 1
-		@classmethod
-		def output(cls, pin, state):
-			pass
-		@classmethod
-		def setup(cls, pin, type, initial):
-			pass
+import RPi.GPIO as gpio
+import Adafruit_MPR121.MPR121 as MPR121
 # END IMPORT PRELUDE
 
 # BEGIN Pin configuration
+gpio.setwarnings(False)
+gpio.setmode(gpio.BOARD)
 DIR = int(11) #int(config['dir-pin'])
 STEP = int(13) #int(config['step-pin'])
 SLEEP = int(15) #int(config['sleep-pin'])
