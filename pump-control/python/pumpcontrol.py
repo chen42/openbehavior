@@ -31,8 +31,6 @@ SLEEP = int(15) #int(config['sleep-pin'])
 MS3 = int(19) #int(config['ms3-pin'])
 MS2 = int(21) #int(config['ms2-pin'])
 MS1 = int(23) #int(config['ms1-pin'])
-#SW1 = int(37)
-#SW2 = int(38)
 #gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 #gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # END Pin configuration

@@ -16,12 +16,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# BEGIN IMPORT PRELUDE
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
+# END IMPORT PRELUDE
 
-def mainLoop():
-	print("in mainLoop()")
-	
-if __name__ == "__main__":
-	mainLoop()
+# BEGIN CONSTANT DEFINITIONS
+SW1 = int(37)
+SW2 = int(38)
+# END CONSTANT DEFINITIONS
+
+# Initialize GPIO
+gpio.setwarnings(False)
+gpio.setmode(gpio.BOARD)
+
+# Initialize pump
+pump = pumpcontrol.Pump(gpio)
+
+# Move pump
+pump.move(10)
+
