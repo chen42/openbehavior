@@ -46,7 +46,11 @@ pump = pumpcontrol.Pump(gpio)
 tsensor = touchsensor.TouchSensor()
 
 while True:
-	if not gpio.input(TIR):
+	if gpio.input(SW1):
+		pump.move(1)
+	elif gpio.input(SW2):
+		pump.move(-1)
+	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
 			pump.move(-1)
