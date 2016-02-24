@@ -6,8 +6,13 @@ $fn=100;
 max_w=210;
 max_h=138;
 max_d=90;
-r=10;
+
+pw=40;// spout holder width x 
+ph=45;// spout holder length y
+pg=60;// spout holder height z
+r=10; // forgot what this is for??
 fv=0.1; // for better visualization
+
 
 
 module corner(ln=20, wd=30 ){ // a negative part for making a round corner 
@@ -114,7 +119,34 @@ module motion_sensor (){
 	cylinder(r1=4.5,r2=4.5, h=20);
 	cylinder(r1=20,r2=4.5, h=6);
 }
-/*
+module spout_holder_inner (sh_x=70, sh_y=40){
+
+			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
+}
+
+module spout_holder(sh_x=70, sh_y=40){
+	//sh_x: spout holder  x
+	//sh_y: spout holder  y
+	difference(){
+		translate([-sh_x,-sh_y,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder outside
+		//spout_holder_inner();
+		union(){
+			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
+			translate([-sh_x-30,-sh_y-10,20]) rotate([0,90,0])  cylinder(r1=2.5, r2=2.5, h=55); //holes for alignment of the spout tip 
+			translate([-sh_x,-sh_y,20]) rotate([90,0,0])  cylinder(r1=12, r2=12, h=55); //holes for obverving the rat  
+			translate([-sh_x,-50,20]) rotate([35,0,0])  cylinder(r1=4.6, r2=4.6, h=55); // location of the spout 
+			translate([-sh_x,-82, 51]) rotate([-55, 0,0])  cube([10, 18, 4.1], center=true);// hex screw for spout 
+			translate([-sh_x,-sh_y-60,34]) rotate([-55,0,0])  cylinder(r1=1.9, r2=1.9, h=50); //screw hole for tightening the spout  
+		}
+	}
+}
+
+
+
+
+
+
+
 difference(){
 		pw=40;// spout holder width x 
  		ph=40;// spout holder length y
@@ -123,38 +155,27 @@ difference(){
 
 	union(){
 		frame();
-		translate([-1*sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder
-		translate([sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg);
+//		translate([-1*sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder
+//		translate([sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg);
 	}
 	union(){
 		top_groove();
 		rotate([90,0,0]) translate([0,0,34]) 	motion_sensor();
 		translate([-max_w/2,0,65]) rotate([0,90,0])  cylinder(r1=1.9, r2=1.9, h=10); //screw hole for the top cover on the side;
 		translate([max_w/2-10,0,65]) rotate([0,90,0])  cylinder(r1=1.9, r2=1.9, h=10); //screw hole for the top cover on the side; 
-		translate([-70,-30,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-16); // spout holder
+		spout_holder_inner(sh_x=-70);
+		spout_holder_inner(sh_x=70);
+		spout_holder(sh_x=70, sh_y=44);
+		spout_holder(sh_x=-70, sh_y=44);
+
+
 	}
 }
 
 mounting_screws();
-*/
 
 
-		pw=40;// spout holder width x 
- 		ph=45;// spout holder length y
-		pg=60;// spout holder height z
-		sh_x=70;// spout holder box x
-		sh_y=40;// spout holder box y
-	difference(){
-		translate([-sh_x,-sh_y,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder outside
-		union(){
-			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
-			translate([-100,-sh_y-10,20]) rotate([0,90,0])  cylinder(r1=2.5, r2=2.5, h=55); //holes for alignment of the spout tip 
-			translate([-sh_x,-sh_y,20]) rotate([90,0,0])  cylinder(r1=12, r2=12, h=55); //holes for obverving the rat  
-			translate([-sh_x,-50,20]) rotate([35,0,0])  cylinder(r1=4.6, r2=4.6, h=55); // location of the spout 
-			translate([-sh_x,-82, 51]) rotate([-55, 0,0])  cube([10, 18, 4.1], center=true);// hex screw for spout 
-			translate([-sh_x,-sh_y-60,34]) rotate([-55,0,0])  cylinder(r1=1.9, r2=1.9, h=50); //screw hole for tightening the spout  
-		}
-	}
+
 
 
 
