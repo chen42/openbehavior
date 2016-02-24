@@ -114,11 +114,11 @@ module motion_sensor (){
 	cylinder(r1=4.5,r2=4.5, h=20);
 	cylinder(r1=20,r2=4.5, h=6);
 }
-
+/*
 difference(){
 		pw=40;// spout holder width x 
  		ph=40;// spout holder length y
-		pg=60;// spout holder height z
+		pg=50;// spout holder height z
 		sh_x=70;// spout holder box x
 
 	union(){
@@ -131,19 +131,31 @@ difference(){
 		rotate([90,0,0]) translate([0,0,34]) 	motion_sensor();
 		translate([-max_w/2,0,65]) rotate([0,90,0])  cylinder(r1=1.9, r2=1.9, h=10); //screw hole for the top cover on the side;
 		translate([max_w/2-10,0,65]) rotate([0,90,0])  cylinder(r1=1.9, r2=1.9, h=10); //screw hole for the top cover on the side; 
-		translate([70,-30,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-6); // spout holder 
-		translate([-70,-30,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-6); // spout holder
+		translate([-70,-30,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-16); // spout holder
 	}
 }
+
 mounting_screws();
+*/
 
 
-sh_x=70;
-		pw=40;// spout holder
-#		translate([-100,-80,30]) rotate([0,90,0])  cylinder(r1=1.9, r2=1.9, h=55); //screw hole for the top cover on the side; 
-#		translate([-1*sh_x,-60,30]) rotate([45,00,0])  cylinder(r1=4.6, r2=4.6, h=55); //screw hole for the top cover on the side; 
-translate([-1*sh_x, -60, 30]) round_corner_box(r0=3, wd=pw-7, ht=15, lg=5);
+		pw=40;// spout holder width x 
+ 		ph=42;// spout holder length y
+		pg=60;// spout holder height z
+		sh_x=70;// spout holder box x
+		sh_y=40;// spout holder box y
+	difference(){
+		translate([-sh_x,-sh_y,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder outside
+		union(){
+			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-16); // spout holder inside
+			translate([-100,-sh_y-10,30]) rotate([0,90,0])  cylinder(r1=2.9, r2=2.9, h=55); //holes for alignment of the spout tip 
+			translate([-sh_x,-50,30]) rotate([35,0,0])  cylinder(r1=4.6, r2=4.6, h=55); // location of the spout 
+			translate([-sh_x,-76, 50]) rotate([-55, 0,0])  cube([12, 18, 4.1], center=true);// hex screw for spout 
+			translate([-sh_x,-sh_y-50,38]) rotate([-55,0,0])  cylinder(r1=1.9, r2=1.9, h=55); //screw hole for tightening the spout  
+		}
+	}
 
 
-// hex hole 14 x 8.4 x 4.1
-// r=1.8 for screw to for wire
+
+
+
