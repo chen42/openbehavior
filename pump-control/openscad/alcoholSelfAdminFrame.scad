@@ -2,7 +2,7 @@
 // Hao Chen
 // UTHSC
  
-
+$fn=100;
 max_w=210;
 max_h=138;
 max_d=90;
@@ -140,18 +140,19 @@ mounting_screws();
 
 
 		pw=40;// spout holder width x 
- 		ph=42;// spout holder length y
+ 		ph=45;// spout holder length y
 		pg=60;// spout holder height z
 		sh_x=70;// spout holder box x
 		sh_y=40;// spout holder box y
 	difference(){
 		translate([-sh_x,-sh_y,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder outside
 		union(){
-			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph*1.4,lg=pg-16); // spout holder inside
-			translate([-100,-sh_y-10,30]) rotate([0,90,0])  cylinder(r1=2.9, r2=2.9, h=55); //holes for alignment of the spout tip 
-			translate([-sh_x,-50,30]) rotate([35,0,0])  cylinder(r1=4.6, r2=4.6, h=55); // location of the spout 
-			translate([-sh_x,-76, 50]) rotate([-55, 0,0])  cube([12, 18, 4.1], center=true);// hex screw for spout 
-			translate([-sh_x,-sh_y-50,38]) rotate([-55,0,0])  cylinder(r1=1.9, r2=1.9, h=55); //screw hole for tightening the spout  
+			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
+			translate([-100,-sh_y-10,20]) rotate([0,90,0])  cylinder(r1=2.5, r2=2.5, h=55); //holes for alignment of the spout tip 
+			translate([-sh_x,-sh_y,20]) rotate([90,0,0])  cylinder(r1=12, r2=12, h=55); //holes for obverving the rat  
+			translate([-sh_x,-50,20]) rotate([35,0,0])  cylinder(r1=4.6, r2=4.6, h=55); // location of the spout 
+			translate([-sh_x,-82, 51]) rotate([-55, 0,0])  cube([10, 18, 4.1], center=true);// hex screw for spout 
+			translate([-sh_x,-sh_y-60,34]) rotate([-55,0,0])  cylinder(r1=1.9, r2=1.9, h=50); //screw hole for tightening the spout  
 		}
 	}
 
