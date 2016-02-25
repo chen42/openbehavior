@@ -19,6 +19,8 @@
 # BEGIN IMPORT PRELUDE
 import sys
 import getopt
+import time
+from threading import Timer
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
@@ -33,12 +35,17 @@ SW2 = int(38)
 
 # BEGIN GLOBAL VARIABLES
 touchcount = 0
+touchcounter = 0
 fixedratio = 10
-timeout = 20.0
+timeout = 20
+pumptimedout = False
 # END GLOBAL VARIABLES
 
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
+	
+def resetPumpTimeout():
+	pumptimedout = False
 
 # Parse command line arguments
 try:
@@ -50,7 +57,7 @@ for opt, arg in opts:
 	if opt == '-f':
 		fixedratio = int(arg)
 	elif opt == '-t':
-		timeout = float(arg)
+		timeout = int(arg)
 	elif opt == '-h':
 		printUsage()
 		sys.exit()
@@ -70,6 +77,9 @@ pump = pumpcontrol.Pump(gpio)
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
 
+# Create timer
+pumpTimer = Timer(timeout, resetPumpTimeout)
+
 while True:
 	if gpio.input(SW1):
 		pump.move(1)
@@ -79,6 +89,10 @@ while True:
 		i = tsensor.readPinTouched()
 		if i == 1:
 			touchcount += 1
-			if touchcount == FR:
-				touchcount = 0
-				pump.move(-1)
+			if not pumptimedout:
+				touchcounter += 1
+				if touchcounter == FR:
+					touchcounter = 0
+					pumptimedout = True
+					pumpTimer.start()
+					pump.move(-1)
