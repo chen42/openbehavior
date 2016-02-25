@@ -83,21 +83,18 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-	translate([-94,-31.5, max_h/2-2]) mounting_pi();
+	translate([-93,-33, max_h/2-2]) mounting_pi();
 //	#translate([-97.5,-35.0, max_h/2-2]) cube([85, 56,2]);//the pi
-	translate([4,-21.5, max_h/2-2]) mounting_touch();
-	translate([40,25, max_h/2-2]) mounting_RTC();
+	translate([16,-16, max_h/2-2]) mounting_touch();
+	translate([20,26, max_h/2-2]) mounting_RTC();
+color("black")	translate([80, 0, max_h/2-2]) rotate([0,0,90])  step_motor_control();
 }
-
-
-
 
 module top_groove(){ // for the top cover
 	difference(){
-		translate([0,0,max_h/2-4])
-		cube([204, 79, 10], center=true);
-		translate([0,0,max_h/2-4])
-		cube([204-8, 79-8,11], center=true);
+		translate([0,0,max_h/2-4]) cube([max_w-6, max_d-6, 10], center=true);
+		translate([0,0,max_h/2-4-11/2]) round_corner_box(r0=5, wd=max_w-6-8-10, lg=max_d-6-8-10,ht=11);
+		// -8  produces a gap of 4 mm for the grove. -10 is for r0=5
 	}
 }
 
@@ -110,6 +107,32 @@ module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic
 	translate([-wd/2,lg/2,0]) cylinder(r=r0, h=ht);
 	}
 }
+
+
+module step_motor_control(){
+	difference(){
+		cube([21+20, 16+4, 6],center=true);
+		union(){
+			translate([15,0,-3]) cylinder(r=1.7, h=8);
+			translate([-15,0,-3]) cylinder(r=1.7, h=8);
+			cube([21, 16, 8], center=true);
+		}
+	}
+
+} 
+
+
+module step_motor_fastener (){
+	difference(){
+		cube([21+14, 9, 3],center=true);
+		union(){
+			translate([15,0,-3]) cylinder(r=1.7, h=8);
+			translate([-15,0,-3]) cylinder(r=1.7, h=8);
+		}
+	}
+}
+ 
+
 
 module motion_sensor (){
 	translate([-14,0,5])
@@ -178,11 +201,15 @@ module the_thing (){
 }
 
 
+difference(){
 
+difference(){
+	the_thing();
+	translate([0,0,-11])cube([max_w, max_d, max_h], center=true);
 
-the_thing();
-
-
+}
+translate([0,0,77])cube([max_w, max_d, 12], center=true);
+}
 // use r=1.7 for m5 screw
 
 //spout_holder(sh_x=70, sh_y=44);
