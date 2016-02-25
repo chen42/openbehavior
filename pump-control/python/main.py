@@ -18,6 +18,7 @@
 
 # BEGIN IMPORT PRELUDE
 import sys
+import getopt
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
@@ -32,7 +33,25 @@ SW2 = int(38)
 
 # BEGIN GLOBAL VARIABLES
 touchcount = 0
+fixedratio = 10
+timeout = 20.0
 # END GLOBAL VARIABLES
+
+def printUsage():
+	print(sys.argv[0] + ' -f <fixed ratio>')
+
+# Parse command line arguments
+try:
+	opts, args = getopt.getopt(sys.argv[1:], "hf:")
+except getopt.GetoptError:
+	printUsage()
+	sys.exit(2)
+for opt, arg in opts:
+	if opt == '-f':
+		fixedratio = int(arg)
+	elif opt == '-h':
+		printUsage()
+		sys.exit()
 
 # Initialize GPIO
 gpio.setwarnings(False)
@@ -58,6 +77,6 @@ while True:
 		i = tsensor.readPinTouched()
 		if i == 1:
 			touchcount += 1
-			if touchcount == 10:
+			if touchcount == FR:
 				touchcount = 0
 				pump.move(-1)
