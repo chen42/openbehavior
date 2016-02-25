@@ -119,6 +119,7 @@ module motion_sensor (){
 	cylinder(r=4.5, h=20);
 	cylinder(r1=20,r2=4.5, h=6);
 }
+
 module spout_holder_inner (sh_x=70, sh_y=40){
 			translate([-sh_x,-sh_y+10,15]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
 }
@@ -130,8 +131,8 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 	difference(){
 		union(){
 			translate([-sh_x,-sh_y,sh_z]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder outside
-			translate([-sh_x,-sh_y,-pg/2-6]) rotate([90,0,0]) round_corner_box(r0=2,ht=5,wd=13,lg=8); //positive for attachment screw, bottom 
-			translate([-sh_x,-sh_y,pg/2+6]) rotate([90,0,0]) round_corner_box(r0=2,ht=5,wd=13,lg=8); //positive for attachment screw, top
+			translate([-sh_x,-sh_y,sh_z-pg/2-6]) rotate([90,0,0]) round_corner_box(r0=2,ht=5,wd=13,lg=8); //positive for attachment screw, bottom 
+			translate([-sh_x,-sh_y,sh_z+pg/2+6]) rotate([90,0,0]) round_corner_box(r0=2,ht=5,wd=13,lg=8); //positive for attachment screw, top
 		}
 		union(){
 			translate([-sh_x,-sh_y+10,sh_z-5]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
@@ -140,38 +141,36 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 			translate([-sh_x,-sh_y-10,sh_z]) rotate([35,0,0]) cylinder(r=4.6, h=55); // location of the spout 
 			translate([-sh_x,-sh_y-42, sh_z+31]) rotate([-55, 0,0]) cube([8.4, 18, 4.1], center=true);// hex screw for spout 
 			translate([-sh_x,-sh_y-60,sh_z+14]) rotate([-55,0,0]) cylinder(r=1.9, h=50); //screw hole for tightening the spout 
-			translate([-sh_x,-sh_y-10,-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
-			translate([-sh_x,-sh_y-10,pg/2+7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
+			translate([-sh_x,-sh_y-10,sh_z-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
+			translate([-sh_x,-sh_y-10,sh_z+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
 		}
 	}
 }
 
-
-
+//spout_holder(sh_x=70, sh_y=40, sh_z=20);
 
 module the_thing (){
 	union(){
 		difference(){
-				pw=40;// spout holder width x 
-				ph=40;// spout holder length y
-				pg=50;// spout holder height z
-				sh_x=70;// spout holder box x
-			union(){
-				frame();
-		//		translate([-1*sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg); //spout holder
-		//		translate([sh_x,-40,20]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw, ht=ph,lg=pg);
-			}
+			//	pw=40;// spout holder width x 
+			//	ph=40;// spout holder length y
+			//	pg=50;// spout holder height z
+			
+			frame();
 			union(){
 				top_groove();
-				rotate([90,0,0]) translate([0,0,34]) 	motion_sensor();
+				rotate([90,0,0]) translate([0,0,34]) motion_sensor();
 				translate([-max_w/2,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side;
 				translate([max_w/2-10,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side; 
 				spout_holder_inner(sh_x=-70);
 				spout_holder_inner(sh_x=70);
-				spout_holder(sh_x=70, sh_y=44);
-				spout_holder(sh_x=-70, sh_y=44);
-
-
+				spout_holder(sh_x=70, sh_y=44.7, sh_z=20);
+				spout_holder(sh_x=-70, sh_y=44.7, sh_z=20);
+				//mounting holes for the spout holders
+				translate([-70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=9);
+				translate([70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=9); 
+				translate([-70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=9);
+				translate([70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=9); 
 			}
 		}
 		mounting_screws();
@@ -180,14 +179,10 @@ module the_thing (){
 
 
 
-spout_holder(sh_x=0,sh_y=0, sh_z=0)
 
-//the_thing()
-
-difference(){
-cube([20,26,20],center=true);
-translate([0,0,-10]) rotate([-55, 0,0]) cube([8.5, 18, 4.2], center=true);// hex screw for spout 
- }
+the_thing();
 
 
 // use r=1.7 for m5 screw
+
+//spout_holder(sh_x=70, sh_y=44);
