@@ -38,17 +38,19 @@ timeout = 20.0
 # END GLOBAL VARIABLES
 
 def printUsage():
-	print(sys.argv[0] + ' -f <fixed ratio>')
+	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
 
 # Parse command line arguments
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hf:")
+	opts, args = getopt.getopt(sys.argv[1:], "hf:t:")
 except getopt.GetoptError:
 	printUsage()
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-f':
 		fixedratio = int(arg)
+	elif opt == '-t':
+		timeout = float(arg)
 	elif opt == '-h':
 		printUsage()
 		sys.exit()
