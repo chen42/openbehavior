@@ -102,3 +102,5 @@ while True:
 					dlogger.logTouch("ACTIVE")
 			else:
 				dlogger.logTouch("ACTIVE")
+		elif i == 7:
+			dlogger.logTouch("INACTIVE")
