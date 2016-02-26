@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(3.5);
+render_part(8);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -105,7 +105,6 @@ t_hook = 5; // thickness of the hook for securing syringe to actuator
 d_plunger_max = 32; // this sets the spacing for screws on the plunger retainer and carriage
 d_plunger_retainer = d_plunger_max + 12;
 
-
 module end_motor() {
 	difference() {
 		union() {
@@ -117,6 +116,7 @@ module end_motor() {
 					cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
 
 				clamp_relief(t_motor_end, pad_guide_ends);
+				translate([0,0,-t_motor_mount/2]) rotate([90, 0, 0]) mounting_screw_bottom(h=20);  
 			}
 		}
 
@@ -269,7 +269,7 @@ module clamp_body(thickness) {
 			translate([i * cc_guides / 2, 0, 0])
 				rounded_box(
 					l1 = (l_ends - cc_guides),
-					l2 = w_ends,
+					l2 = w_ends+10, // +10 added by Hao
 					r_corner = 3,
 					height = thickness);
 
@@ -313,6 +313,7 @@ module clamp_relief(
 			}
 
 }
+
 
 module rod_clamps(
 	thickness,
@@ -532,14 +533,33 @@ module syringe_bungie() {
 
 /* Module for mounting syringe pump on the cage assembly */
 module cage_mount() {
-    union() {
-%        linear_extrude(height = 10) {
-            square(size = [83, 250], center=true);
-        }
-        translate([0,-75,24]) rotate([90,0,180]) end_motor();
-        translate([0,95,24]) rotate([90,0,0]) end_idler_mod();
-		color("green")	translate([0,-97, 24]) cube([40,20,40], center=true); // space for the motor
+	difference(){
+		union() {
+			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
+			translate([0,-20,5]) rounded_box (l1=82, l2=210, r_corner=4, height=10);
+//			translate([0,0,2]) color("black") cube([62,156, 5], center=true); // size of the real pump
+	
+		}
+		union(){
+			spaceX=68;
+		    translate([0,-spaceX+3,24]) rotate([90,0,180]) scale([1.03,1.04,1]) end_motor();
+		    translate([0,spaceX,24]) rotate([90,0,0]) scale([1.03, 1.05,1]) end_idler_mod();
+			translate([0,spaceX,0]) mounting_screw_bottom(h=20);
+			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=20);
+		}
+		
     }
+}
+module mounting_screw_bottom(h=5){
+	cylinder(r=1.7, h);
+}
+
+module motor_housing(){
+	difference(){
+		rounded_box(l1=64, l2=40, r_corner=3, height=40); 
+		translate([0,-10,0]) cube([54, 50,50], center=true);
+		color("red") translate([0,-2.5,16]) cube([60, 40, 4], center=true); // top cover for the motor
+	}
 }
 
 module end_idler_mod() {
@@ -550,12 +570,11 @@ module end_idler_mod() {
                 translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
             }
             translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end+2, r = 8.6);
+	 		translate([0,-10,0]) rotate([90,0,0]) mounting_screw_bottom(h=10);
         }
-        
-        translate([-22,t_idler_end-2.5,-3.5]) rubber_band_hook();
-        translate([24.3, t_idler_end-6,3.5])rubber_band_post();
+        translate([-22, t_idler_end+2, -3.5]) rubber_band_hook();
+        translate([24.3, t_idler_end-2, 3.5]) rubber_band_post();
     }
-    
 }
 
 module rubber_band_hook() {
@@ -633,8 +652,8 @@ module carriage_with_syringe_slot() {
 
 module end_idler_mod_mount() {
 	difference(){
-%		translate([0,0,-9])		cube([80,30,10], center=true);
-#		rotate([90,0,0])	end_idler_mod();
+%		translate([0,0,-18])	cube([80,30,15], center=true);
+		rotate([90,0,0])	scale([1.05, 1.05,1  ]) end_idler_mod();
 	}
 
 }
