@@ -78,9 +78,6 @@ pump = pumpcontrol.Pump(gpio)
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
 
-# Create timer
-pumpTimer = Timer(timeout, resetPumpTimeout)
-
 while True:
 	if gpio.input(SW1):
 		pump.move(1)
@@ -95,5 +92,6 @@ while True:
 				if touchcounter == fixedratio:
 					touchcounter = 0
 					pumptimedout = True
+					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
 					pump.move(-1)
