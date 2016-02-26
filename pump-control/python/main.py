@@ -25,6 +25,7 @@ import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
 import touchsensor
+import datalogger
 # END IMPORT PRELUDE
 
 # BEGIN CONSTANT DEFINITIONS
@@ -34,7 +35,6 @@ SW2 = int(38)
 # END CONSTANT DEFINITIONS
 
 # BEGIN GLOBAL VARIABLES
-touchcount = 0
 touchcounter = 0
 fixedratio = 10
 timeout = 20
@@ -78,6 +78,9 @@ pump = pumpcontrol.Pump(gpio)
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
 
+# Initialize data logger
+dlogger = datalogger.DataLogger()
+
 while True:
 	if gpio.input(SW1):
 		pump.move(1)
@@ -86,12 +89,16 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			touchcount += 1
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
+					dlogger.logTouch("REWARD")
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
 					pump.move(-1)
+				else:
+					dlogger.logTouch("ACTIVE")
+			else:
+				dlogger.logTouch("ACTIVE")
