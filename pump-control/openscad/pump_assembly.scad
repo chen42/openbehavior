@@ -12,40 +12,42 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(14);
+render_part(3.5);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
 
-	if (part_to_render == 2) end_idler();
+    if (part_to_render == 2) carriage_with_syringe_slot();
 
-	if (part_to_render == 3) carriage();
+    if (part_to_render == 3) end_idler_mod(); // with rubber band hooks.
 
-	if (part_to_render == 4) carriage_syringe_pump();
+    if (part_to_render == 3.5) end_idler_mod_mount(); // reminds of the BASIC language 
 
-	if (part_to_render == 5) clamp_syringe_pump();
+	if (part_to_render == 4) carriage();
+        
+    if (part_to_render == 5) rubber_band_hook();
+        
+    if (part_to_render == 6) rubber_band_post();
+        
+    if (part_to_render == 7) syringe_slot();
+ 
+    if (part_to_render == 8) cage_mount();
 
-	if (part_to_render == 6) {
+	if (part_to_render == 9) carriage_syringe_pump(); // not in use
+
+	if (part_to_render == 10) clamp_syringe_pump(); // not in use
+
+	if (part_to_render == 11) { // no in use
 		for (i = [-1, 1])
 			translate([i * (d_guide_rod + 2.5), 0, 0])
 				syringe_hook();
 	}
 
-	if (part_to_render == 7) {syringe_plunger_retainer();}
+	if (part_to_render == 12) {syringe_plunger_retainer();} // no in use
 
-	if (part_to_render == 8) syringe_bungie();
-        
-    if (part_to_render == 9) cage_mount();
-        
-    if (part_to_render == 10) end_idler_mod();
-        
-    if (part_to_render == 11) rubber_band_hook();
-        
-    if (part_to_render == 12) rubber_band_post();
-        
-    if (part_to_render == 13) syringe_slot();
-        
-    if (part_to_render == 14) carriage_with_syringe_slot();
+	if (part_to_render == 13) syringe_bungie(); // not in use
+       
+	if (part_to_render == 14) end_idler(); // not in use
 }
 
 // [x, y, z] = [l, w, t]
@@ -298,15 +300,15 @@ module clamp_relief(
 					for (j = [1]) {
 						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
+	//#							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
 
 						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
 								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
 
-						translate([0, 0, j * (thickness - pad_ends) / 4])
-							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
+//						translate([0, 0, j * (thickness - pad_ends) / 4])
+//							rotate([0, 90, 0])
+//#								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
 					}
 			}
 
@@ -531,11 +533,12 @@ module syringe_bungie() {
 /* Module for mounting syringe pump on the cage assembly */
 module cage_mount() {
     union() {
-        linear_extrude(height = 5) {
-            square(size = [83, 200], center=true);
+%        linear_extrude(height = 10) {
+            square(size = [83, 250], center=true);
         }
-        translate([0,-75,23]) rotate([90,0,180]) end_motor();
-        translate([0,75,23]) rotate([90,0,0]) end_idler();
+        translate([0,-75,24]) rotate([90,0,180]) end_motor();
+        translate([0,95,24]) rotate([90,0,0]) end_idler_mod();
+		color("green")	translate([0,-97, 24]) cube([40,20,40], center=true); // space for the motor
     }
 }
 
@@ -546,11 +549,11 @@ module end_idler_mod() {
                 end_idler();
                 translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
             }
-            translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end, r = 8.6);
+            translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end+2, r = 8.6);
         }
         
-        translate([-22,t_idler_end-2.5,-7.5]) rubber_band_hook();
-        translate([23, t_idler_end-7,0])rubber_band_post();
+        translate([-22,t_idler_end-2.5,-3.5]) rubber_band_hook();
+        translate([24.3, t_idler_end-6,3.5])rubber_band_post();
     }
     
 }
@@ -626,3 +629,13 @@ module carriage_with_syringe_slot() {
 	}
     
 }
+
+
+module end_idler_mod_mount() {
+	difference(){
+%		translate([0,0,-9])		cube([80,30,10], center=true);
+#		rotate([90,0,0])	end_idler_mod();
+	}
+
+}
+
