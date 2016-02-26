@@ -73,7 +73,7 @@ module mounting_pi(){
 } 
 
 module mounting_touch(){
-	mounting_m25(innR=1.5);
+	mounting_m25(innR=1.2);
 	translate([28,0,0]) mounting_m25(innR=1.5);
 } 
 
@@ -87,7 +87,7 @@ module mounting_screws(){
 //	#translate([-97.5,-35.0, max_h/2-2]) cube([85, 56,2]);//the pi
 	translate([16,-16, max_h/2-2]) mounting_touch();
 	translate([20,26, max_h/2-2]) mounting_RTC();
-color("black")	translate([80, 0, max_h/2-2]) rotate([0,0,90])  step_motor_control();
+	translate([80, 0, max_h/2+4]) rotate([0,0,90])  step_motor_control();
 }
 
 module top_groove(){ // for the top cover
@@ -111,11 +111,11 @@ module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic
 
 module step_motor_control(){
 	difference(){
-		cube([21+20, 16+4, 6],center=true);
+		cube([23+20, 18+4, 8],center=true);
 		union(){
 			translate([15,0,-3]) cylinder(r=1.7, h=8);
 			translate([-15,0,-3]) cylinder(r=1.7, h=8);
-			cube([21, 16, 8], center=true);
+			cube([23, 18, 9], center=true);
 		}
 	}
 
@@ -131,7 +131,6 @@ module step_motor_fastener (){
 		}
 	}
 }
- 
 
 
 module motion_sensor (){
@@ -178,7 +177,6 @@ module the_thing (){
 			//	pw=40;// spout holder width x 
 			//	ph=40;// spout holder length y
 			//	pg=50;// spout holder height z
-			
 			frame();
 			union(){
 				top_groove();
@@ -200,16 +198,17 @@ module the_thing (){
 	}
 }
 
+the_thing();
 
+/*
 difference(){
-
-difference(){
-	the_thing();
-	translate([0,0,-11])cube([max_w, max_d, max_h], center=true);
-
-}
-translate([0,0,77])cube([max_w, max_d, 12], center=true);
+	difference(){
+		the_thing();
+		translate([0,0,-1])cube([max_w, max_d, max_h], center=true);
+	}
+	translate([0,0,77])cube([max_w, max_d, 12], center=true);
 }
 // use r=1.7 for m5 screw
 
 //spout_holder(sh_x=70, sh_y=44);
+*/
