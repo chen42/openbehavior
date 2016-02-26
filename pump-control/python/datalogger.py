@@ -25,7 +25,7 @@ class DataLogger:
 		self.datafile = open(TDATA_FILEPATH, "a")
 	def logTouch(self, touchType):
 		# Get current time in formatted string
-		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S %Z\n")
+		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S:%f %Z\n")
 		# Create output string
 		outputstr = "" + str(self.boxid) + "\t" + str(self.ratid) + "\t" + touchType + "\t" + currtimestr
 		# Append to file
