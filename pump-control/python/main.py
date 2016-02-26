@@ -45,7 +45,7 @@ def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
 	
 def resetPumpTimeout():
-	pumptimedout = False
+	global pumptimedout = False
 
 # Parse command line arguments
 try:
