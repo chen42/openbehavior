@@ -27,7 +27,7 @@ class DataLogger:
 		# Get current time in formatted string
 		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S %Z\n")
 		# Create output string
-		outputstr = "" + self.boxid + "\t" + self.ratid + "\t" + touchType + "\t" + currtimestr
+		outputstr = "" + str(self.boxid) + "\t" + str(self.ratid) + "\t" + touchType + "\t" + currtimestr
 		# Append to file
 		(self.datafile).write(outputstr)
 
