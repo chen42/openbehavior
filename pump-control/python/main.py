@@ -91,7 +91,7 @@ while True:
 			touchcount += 1
 			if not pumptimedout:
 				touchcounter += 1
-				if touchcounter == FR:
+				if touchcounter == fixedratio:
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer.start()
