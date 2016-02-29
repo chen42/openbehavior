@@ -21,6 +21,7 @@
 
 # BEGIN IMPORT PRELUDE
 import sys
+import getopt
 import time
 import RPi.GPIO as gpio
 # END IMPORT PRELUDE
