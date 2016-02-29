@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # BEGIN IMPORT PRELUDE
+import os
 import sys
 import getopt
 import time
@@ -47,6 +48,16 @@ def printUsage():
 def resetPumpTimeout():
 	global pumptimedout
 	pumptimedout = False
+	
+def forkPump(movement):
+	pumpArg = str(movement)
+	retFork = os.fork()
+	if retFork == 0:
+		args = ("-m", pumpArg)
+		os.execvp("/home/pi/openbehavior/pump-control/python/pumpcontrol.py", args)
+		return
+	else:
+		return
 
 # Parse command line arguments
 try:
@@ -63,13 +74,14 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
+# Initialize GPIO
+gpio.setwarnings(False)
+gpio.setmode(gpio.BOARD)
+
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
-
-# Initialize pump
-pump = pumpcontrol.Pump(gpio)
 
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
