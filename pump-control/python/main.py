@@ -53,9 +53,8 @@ def forkPump(movement):
 	pumpArg = str(movement)
 	retFork = os.fork()
 	if retFork == 0:
-		args = ("-m", pumpArg)
-		os.execvp("/home/pi/openbehavior/pump-control/python/pumpcontrol.py", args)
-		return
+		os.system("/home/pi/openbehavior/pump-control/python/pumpcontrol.py -m " + pumpArg)
+		sys.exit(0)
 	else:
 		return
 
