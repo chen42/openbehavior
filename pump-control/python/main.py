@@ -91,9 +91,9 @@ dlogger = datalogger.DataLogger()
 
 while True:
 	if gpio.input(SW1):
-		forkPump(1)
+		pump.move(1)
 	elif gpio.input(SW2):
-		forkPump(-1)
+		pump.move(-1)
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
@@ -105,7 +105,7 @@ while True:
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
-					forkPump(1)
+					pump.move(-1)
 				else:
 					dlogger.logTouch("ACTIVE")
 			else:
