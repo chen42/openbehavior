@@ -534,6 +534,7 @@ module syringe_bungie() {
 /* Module for mounting syringe pump on the cage assembly */
 module cage_mount() {
 	difference(){
+		spaceX=68;
 		union() {
 			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
 			translate([0,-20,5]) rounded_box (l1=82, l2=210, r_corner=4, height=10);
@@ -541,10 +542,11 @@ module cage_mount() {
 	
 		}
 		union(){
-			spaceX=68;
-		    translate([0,-spaceX+3,24]) rotate([90,0,180]) scale([1.03,1.04,1]) end_motor();
-		    translate([0,spaceX,24]) rotate([90,0,0]) scale([1.03, 1.05,1]) end_idler_mod();
+		    //translate([0,-spaceX+3,24]) rotate([90,0,180]) scale([1.03,1.04,1]) end_motor();
+			translate([0,-spaceX+3,7.5]) cube([64,26, 6], center=true);
+		    //translate([0,spaceX,24]) rotate([90,0,0]) scale([1.03, 1.05,1]) end_idler_mod();
 			translate([0,spaceX,0]) mounting_screw_bottom(h=20);
+			translate([0,spaceX,7.5]) cube([64,21, 6], center=true);
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=20);
 		}
 		
