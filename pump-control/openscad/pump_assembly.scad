@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(8);
+render_part(1);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -106,33 +106,38 @@ d_plunger_max = 32; // this sets the spacing for screws on the plunger retainer 
 d_plunger_retainer = d_plunger_max + 12;
 
 module end_motor() {
-	difference() {
-		union() {
-			rod_clamps(t_motor_end, pad_guide_ends);
-
-			// motor plate
-			difference () {
-				translate([0, 0, (t_motor_mount - t_motor_end) / 2])
-					cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
-
-				clamp_relief(t_motor_end, pad_guide_ends);
-				translate([0,0,-t_motor_mount/2]) rotate([90, 0, 0]) mounting_screw_bottom(h=20);  
-			}
-		}
-
-		// motor mount holes
-		translate([0, 0, -t_motor_end / 2])
-			rotate([0, 0, 45])
-				NEMA_X_mount(
-					height = t_motor_end,
-					l_slot = 1,
-					motor = motor);
-
-		// keyhole opening for motor mount screws
-		// for (i = [-1, 1])
-		//	translate([i * motor[3] / 2, -motor[3] / 2, 0])
-		//		cylinder(r = 2.5, h = 5, center = true);
-	}
+    difference() {
+        union() {
+            difference() {
+                union() {
+                    rod_clamps(t_motor_end, pad_guide_ends);
+        
+                    // motor plate
+                    difference () {
+                        translate([0, 0, (t_motor_mount - t_motor_end) / 2])
+                            cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
+        
+                        clamp_relief(t_motor_end, pad_guide_ends); 
+                    }
+                }
+        
+                // motor mount holes
+                translate([0, 0, -t_motor_end / 2])
+                    rotate([0, 0, 45])
+                        NEMA_X_mount(
+                            height = t_motor_end,
+                            l_slot = 1,
+                            motor = motor);
+        
+                // keyhole opening for motor mount screws
+                // for (i = [-1, 1])
+                //	translate([i * motor[3] / 2, -motor[3] / 2, 0])
+                //		cylinder(r = 2.5, h = 5, center = true);
+            }
+            translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
+        }
+        translate([0,0,-t_motor_mount/2]) rotate([90, 0, 0]) mounting_screw_bottom(h=20);
+    }
 }
 
 module end_idler() {
@@ -570,6 +575,7 @@ module end_idler_mod() {
             union() {
                 end_idler();
                 translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
+                translate([-22,-19.1,-10]) cube([45,10,20]);
             }
             translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end+2, r = 8.6);
 	 		translate([0,-10,0]) rotate([90,0,0]) mounting_screw_bottom(h=10);
