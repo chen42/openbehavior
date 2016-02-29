@@ -22,6 +22,7 @@
 # BEGIN IMPORT PRELUDE
 import sys
 import time
+import RPi.GPIO as gpio
 # END IMPORT PRELUDE
 
 # BEGIN Pin configuration
@@ -115,4 +116,18 @@ class Pump:
 	def sleep(self):
 		self.gpio.output(SLEEP, self.gpio.LOW)
 # END CLASS Pump
-		
+
+if __name__ == "__main__":
+	# Initialize GPIO
+	gpio.setwarnings(False)
+	gpio.setmode(gpio.BOARD)
+	p = Pump(gpio)
+	# Parse command line arguments
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "m:")
+	except getopt.GetoptError:
+		sys.exit(2)
+	for opt, arg in opts:
+		if opt == '-m':
+			p.move(float(arg))
+			

@@ -63,10 +63,6 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
-# Initialize GPIO
-gpio.setwarnings(False)
-gpio.setmode(gpio.BOARD)
-
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
