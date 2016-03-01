@@ -543,15 +543,13 @@ module cage_mount() {
 		union() {
 			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
 			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
-//			translate([0,0,2]) color("black") cube([62,156, 5], center=true); // size of the real pump
+			translate([0,0,-8]) cylinder(r=0.4, 6); // bottom pin to fool the printer so that I 
 	
 		}
 		union(){
-		    //translate([0,-spaceX+3,24]) rotate([90,0,180]) scale([1.03,1.04,1]) end_motor();
 			translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true);
-		    //translate([0,spaceX,24]) rotate([90,0,0]) scale([1.03, 1.05,1]) end_idler_mod();
-			translate([0,spaceX,0]) mounting_screw_bottom(h=10);
-			translate([0,spaceX,7.5]) cube([63.4,20.6, 6], center=true);
+#			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
+			translate([0,spaceX+1,7.5]) cube([63.4,20.6, 6], center=true);
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=10);
 		}
 		
@@ -559,7 +557,7 @@ module cage_mount() {
 }
 module mounting_screw_bottom(h=5){
 	cylinder(r=1.7, h);
-#	translate([0,0,0]) cylinder(r1=3, r2=1.7, 3);
+	translate([0,0,-3]) cylinder(r1=3, r2=1.7, 3);
 }
 
 module motor_housing(){
