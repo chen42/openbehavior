@@ -543,14 +543,16 @@ module cage_mount() {
 		union() {
 			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
 			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
-			translate([0,0,-8]) cylinder(r=0.4, 6); // bottom pin to fool the printer so that I 
 	
 		}
 		union(){
 			translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true);
-#			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
+			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
 			translate([0,spaceX+1,7.5]) cube([63.4,20.6, 6], center=true);
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=10);
+			r=100;
+			translate([r/2-5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side curve for printing on the side 
+			translate([-r/2+5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40);
 		}
 		
     }
