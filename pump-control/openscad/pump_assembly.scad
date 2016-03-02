@@ -552,7 +552,10 @@ module cage_mount() {
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=10);
 			r=100;
 			translate([r/2-5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side curve for printing on the side 
-			translate([-r/2+5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40);
+			translate([-r/2+5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side cureve 
+			translate([0, -98,-3]) cube([40,20,50],center=true); // hole for dissipate motor heat
+			translate([0, -100, 30]) scale([1.2,0.8, 0.5]) sphere(r=30); // hole for dissipate motor heat
+			translate([0,3,-3]) scale([0.4,1,1]) cylinder(r=r/2,40); // center base hole for reducing printing time 
 		}
 		
     }
