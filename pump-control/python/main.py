@@ -32,6 +32,7 @@ import datalogger
 TIR = int(36)
 SW1 = int(37)
 SW2 = int(38)
+TOUCHLED = int(32)
 # END CONSTANT DEFINITIONS
 
 # BEGIN GLOBAL VARIABLES
@@ -47,6 +48,11 @@ def printUsage():
 def resetPumpTimeout():
 	global pumptimedout
 	pumptimedout = False
+	
+def blinkTouchLED(duration):
+	gpio.out(TOUCHLED, gpio.HIGH)
+	time.sleep(duration)
+	gpio.out(TOUCHLED, gpio.LOW)
 
 # Parse command line arguments
 try:
@@ -71,6 +77,7 @@ gpio.setmode(gpio.BOARD)
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(TOUCHLED, gpio.OUT)
 
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
@@ -87,6 +94,7 @@ while True:
 	elif gpio.input(SW2):
 		pump.move(-0.5)
 	elif not gpio.input(TIR):
+		blinkTouchLED(0.1)
 		i = tsensor.readPinTouched()
 		if i == 1:
 			if not pumptimedout:
