@@ -21,6 +21,7 @@ import sys
 import getopt
 import time
 from threading import Timer
+import subprocess32 as subprocess
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
@@ -105,6 +106,7 @@ while True:
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
+					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py', shell=True)
 					pump.move(-0.06)
 				else:
 					dlogger.logTouch("ACTIVE")
