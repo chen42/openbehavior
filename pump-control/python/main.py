@@ -50,9 +50,9 @@ def resetPumpTimeout():
 	pumptimedout = False
 	
 def blinkTouchLED(duration):
-	gpio.out(TOUCHLED, gpio.HIGH)
+	gpio.output(TOUCHLED, gpio.HIGH)
 	time.sleep(duration)
-	gpio.out(TOUCHLED, gpio.LOW)
+	gpio.output(TOUCHLED, gpio.LOW)
 
 # Parse command line arguments
 try:
