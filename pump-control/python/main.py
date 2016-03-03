@@ -106,7 +106,7 @@ while True:
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
-					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py', shell=True)
+					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
 					dlogger.logTouch("ACTIVE")
