@@ -95,9 +95,9 @@ while True:
 	elif gpio.input(SW2):
 		pump.move(-0.5)
 	elif not gpio.input(TIR):
-		blinkTouchLED(0.1)
 		i = tsensor.readPinTouched()
 		if i == 1:
+			blinkTouchLED(0.1)
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
@@ -113,4 +113,5 @@ while True:
 			else:
 				dlogger.logTouch("ACTIVE")
 		elif i == 7:
+			blinkTouchLED(0.1)
 			dlogger.logTouch("INACTIVE")
