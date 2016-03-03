@@ -18,4 +18,4 @@ if __name__ == "__main__":
 	gpio.setmode(gpio.BCM)
 	gpio.setup(GREEN_LED_PIN, gpio.OUT)
 	# flash
-	flashRewardLED(1)
+	flashRewardLED(5)
