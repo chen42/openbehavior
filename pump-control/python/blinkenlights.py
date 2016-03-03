@@ -4,7 +4,7 @@ import RPi.GPIO as gpio
 import time
 
 # BEGIN CONSTANT DEFINITIONS
-GREEN_LED_PIN = int(28)
+GREEN_LED_PIN = int(1)
 # END CONSTANT DEFINITIONS
 
 def flashRewardLED(duration):
@@ -15,5 +15,7 @@ def flashRewardLED(duration):
 if __name__ == "__main__":
 	# Initialize GPIO
 	gpio.setwarnings(False)
-	gpio.setmode(gpio.BOARD)
+	gpio.setmode(gpio.BCM)
 	gpio.setup(GREEN_LED_PIN, gpio.OUT)
+	# flash
+	flashRewardLED(1)
