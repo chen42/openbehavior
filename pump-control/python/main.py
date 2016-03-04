@@ -21,6 +21,7 @@ import sys
 import getopt
 import time
 from threading import Timer
+import subprocess32 as subprocess
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
@@ -32,6 +33,7 @@ import datalogger
 TIR = int(36)
 SW1 = int(37)
 SW2 = int(38)
+TOUCHLED = int(32)
 # END CONSTANT DEFINITIONS
 
 # BEGIN GLOBAL VARIABLES
@@ -47,6 +49,11 @@ def printUsage():
 def resetPumpTimeout():
 	global pumptimedout
 	pumptimedout = False
+	
+def blinkTouchLED(duration):
+	gpio.output(TOUCHLED, gpio.HIGH)
+	time.sleep(duration)
+	gpio.output(TOUCHLED, gpio.LOW)
 
 # Parse command line arguments
 try:
@@ -71,6 +78,7 @@ gpio.setmode(gpio.BOARD)
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(TOUCHLED, gpio.OUT)
 
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
@@ -89,6 +97,7 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
+			blinkTouchLED(0.1)
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
@@ -97,10 +106,12 @@ while True:
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
+					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
 					dlogger.logTouch("ACTIVE")
 			else:
 				dlogger.logTouch("ACTIVE")
 		elif i == 7:
+			blinkTouchLED(0.1)
 			dlogger.logTouch("INACTIVE")
