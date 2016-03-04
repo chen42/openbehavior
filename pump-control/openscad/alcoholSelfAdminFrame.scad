@@ -108,7 +108,6 @@ module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic
 	}
 }
 
-
 module step_motor_control(){
 	difference(){
 		cube([23+20, 18+4, 8],center=true);
@@ -124,7 +123,7 @@ module step_motor_control(){
 
 module step_motor_fastener (){
 	difference(){
-		cube([21+14, 9, 3],center=true);
+		cube([21+16, 9, 3],center=true);
 		union(){
 			translate([15,0,-3]) cylinder(r=1.7, h=8);
 			translate([-15,0,-3]) cylinder(r=1.7, h=8);
@@ -198,17 +197,7 @@ module the_thing (){
 	}
 }
 
-the_thing();
+//the_thing();
+step_motor_fastener();
 
-/*
-difference(){
-	difference(){
-		the_thing();
-		translate([0,0,-1])cube([max_w, max_d, max_h], center=true);
-	}
-	translate([0,0,77])cube([max_w, max_d, 12], center=true);
-}
-// use r=1.7 for m5 screw
 
-//spout_holder(sh_x=70, sh_y=44);
-*/
