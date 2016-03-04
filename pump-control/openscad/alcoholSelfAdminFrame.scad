@@ -98,6 +98,35 @@ module top_groove(){ // for the top cover
 	}
 }
 
+!top_cover();
+module top_cover(){
+//		translate([101,0,0])cube([2,2,200],center=true); // location finder
+	difference(){
+		color("green")  round_corner_box(r0=3.6, wd=max_w-15, lg=max_d-15,ht=65); // outside 
+	 	translate([0,0,-0.1])round_corner_box(r0=6, wd=max_w-24, lg=max_d-24,ht=63); // inside
+		translate([-130,0,3]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
+		translate([max_w/2-10,7,17]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+		translate([101-14,max_d/2,15]) rotate([90,0,0]) round_corner_box(r0=1, wd=14,lg=10, ht=20); // power cord 
+		translate([65,max_d/2,0]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=20); // wire hole 
+		translate([-65,max_d/2,0]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=20); // wire hole 
+//		translate([60, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
+//		translate([73, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
+		translate([40,50,35]) rotate([90,0,0]) dev_board();
+	}
+}
+module dev_board(){
+//	difference(){
+//		cube([72,47,1],center=true);
+		translate([72/2-3, 47/2-3,0])cylinder(r=2, h=10);
+		translate([-72/2+3, -47/2+3,0])cylinder(r=2, h=10);
+		translate([-72/2+3, 47/2-3,0])cylinder(r=2, h=10);
+		translate([72/2-3, -47/2+3,0])cylinder(r=2, h=10);
+		cube([40,20,30],center=true);
+//	}
+}
+
+
+
 module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic 
 	hull(){
 	translate([wd/2,lg/2,0])
@@ -198,6 +227,6 @@ module the_thing (){
 }
 
 //the_thing();
-step_motor_fastener();
+//step_motor_fastener();
 
 
