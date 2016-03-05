@@ -13,8 +13,6 @@ pg=60;// spout holder height z
 r=10; // forgot what this is for??
 fv=0.1; // for better visualization
 
-
-
 module corner(ln=20, wd=30 ){ // a negative part for making a round corner 
 	difference (){
 		cube([wd,wd,ln]);
@@ -111,7 +109,7 @@ module top_cover(){
 		translate([-65,max_d/2,0]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=20); // wire hole 
 //		translate([60, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
 //		translate([73, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
-		translate([40,50,35]) rotate([90,0,0]) dev_board();
+		translate([40,45,35]) rotate([90,0,0]) dev_board();
 	}
 }
 module dev_board(){
