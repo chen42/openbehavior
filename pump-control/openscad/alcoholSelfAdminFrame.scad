@@ -103,13 +103,13 @@ module top_cover(){
 		color("green")  round_corner_box(r0=3.6, wd=max_w-15, lg=max_d-15,ht=65); // outside 
 	 	translate([0,0,-0.1])round_corner_box(r0=6, wd=max_w-24, lg=max_d-24,ht=63); // inside
 		translate([-130,0,3]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-		translate([max_w/2-10,7,17]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
-		translate([101-14,max_d/2,15]) rotate([90,0,0]) round_corner_box(r0=1, wd=14,lg=10, ht=20); // power cord 
-		translate([65,max_d/2,0]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=20); // wire hole 
-		translate([-65,max_d/2,0]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=20); // wire hole 
+		translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+		translate([101-14,max_d/2,20]) rotate([90,0,0]) round_corner_box(r0=1, wd=14,lg=10, ht=20); // power cord 
+		translate([60,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=14); // wire hole 
+		translate([-60,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=10,lg=10, ht=14); // wire hole 
 //		translate([60, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
 //		translate([73, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
-		translate([40,45,35]) rotate([90,0,0]) dev_board();
+		translate([40,45,38]) rotate([90,0,0]) dev_board();
 	}
 }
 module dev_board(){
