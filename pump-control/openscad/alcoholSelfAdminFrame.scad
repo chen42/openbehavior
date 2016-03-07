@@ -81,7 +81,8 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-	translate([-93,-33, max_h/2-2]) mounting_pi();
+//	translate([-93,-33, max_h/2-2]) mounting_pi();
+	translate([-93,-30, max_h/2-2]) mounting_pi();
 //	#translate([-97.5,-35.0, max_h/2-2]) cube([85, 56,2]);//the pi
 	translate([16,-16, max_h/2-2]) mounting_touch();
 	translate([20,26, max_h/2-2]) mounting_RTC();
@@ -96,7 +97,7 @@ module top_groove(){ // for the top cover
 	}
 }
 
-!top_cover();
+//top_cover();
 module top_cover(){
 //		translate([101,0,0])cube([2,2,200],center=true); // location finder
 	difference(){
@@ -137,7 +138,7 @@ module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic
 
 module step_motor_control(){
 	difference(){
-		cube([23+20, 18+4, 8],center=true);
+		cube([23+20, 18+4, 5],center=true);
 		union(){
 			translate([15,0,-3]) cylinder(r=1.7, h=8);
 			translate([-15,0,-3]) cylinder(r=1.7, h=8);
@@ -160,10 +161,8 @@ module step_motor_fastener (){
 
 
 module motion_sensor (){
-	translate([-14,0,5])
-	cylinder(r=1, h=7);
-	translate([14,0,5])
-	cylinder(r=1,h=7);
+	translate([-14,0,5]) cylinder(r=1, h=7);
+	translate([14,0,5]) cylinder(r=1,h=7);
 	cylinder(r=4.5, h=20);
 	cylinder(r1=20,r2=4.5, h=6);
 }
@@ -196,7 +195,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 }
 
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
-
+!the_thing();
 module the_thing (){
 	union(){
 		difference(){
