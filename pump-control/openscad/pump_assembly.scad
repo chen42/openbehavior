@@ -12,7 +12,7 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(8);
+//render_part(8);
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -543,23 +543,25 @@ module cage_mount() {
 		union() {
 			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
 			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
-	
 		}
 		union(){
-			translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true);
-			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
+		#	translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true); // motor end
 			translate([0,spaceX+1,7.5]) cube([63.4,20.6, 6], center=true);
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=10);
+			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
 			r=100;
 			translate([r/2-5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side curve for printing on the side 
 			translate([-r/2+5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side cureve 
 			translate([0, -98,-3]) cube([40,20,50],center=true); // hole for dissipate motor heat
-			translate([0, -100, 30]) scale([1.2,0.8, 0.5]) sphere(r=30); // hole for dissipate motor heat
+			translate([-50, -100, 30]) rotate([0,90,0]) cylinder(r=10, h=100); // hole for dissipate motor heat
+			translate([0, -100, 30]) rotate([90,0,0]) cylinder(r=2, h=100); // hole for motor wires 
 			translate([0,3,-3]) scale([0.4,1,1]) cylinder(r=r/2,40); // center base hole for reducing printing time 
 		}
 		
     }
 }
+
+
 module mounting_screw_bottom(h=5){
 	cylinder(r=1.7, h);
 	translate([0,0,-3]) cylinder(r1=3, r2=1.7, 3);
@@ -571,6 +573,15 @@ module motor_housing(){
 		translate([0,-10,0]) cube([54, 50,50], center=true);
 		color("red") translate([0,-2.5,16]) cube([60, 40, 4], center=true); // top cover for the motor
 	}
+}
+
+!motor_housing_cover();
+module motor_housing_cover(){
+difference(){
+#	rotate([90,0,0]) rounded_box(l1=60, l2=1, r_corner=1.2, height=40);
+	
+	}
+
 }
 
 module end_idler_mod() {
