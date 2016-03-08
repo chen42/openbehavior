@@ -15,8 +15,6 @@ BOXIDPATH = '/home/pi/boxid'
 PREFIXDAT = '/home/pi/pies/motion/mot'
 # Number of seconds to sleep after detecting motion
 SECS_TO_SLEEP_ON_MOTION = float(45.0)
-# Number of seconds to sleep while waiting for motion to be detected
-SECS_TO_SLEEP_ON_WAIT = float(5.0)
 ### END CONSTANT DEFINITIONS
 
 ### BEGIN GLOBAL DATA SECTION
@@ -105,11 +103,22 @@ def motionMain():
 	
 	# Main event loop
 	while(True):
+		# EXPLANATION:
+		# 	When motion is detected, the sensor's output transitions from low to high and stays
+		# 	high for about one minute before finally transitioning back to low. Since the input
+		#	is guaranteed to not change during this time, the program can sleep for most of it.
+		#	Recording the time and writing it to the data file should take less than a second, 
+		#	but we budget 15 seconds for this just to be safe (in case the kernel's buffer 
+		#	cache is being thrashed or whatever) and to provide some wiggle room. The program
+		#	should therefore sleep for the remaining 45 seconds
+		#
+		# If motion has been detected, sleep for about 3/4ths of a minute to free up CPU time
 		if pSleep:
 			time.sleep(SECS_TO_SLEEP_ON_MOTION)
 			pSleep = False
+		# If motion hasn't been detected, simply pass (do nothing) and continue waiting for motion
 		else:
-			time.sleep(SECS_TO_SLEEP_ON_WAIT)
+			pass
 			
 # Execute motionMain() when script is run directly 
 # (Allows for possible importation by other scripts in the future)
