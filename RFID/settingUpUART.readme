@@ -1,20 +1,17 @@
+For Raspbian Jessie:
+run the following two commands
 
-1. comment out the following line in /etc/inittab
+sudo systemctl stop serial-getty@ttyAMA0.service
+sudo systemctl disable serial-getty@ttyAMA0.service 
 
-T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
+then disable the login shell:
 
-2. disable bootup info
+sudo raspi-config
 
-change the line in /boot/cmdline.txt  from 
+select 9 for advanced options.
+select A8 for Serial to disable login shell.
 
-dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait
-
-to 
-
-dwc_otg.lpm_enable=0  console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait
-
-i.e. remove all references to ttyAMA0
-
+then reboot.
 
 
 
