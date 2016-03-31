@@ -51,7 +51,7 @@ def recordMotionCallback(derp):
 	# Calculate elapsed time since start
 	elapsedTime = time.time() - startEpochTime
 	# Write data point to file
-	motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(eventTime)) + boxID + "\t" + str(elapsedTime) + "\n")
+	motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(motionEventTime)) + boxID + "\t" + str(elapsedTime) + "\n")
 	# Blink the LED
 	motionBlinkenLights()
 	# Explicit return because FUCK YEAH FLOWCHARTS
