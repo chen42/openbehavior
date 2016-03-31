@@ -108,8 +108,9 @@ def motionMain():
 		#
 		# If motion has been detected, sleep for about 3/4ths of a minute to free up CPU time
 		if pSleep:
-			time.sleep(SECS_TO_SLEEP_ON_MOTION)
-			pSleep = False
+			#time.sleep(SECS_TO_SLEEP_ON_MOTION)
+			#pSleep = False
+			pass
 		# If motion hasn't been detected, simply pass (do nothing) and continue waiting for motion
 		else:
 			pass
