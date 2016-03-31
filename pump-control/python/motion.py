@@ -93,7 +93,7 @@ def motionMain():
 	GPIO.setup(MOTIONLED, GPIO.OUT, initial=GPIO.LOW)
 	
 	# Register interrupt event for pin used for motion detection
-	GPIO.add_event_detect(MOTIONOUT, GPIO.RISING, callback=recordMotionCallback)
+	#GPIO.add_event_detect(MOTIONOUT, GPIO.RISING, callback=recordMotionCallback)
 	
 	# Main event loop
 	while(True):
@@ -107,14 +107,23 @@ def motionMain():
 		#	should therefore sleep for the remaining 45 seconds.
 		#
 		# If motion has been detected, sleep for about 3/4ths of a minute to free up CPU time
-		if pSleep:
+		#if pSleep:
 			#time.sleep(SECS_TO_SLEEP_ON_MOTION)
 			#pSleep = False
-			pass
+		#	pass
 		# If motion hasn't been detected, simply pass (do nothing) and continue waiting for motion
-		else:
-			pass
-			
+		#else:
+		#	pass
+		if GPIO.input(MOTIONOUT):
+			# Get time of event
+			motionEventTime = time.time()
+			# Calculate elapsed time since start
+			elapsedTime = time.time() - startEpochTime
+			# Write data point to file
+			motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(motionEventTime)) + boxID + "\t" + str(elapsedTime) + "\n")
+			# Blink the LED
+			motionBlinkenLights()
+						
 # Execute motionMain() when script is run directly 
 # (Allows for possible importation by other scripts in the future)
 if __name__ == '__main__':
