@@ -29,12 +29,6 @@ startLocalTime = None
 startLocalTimeString = ''
 startEpochTime = float()
 # Variable to control whether or not the program's main thread should sleep or not.
-# EXPLANATION:
-# 	The motion detector outputs HIGH for an entire minute after motion is detected,
-# 	so the program should voluntarily release control of execution and sleep for just
-# 	under a minute instead of tying up resources. This variable is asynchronously set
-#	to true by recordMotionCallback which is asynchronously called whenever motion is 
-#	detected and reset to false after the program finishes sleeping.
 pSleep = False
 ### END GLOBAL DATA SECTION
 
@@ -48,7 +42,7 @@ def motionBlinkenLights():
 	return None
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired
-def recordMotionCallback():
+def recordMotionCallback(derp):
 	global boxID
 	global motionDataFile
 	global startEpochTime
@@ -105,12 +99,12 @@ def motionMain():
 	while(True):
 		# EXPLANATION:
 		# 	When motion is detected, the sensor's output transitions from low to high and stays
-		# 	high for about one minute before finally transitioning back to low. Since the input
+		# 	there for about one minute before finally transitioning back to low. Since the input
 		#	is guaranteed to not change during this time, the program can sleep for most of it.
 		#	Recording the time and writing it to the data file should take less than a second, 
 		#	but we budget 15 seconds for this just to be safe (in case the kernel's buffer 
-		#	cache is being thrashed or whatever) and to provide some wiggle room. The program
-		#	should therefore sleep for the remaining 45 seconds
+		#	cache is being thrashed or whatever) and provide some wiggle room. The program
+		#	should therefore sleep for the remaining 45 seconds.
 		#
 		# If motion has been detected, sleep for about 3/4ths of a minute to free up CPU time
 		if pSleep:
