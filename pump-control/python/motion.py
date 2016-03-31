@@ -14,7 +14,7 @@ BOXIDPATH = '/home/pi/boxid'
 # Prefix to filesystem path where motion data will be stored
 PREFIXDAT = '/home/pi/pies/motion/mot'
 # Number of seconds to sleep after detecting motion
-SECS_TO_SLEEP_ON_MOTION = float(45.0)
+SECS_TO_SLEEP_ON_MOTION = float(1.0)
 ### END CONSTANT DEFINITIONS
 
 ### BEGIN GLOBAL DATA SECTION
