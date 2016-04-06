@@ -12,7 +12,7 @@ motionLed=31
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 gpio.setup(pirPin, gpio.IN)
-gpio.setup(onPin, gpio.IN)        
+gpio.setup(onPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)        
 gpio.setup(motionLed, gpio.OUT)        
 
 while(True):
