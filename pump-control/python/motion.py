@@ -50,6 +50,9 @@ def recordMotionCallback(derp):
 	motionEventTime = time.time()
 	# Calculate elapsed time since start
 	elapsedTime = time.time() - startEpochTime
+	# If elapsed time is greater than two hours, end the program
+	if elapsedTime >= 7200:
+		sys.exit(0)
 	# Write data point to file
 	motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(motionEventTime)) + boxID + "\t" + str(elapsedTime) + "\n")
 	# Blink the LED
