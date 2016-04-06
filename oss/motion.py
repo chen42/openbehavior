@@ -11,7 +11,7 @@ onPin=16
 motionLed=31
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
-gpio.setup(pirPin, gpio.IN)
+gpio.setup(pirPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(onPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)        
 gpio.setup(motionLed, gpio.OUT)        
 
