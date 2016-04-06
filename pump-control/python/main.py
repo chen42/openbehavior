@@ -20,6 +20,7 @@
 import sys
 import getopt
 import time
+import datetime
 from threading import Timer
 import subprocess32 as subprocess
 import RPi.GPIO as gpio
@@ -89,8 +90,18 @@ tsensor = touchsensor.TouchSensor()
 # Initialize data logger
 dlogger = datalogger.DataLogger()
 
+# Get start time
+sTime = datetime.datetime.now()
+
 while True:
-	if gpio.input(SW1):
+	# Get current time
+	currTime = datetime.datetime.now()
+	# Calculate the difference
+	diffTime = currTime - sTime
+	# If the elapsed time is greater than two hours, quit the program
+	if diffTime.seconds >= 7200:
+		sys.exit(0)
+	elif gpio.input(SW1):
 		pump.move(0.5)
 	elif gpio.input(SW2):
 		pump.move(-0.5)
