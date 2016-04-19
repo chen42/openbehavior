@@ -28,14 +28,11 @@ module lcdPanel(){
 		l=31;
 		difference(){
 		union(){
-			hull(){
 				translate([w/2,   l/2,0])cylinder(r=3.8, h=10);
 				translate([w/2,  -l/2,0])cylinder(r=3.8, h=10);
-			}
-			hull(){
 				translate([-w/2, -l/2,0])cylinder(r=3.8, h=10);
 				translate([-w/2,  l/2,0])cylinder(r=3.8, h=10);
-			}
+			
 		}
 		union (){
 			translate([w/2,   l/2,0])cylinder(r=1.6, h=11);
@@ -49,15 +46,15 @@ module lcdPanel(){
 
 module baseboard(){
 	difference(){
-		color("grey") translate([-90/2,-215+36,-5]) cube([90, 160, 4]); // base board
-		translate([0,-76,0])cube([11.5,3.3,4.5], center=true); // rfid board connection via the pins; 
+		color("grey") translate([0,-100,-3]) cube([90, 160, 4], center=true); // base board
+		translate([10,-84,-2])cube([11.5,3.1,5], center=true); // rfid board connection via the pins; 
 		translate([0,-6,0]) cube([47,46,5], center=true); // rfid antenna groove;
 	}
 } 
 module sidewall(){
-	color("blue") cube([2,100,40], center=true);
-	translate([3,48,0]) difference( ) { cube([7,7,40], center=true); cylinder(r=1.9, h=43);}
-	translate([3,-48,0]) difference( ) { cube([7,7,40], center=true); cylinder(r=1.9, h=43);}
+	color("blue") cube([2,100,30], center=true);
+	translate([3,46.5,8]) difference( ) { cube([7,7,14], center=true); cylinder(r=1.9, h=43);}
+	translate([3,-46.5,8]) difference( ) { cube([7,7,14], center=true); cylinder(r=1.9, h=43);}
 }
 
 
@@ -78,18 +75,24 @@ module topCover(){
 	}
 }
 
+union(){
+		rfid_antenna_housing();
+		baseboard();
+		translate([0,-41,-1]) lcdPanel();
+		translate([-13,-143,-1.0]) rotate([0,0,-90]) mounting_pi(); // pi 
+		bx=44;
+		by=-128;
+		translate([bx,by,13]) rotate([0,0,180]) sidewall();
+		translate([-bx,by,13])sidewall(); 
+		difference(){
+			translate([0,-179,13]) cube([90,2,30], center=true);// backwall
+			translate([-13,-178,3]) cube([20,10, 5], center=true); // sdcard slot  
+			translate([35,-170, 28]) rotate([90,0,0]) cylinder(r=2.5, h=20); 
+		}
 
-rfid_antenna_housing();
-baseboard();
-translate([0,-40,-1]) lcdPanel();
-translate([0,-143,-1.0]) rotate([0,0,-90]) mounting_pi(); // pi 
-bx=44;
-by=-128;
-translate([bx,by,18]) rotate([0,0,180]) sidewall();
-translate([-bx,by,18])sidewall(); 
-difference(){
-translate([0,-178,18]) cube([90,2,40], center=true);// backwall
-translate([0,-178,3]) cube([20,10, 5], center=true);  
+		color("green") translate([30,-80,12]) rotate([90,0,0]) battery();	
 }
-!topCover();
+
+
+	//topCover();
 
