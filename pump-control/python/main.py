@@ -99,7 +99,7 @@ while True:
 	# Calculate the difference
 	diffTime = currTime - sTime
 	# If the elapsed time is greater than two hours, quit the program
-	if diffTime.seconds >= 7200:
+	if diffTime.seconds >= 120:
 		sys.exit(0)
 	elif gpio.input(SW1):
 		pump.move(0.5)
