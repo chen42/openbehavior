@@ -8,7 +8,7 @@ import string
 # BEGIN CONSTANT DEFINITIONS
 BOXID_FILEPATH = '/home/pi/boxid'
 RATID_FILEPATH = '/home/pi/ratid'
-TDATA_FILEPATH = '/home/pi/touchdata'
+TDATA_FILEPRFX = '/home/pi/pies/pump/pump'
 # END CONSTANT DEFINITIONS
 
 class DataLogger:
@@ -21,8 +21,12 @@ class DataLogger:
 		ratidfile = open(RATID_FILEPATH)
 		self.ratid = int((ratidfile.read()).strip())
 		ratidfile.close()
+		# get start time
+		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+		# construct file name
+		datafilePath = TDATA_FILEPRFX + self.boxid + '_' + startTime + '.csv'
 		# open data file
-		self.datafile = open(TDATA_FILEPATH, "a")
+		self.datafile = open(datafilePath, "a")
 	def logTouch(self, touchType):
 		# Get current time in formatted string
 		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S:%f %Z\n")
