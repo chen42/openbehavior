@@ -28,10 +28,10 @@ module lcdPanel(){
 		l=31;
 		difference(){
 		union(){
-				translate([w/2,   l/2,0])cylinder(r=3.8, h=10);
-				translate([w/2,  -l/2,0])cylinder(r=3.8, h=10);
-				translate([-w/2, -l/2,0])cylinder(r=3.8, h=10);
-				translate([-w/2,  l/2,0])cylinder(r=3.8, h=10);
+				translate([w/2,   l/2,0])cylinder(r=3.6, h=10);
+				translate([w/2,  -l/2,0])cylinder(r=3.6, h=10);
+				translate([-w/2, -l/2,0])cylinder(r=3.6, h=10);
+				translate([-w/2,  l/2,0])cylinder(r=3.6, h=10);
 			
 		}
 		union (){
@@ -46,9 +46,10 @@ module lcdPanel(){
 
 module baseboard(){
 	difference(){
-		color("grey") translate([0,-100,-3]) cube([90, 160, 4], center=true); // base board
-		translate([10,-84,-2])cube([11.5,3.1,5], center=true); // rfid board connection via the pins; 
+		color("grey") translate([0,-96,-3]) cube([90, 152, 4], center=true); // base board
+		translate([40,-105,-2])cube([3.0, 11.5,5], center=true); // rfid board connection via the pins; 
 		translate([0,-6,0]) cube([47,46,5], center=true); // rfid antenna groove;
+		screwsV_frontCover();
 	}
 } 
 module sidewall(){
@@ -60,39 +61,80 @@ module sidewall(){
 
 module topCoverMounting() {
 	mx=41;
-	my=-80;
-	my2=-176;
-	color("blue") translate([mx,my,0]) cylinder(r=1.8,h=50);
-	color("blue") translate([-mx,my,0]) cylinder(r=1.8,h=50);
-	color("blue") translate([-mx,my2,0]) cylinder(r=1.8,h=50);
-	color("blue") translate([mx,my2,0]) cylinder(r=1.8,h=50);
+	my=-73.3;
+	my2=-166.6;
+	color("blue") translate([mx,my,0])  cylinder(r=1.8,h=40);
+	color("blue") translate([-mx,my,0]) cylinder(r=1.8,h=40);
+	color("blue") translate([-mx,my2,0])cylinder(r=1.8,h=40);
+	color("blue") translate([mx,my2,0]) cylinder(r=1.8,h=40);
 } 
 
 module topCover(){
 	difference(){
-		translate([0,-128,40]) cube([90, 104, 3], center=true);
+		translate([0,-121,30]) cube([90, 102, 3], center=true);
 		topCoverMounting();
 	}
 }
 
+module lcd(){ // model:  HD44780 
+	translate([0,-43, 13.1]) cube([69+1, 24+1, 8.4], center=true);
+	translate([0,-43, 13.1-3.7]) cube([80.6, 36, 1], center=true);
+}
+
+module screws_frontCover(){
+	r0=1.6;
+	h0=25;
+	// in the  base 
+	translate([40,-67,-20]) cylinder(r=r0, h0);
+	translate([-40,-67,-20]) cylinder(r=r0, h0);
+	// on the side
+	h1=10;
+	translate([41,-67,20]) rotate([90,0,0])  cylinder(r=r0, h1);
+    translate([-41,-67,20]) rotate([90,0,0]) cylinder(r=r0, h1);
+} 
+
+module frontCover (){
+	difference() {
+		union(){
+			translate([-45,-70,-1]) color("pink") cube([2,50,15]);
+			translate([45-2,-70,-1]) color("pink") cube([2,50,15]);
+			translate([-45,-22,-1]) color("pink") cube([90, 2,15]);
+			translate([-45,-70,13])  cube([90, 50,3]);
+			translate([-45,-70,13]) cube ([90,2,15]);
+			#translate([-40,-67,6]) cube([6,6,14],center=true); // for screws
+			#translate([40,-67,6]) cube([6,6,14],center=true); // for screws
+		}
+		lcd();	
+		screws_frontCover();
+	}
+
+}
+
 union(){
-		rfid_antenna_housing();
-		baseboard();
-		translate([0,-41,-1]) lcdPanel();
-		translate([-13,-143,-1.0]) rotate([0,0,-90]) mounting_pi(); // pi 
-		bx=44;
-		by=-128;
-		translate([bx,by,13]) rotate([0,0,180]) sidewall();
-		translate([-bx,by,13])sidewall(); 
+		lcd();	
+		difference() {
+			union(){
+				rfid_antenna_housing();
+				translate([0,-43,-1]) lcdPanel();
+				translate([-13,-143+8,-1.0]) rotate([0,0,-90]) mounting_pi(); // pi  // rpi
+				bx=44;
+				by=-120;
+
+				baseboard();
+				translate([bx,by,13]) rotate([0,0,180]) sidewall();
+				translate([-bx,by,13]) sidewall(); 
+			} 
+			screws_frontCover();
+		}
+
 		difference(){
-			translate([0,-179,13]) cube([90,2,30], center=true);// backwall
-			translate([-13,-178,3]) cube([20,10, 5], center=true); // sdcard slot  
+			translate([0,-171,13]) cube([90,2,30], center=true);// backwall
+			translate([-13,-170,3]) cube([20,10, 5], center=true); // sdcard slot  
 			translate([35,-170, 28]) rotate([90,0,0]) cylinder(r=2.5, h=20); 
 		}
 
-		color("green") translate([30,-80,12]) rotate([90,0,0]) battery();	
 }
+topCover();
+frontCover();
 
-
-	//topCover();
 
