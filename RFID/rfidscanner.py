@@ -3,12 +3,19 @@
 import serial
 import sys
 import time
+import datetime
 import operator
 import Adafruit_CharLCD
 
 # CONSTANTS
 # path to data file
-datafile = "/home/pi/Sync/rfidreader.log"
+
+idfile=open("/home/pi/deviceid")
+device=idfile.read()
+device=device.strip()
+year=datetime.date.today().year
+month=datetime.date.today().month
+datafile="/home/pi/Pies/RFIDReader/"+device+str(year)+"-"+str(month)+".log"
 # flags
 startflag = "\x02"
 endflag = "\x03"
