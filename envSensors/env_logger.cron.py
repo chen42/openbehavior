@@ -83,9 +83,9 @@ try:
 	idfile=open("/home/pi/locationid")
 	location=idfile.read()
 	location=location.strip()
-        year=datetime.today().year
-        month=datetime.today().month
-	filename="/home/pi/env/"+location+"Env"+str(year)+"-"+str(month)+".log"
+        year=datetime.date.today().year
+        month=datetime.date.today().month
+	filename="/home/pi/Pies/Env/Env"+location+str(year)+"-"+str(month)+".log"
 	prog(filename)
 	gpio.output(led,True)
 except: 
