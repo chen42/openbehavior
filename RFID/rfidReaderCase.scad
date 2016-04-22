@@ -71,7 +71,7 @@ module topCoverMounting() {
 
 module topCover(){
 	difference(){
-		translate([0,-121,30]) cube([90, 102, 3], center=true);
+		translate([0,-120,30]) cube([90, 104, 3], center=true);
 		topCoverMounting();
 	}
 }
@@ -105,13 +105,14 @@ module frontCover (){
 			#translate([40,-67,6]) cube([6,6,14],center=true); // for screws
 		}
 		lcd();	
+		translate([-30,-65,10])cylinder(r=6,h=10); // brightness adjust
 		screws_frontCover();
 	}
 
 }
 
 union(){
-		lcd();	
+	//	lcd();	
 		difference() {
 			union(){
 				rfid_antenna_housing();
@@ -119,7 +120,6 @@ union(){
 				translate([-13,-143+8,-1.0]) rotate([0,0,-90]) mounting_pi(); // pi  // rpi
 				bx=44;
 				by=-120;
-
 				baseboard();
 				translate([bx,by,13]) rotate([0,0,180]) sidewall();
 				translate([-bx,by,13]) sidewall(); 
