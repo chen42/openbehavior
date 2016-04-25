@@ -11,10 +11,10 @@ io.setup(led_pin, io.OUT)       # activate input
 start=time.time()
 
 # Each box has its own ID
-idfile=open("/home/pi/boxid")
+idfile=open("/home/pi/deviceid")
 boxid=idfile.read()
 boxid=boxid.strip()
-datafile='/home/pi/motion'+ boxid + "_" + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
+datafile='/home/pi/Pies/OCMotion/motion'+ boxid + "_" + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
 
 #sessionLength=3600
 sessionLength=10.0
@@ -37,9 +37,9 @@ def motion(pir_pin, start, sessionLength):
 				f.write(boxid +"\t"+ str(lapsed) +"\n")
 				f.close()
 			io.output(led_pin, True)
-			time.sleep(0.05)
+			time.sleep(0.10)
 			io.output(led_pin, False)
-			time.sleep(0.05)
+			time.sleep(0.10)
 			cnt=cnt+1
 	return cnt
 
