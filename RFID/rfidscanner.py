@@ -13,21 +13,23 @@ import Adafruit_CharLCD
 idfile=open("/home/pi/deviceid")
 device=idfile.read()
 device=device.strip()
+today=datetime.date.today()
+td=str(today)+"\n"
 year=datetime.date.today().year
 month=datetime.date.today().month
-datafile="/home/pi/Pies/RFIDReader/"+device+str(year)+"-"+str(month)+".log"
+datafile="/home/pi/Pies/RFIDReader/"+device+"_"+str(year)+"-"+str(month)+".log"
 # flags
 startflag = "\x02"
 endflag = "\x03"
 
 def printIDtoLCD(lcd, idstring):
 	lcd.clear()
-	lcd.message("ID:\n")
-	lcd.message("READING...")
-	time.sleep(1)
+	lcd.message(td)
+        lcd.message("Tag Found!\n")
+	time.sleep(.5)
 	lcd.clear()
-	lcd.message("ID:\n")
-	lcd.message(idstring)
+        lcd.message(td)
+        lcd.message("ID:"+ idstring)
 	
 
 def main():
@@ -40,7 +42,7 @@ def main():
 	lcd.begin(16,1)
 	lcd.clear()
 	lcd.message("a posse ad esse\n")
-	lcd.message("a posse ad esse\n")
+	lcd.message(td)
 	time.sleep(2)
 	
 	# open the reader through UART
