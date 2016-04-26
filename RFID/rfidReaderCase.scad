@@ -49,7 +49,6 @@ module baseboard(){
 		color("grey") translate([0,-96,-3]) cube([90, 152, 4], center=true); // base board
 		translate([40,-105,-2])cube([3.0, 11.5,5], center=true); // rfid board connection via the pins; 
 		translate([0,-6,0]) cube([47,46,5], center=true); // rfid antenna groove;
-		screwsV_frontCover();
 	}
 } 
 module sidewall(){
@@ -105,7 +104,7 @@ module frontCover (){
 			#translate([40,-67,6]) cube([6,6,14],center=true); // for screws
 		}
 		lcd();	
-		translate([-30,-65,10])cylinder(r=6,h=10); // brightness adjust
+		translate([-26,-65,10])cylinder(r=5,h=10); // brightness adjust
 		screws_frontCover();
 	}
 
@@ -126,15 +125,13 @@ union(){
 			} 
 			screws_frontCover();
 		}
-
 		difference(){
 			translate([0,-171,13]) cube([90,2,30], center=true);// backwall
 			translate([-13,-170,3]) cube([20,10, 5], center=true); // sdcard slot  
 			translate([35,-170, 28]) rotate([90,0,0]) cylinder(r=2.5, h=20); 
 		}
-
 }
-topCover();
-frontCover();
+//topCover();
+!frontCover();
 
 
