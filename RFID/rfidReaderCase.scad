@@ -76,8 +76,8 @@ module topCover(){
 }
 
 module lcd(){ // model:  HD44780 
-	translate([0,-43, 13.1]) cube([69+1, 24+1, 8.4], center=true);
-	translate([0,-43, 13.1-3.7]) cube([80.6, 36, 1], center=true);
+	translate([0,-44, 13.1]) cube([69+1, 24+1, 8.4], center=true);
+	translate([0,-44, 13.1-3.7]) cube([80.6, 36, 1], center=true);
 }
 
 module screws_frontCover(){
@@ -95,19 +95,18 @@ module screws_frontCover(){
 module frontCover (){
 	difference() {
 		union(){
-			translate([-45,-70,-1]) color("pink") cube([2,50,15]);
-			translate([45-2,-70,-1]) color("pink") cube([2,50,15]);
-			translate([-45,-22,-1]) color("pink") cube([90, 2,15]);
-			translate([-45,-70,13])  cube([90, 50,3]);
+			translate([-45,-70,-1]) color("pink") cube([2,50,16]);
+			translate([45-2,-70,-1]) color("pink") cube([2,50,16]);
+			translate([-45,-22,-1]) color("pink") cube([90, 2,16]);
+			translate([-45,-70,15])  color("blue") cube([90, 50,2]);
 			translate([-45,-70,13]) cube ([90,2,15]);
-			#translate([-40,-67,6]) cube([6,6,14],center=true); // for screws
-			#translate([40,-67,6]) cube([6,6,14],center=true); // for screws
+			translate([-40,-67,6]) cube([6,6,14],center=true); // for screws
+			translate([40,-67,6]) cube([6,6,14],center=true); // for screws
 		}
 		lcd();	
-		translate([-26,-65,10])cylinder(r=5,h=10); // brightness adjust
+		translate([-27,-69,10]) cylinder(r=5,h=6); // brightness adjust
 		screws_frontCover();
 	}
-
 }
 
 union(){
@@ -131,7 +130,7 @@ union(){
 			translate([35,-170, 28]) rotate([90,0,0]) cylinder(r=2.5, h=20); 
 		}
 }
-//topCover();
-!frontCover();
+topCover();
+frontCover();
 
 
