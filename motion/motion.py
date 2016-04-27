@@ -1,52 +1,54 @@
+#!/usr/bin/env python2
+
+import RPi.GPIO as gpio
 import time
-from time import strftime, localtime
-import RPi.GPIO as io
-io.setmode(io.BOARD)
+import os
+import sys
 
-pir_pin = 12 
-led_pin =37
+pirPin=12
+onPin=16
+motionLed=40
+gpio.setwarnings(False)
+gpio.setmode(gpio.BOARD)
+gpio.setup(pirPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setup(onPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)        
+gpio.setup(motionLed, gpio.OUT)        
 
-io.setup(pir_pin, io.IN)        # activate input
-io.setup(led_pin, io.OUT)       # activate input
-start=time.time()
+while(True):
+	if gpio.input(onPin):
+                sessionLength=3600
+		idfile=open("/home/pi/deviceid")
+		boxid=idfile.read()
+                boxid=boxid.strip()
+		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+		start=time.time()
+		motionDataFile='/home/pi/Pies/OCMotion/mot'+ boxid + "_" + startTime + ".csv"
+                cnt=0
+		with open(motionDataFile,"a") as f:
+			f.write("#Session started on " + time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
+			f.write("date\tboxid\tseconds\n")
+			f.close()
+			
+		while time.time()-start < sessionLength:
+			if gpio.input(pirPin):
+				print time.strftime("%Y-%m-%d\t%H:%M:%S")
+                                cnt=cnt+1
+				with open(motionDataFile,"a") as f:
+					lapsed=time.time()-start
+					f.write(time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
+					f.close()
+				gpio.output(motionLed, True)
+				time.sleep(0.1)
+				gpio.output(motionLed, False)
+				time.sleep(0.1)
+                                if not gpio.input(onPin):
+                                    sessionLength=0
+		with open(motionDataFile, "a") as f:
+			f.write("Total\t"+str(cnt) + "\n")
+			f.write("#Session ended at " + time.strftime("%H:%M:%S", time.localtime()) + "\n")
+			f.close()
+	else:
+		time.sleep(1)
+                print "idle\n"
 
-# Each box has its own ID
-idfile=open("/home/pi/deviceid")
-boxid=idfile.read()
-boxid=boxid.strip()
-datafile='/home/pi/Pies/OCMotion/motion'+ boxid + "_" + time.strftime("%Y-%m-%d_%H:%M:%S", localtime()) + ".csv"
-
-#sessionLength=3600
-sessionLength=10.0
-
-# open data file
-with open(datafile,"a") as f:
-	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
-	f.write("boxid\tseconds\n")
-	f.close()
-time.sleep(2)
-
-
-def motion(pir_pin, start, sessionLength):
-	cnt=0
-	while time.time()-start < sessionLength:
-		if io.input(pir_pin):
-			print time.strftime("%Y-%m-%d\t%H:%M:%S")
-			with open(datafile,"a") as f:
-				lapsed=time.time()-start
-				f.write(boxid +"\t"+ str(lapsed) +"\n")
-				f.close()
-			io.output(led_pin, True)
-			time.sleep(0.10)
-			io.output(led_pin, False)
-			time.sleep(0.10)
-			cnt=cnt+1
-	return cnt
-
-
-if __name__== '__main__':
-	CNT=motion(pir_pin, start, sessionLength)
-	with open(datafile, "a") as f:
-		f.write("Total Activity:\t"+str(CNT)+"\n")
-		f.write("#session Ended at " + time.strftime("%H:%M:%S", localtime())+"\n")
 
