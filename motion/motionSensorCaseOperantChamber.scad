@@ -44,16 +44,15 @@ module cover(){
 	translate([x+13,y, z]) col2nd();
 	translate([-x-13,y, z]) col2nd();
 }
-//!cover();
 
 
 module col(){
 		cube([8,8,12],center=true);
 }
 module col4(){
-	zz=19;
-	translate([x0/2-4, y0/2-15, zz]) col();
-	translate([-x0/2+5, y0/2-15, zz]) col();
+	zz=15;
+	translate([x0/2-4, y0/2-5, zz]) col();
+	translate([-x0/2+5, y0/2-5, zz]) col();
 	translate([x0/2-5, -y0/2+5, zz]) col();
 	translate([-x0/2+5, -y0/2+5, zz]) col();
 
@@ -65,26 +64,27 @@ module screw() {
 
 
 module screw4(){
-	zz=18;
-	translate([x0/2-5, y0/2-15, zz]) screw();
-	translate([-x0/2+5, y0/2-15, zz]) screw();
+	zz=15;
+	translate([x0/2-5, y0/2-5, zz]) screw();
+	translate([-x0/2+5, y0/2-5, zz]) screw();
 	translate([x0/2-5, -y0/2+5, zz]) screw();
 	translate([-x0/2+5, -y0/2+5, zz]) screw();
 }
 
-x0=70;
+x0=76;
 y0=104;
-z0=50;
+z0=42;
 
 
 module case(){
 	difference(){
-		cube([x0, y0, z0], center=true); 
-		translate([0,0,4]) cube([x0-4, y0-4, z0+5], center=true); 
-		translate([0,y0/2,z0-45.2]) cube([56, 8, 41], center=true);
-		translate([0,-40,25]) rotate([90,0,0]) cylinder(r=3,h=30);
+		cube([x0, y0, z0], center=true); // outside 
+		translate([0,0,4]) cube([x0-4, y0-4, z0+5], center=true); // inside 
+		translate([-x0/2,0,1]) cube([8, 56, 41], center=true);
+		translate([0,60,21]) rotate([90,0,0]) cylinder(r=3,h=30); // power cords
+		translate([-4,-53,-z0/2+10]) cube([20,10, 5], center=true); // sdcard slot  
 	}
-	translate([0,-7,-z0/2+1]) rotate([0,0,-90]) mounting_pi();
+	translate([-4,-17,-z0/2+1]) rotate([0, 0, -90]) mounting_pi();
 	difference(){
 		col4();
 		screw4();
@@ -102,7 +102,6 @@ module volcover(){
 	}
 }
 
-
 module motionBoxPos() {
 	translate([0,-2/2,0]) 	cube([63.4, 2,40], center=true) ; //backplate
 	translate([0,-2/2-4.5,0]) cube([63.4, 2,40], center=true) ;//bbackplate
@@ -111,7 +110,7 @@ module motionBoxPos() {
 }
 
 module motionBoxNeg() {
-	translate([0,-25/2+2.1, 0]) cube([51.4, 21, 31], center=true); // inside 
+	translate([0,-25/2+2, 0]) cube([51.4, 21, 31], center=true); // inside 
 	translate([14.5,0,0]) rotate([90,0,0]) cylinder(r=1, h=24); // motion sensor mounting screw
 	translate([-14.5, 0,0]) rotate([90,0,0]) cylinder(r=1, h=24); // motion sensor mounting screw
 	rotate([90,0,0]) cylinder(r=4.5, h=30); // motion sensor proper
@@ -125,7 +124,7 @@ module motionBoardBox(){
 }
 
 case();
-translate([0,47.7,5]) rotate([0,0,180] ) motionBoardBox();
-translate([0,0,25]) rotate([0,180,180]) cover();
-color("yellow") volcover();
+//translate([-34,0,1]) rotate([0,0,-90] ) motionBoardBox();
+//translate([0,0,25]) rotate([0,180,180]) cover();
+//color("yellow") volcover();
 
