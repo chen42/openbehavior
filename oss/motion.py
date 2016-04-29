@@ -1,46 +1,50 @@
-#!/usr/bin/env python2
-
 import RPi.GPIO as gpio
+import argparse
 import time
 import os
 import sys
+from time import strftime, localtime
+
+
+parser=argparse.ArgumentParser()
+parser.add_argument('-RatID',  type=str)
+args=parser.parse_args()
 
 sessionLength=1800
 pirPin=12
-onPin=16
 motionLed=31
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
-gpio.setup(pirPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
-gpio.setup(onPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)        
+gpio.setup(pirPin, gpio.IN)        
 gpio.setup(motionLed, gpio.OUT)        
 
-while(True):
-	if not gpio.input(onPin):
-		idfile=open("/home/pi/boxid")
-		boxid=idfile.read()
-		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-		start=time.time()
-		motionDataFile='/home/pi/pies/motion/mot'+ boxid + "_" + startTime + ".csv"
+## creat data files, Each box has its own ID
+idfile=open("/home/pi/deviceid")
+boxid=idfile.read()
+boxid=boxid.strip()
+startTime=time.strftime("%Y-%m-%d_%H:%M:%S", localtime())
+start=time.time()
+motionDataFile='/home/pi/Pies/OSS/Motion/'+boxid+'_motion_'+ args.RatID + '_'+ startTime + ".csv"
+with open(motionDataFile,"a") as f:
+	f.write("#Session Started on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", localtime())+"\n")
+	f.write("RatID\tdate\tboxid\tseconds\n")
+	f.close()
+
+while time.time()-start < sessionLength:
+	if gpio.input(pirPin):
+		#print time.strftime("%Y-%m-%d\t%H:%M:%S")
 		with open(motionDataFile,"a") as f:
-			f.write("#Session started on " + time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
-			f.write("date\tboxid\tseconds\n")
+			lapsed=time.time()-start
+			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", localtime()) + boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
-			
-		while time.time()-start < sessionLength:
-			if gpio.input(pirPin):
-				#print time.strftime("%Y-%m-%d\t%H:%M:%S")
-				with open(motionDataFile,"a") as f:
-					lapsed=time.time()-start
-					f.write(time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
-					f.close()
-				gpio.output(motionLed, True)
-				time.sleep(0.5)
-				gpio.output(motionLed, False)
-				time.sleep(0.5)
-				
-		with open(motionDataFile, "a") as f:
-			f.write("#Session ended at " + time.strftime("%H:%M:%S", time.localtime()) + "\n")
-			f.close()
-	else:
-		time.sleep(5)
+		gpio.output(motionLed, True)
+		time.sleep(0.5)
+		gpio.output(motionLed, False)
+		time.sleep(0.5)
+
+with open(motionDataFile, "a") as f:
+	f.write("#session Ended at " + time.strftime("%H:%M:%S", localtime())+"\n")
+	f.close
+
+
+

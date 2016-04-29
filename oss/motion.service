@@ -1,9 +1,0 @@
-# systemd unit for starting the motion sensor on boot
-# for use in user mode only pls
-[Unit]
-Description=MotionSense
-
-[Service]
-Type=forking
-ExecStart=/home/pi/openbehavior/oss/motion.py
-ExecStop=/usr/bin/pkill motion.py

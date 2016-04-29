@@ -51,8 +51,8 @@ def touchSensor():
 			#subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
 				rewardtime=time.time()
-				subprocess.call("sudo python /home/pi/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start) + " -interval " + str(timeout)  + " &", shell=True)
-				timeout=random.andint(1,10) ## generate next timeout period 
+				subprocess.call("sudo python /home/pi/openbehavior/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start) + " -interval " + str(timeout)  + " &", shell=True)
+				timeout=random.randint(1,10) ## generate next timeout period 
 				print ("reward given, next interval is" + str(timeout)) 
 				time.sleep(0.20)
 			else:
@@ -82,10 +82,10 @@ def doneSignal():
 	while True:
 		gpio.output(touchLed,True)
 		gpio.output(motionLight,False)
-		time.sleep(0.2)
+		time.sleep(1)
 		gpio.output(touchLed,False)
 		gpio.output(motionLight,True)
-		time.sleep(0.3)
+		time.sleep(1)
 
 if __name__ == '__main__':
 	sessionLength=1800
@@ -118,17 +118,15 @@ if __name__ == '__main__':
 	RatID=ReadRFID("/dev/ttyUSB0")
 	gpio.output(houseLight1,True)
 	gpio.output(houseLight2,True)
-	## terminate syncthing after detecting RFID (i.e. session starts)
-	subprocess.call("sudo killall syncthing", shell=True)
 	## creat data files, Each box has its own ID
-	idfile=open("/home/pi/boxid")
+	idfile=open("/home/pi/deviceid")
 	boxid=idfile.read()
 	boxid=boxid.strip()
 	# data file names
 	startTime=str(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
-	touchDataFile='/home/pi/pies/oss/oss'+ boxid + "_" + startTime + ".csv"
+	touchDataFile='/home/pi/Pies/OSS/Touch/'+boxid+'_touch'+ '_' + RatID +'_'+ startTime+'.csv'
 	createDataFiles()
-	subprocess.call("sudo python /home/pi/oss/motion.py " + " -RatID " + RatID + " &", shell=True)
+	subprocess.call("sudo python /home/pi/openbehavior/oss/motion.py " + " -RatID " + RatID + " &", shell=True)
 	## turn the touchLed off when the RFID is detected
 	gpio.output(touchLed, False)
 	start=time.time()
@@ -144,8 +142,7 @@ if __name__ == '__main__':
 	# reactivate automatic garbage collection and clean objects so no memory leaks
 	gc.enable()
 	gc.collect()
-	# restart syncthing once session is finished
-	subprocess.call("/home/pi/syncthing -no-browser -home=\"/home/pi/.config/syncthing\" & ", shell=True)
+	subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh')
 	doneSignal()
 
 
