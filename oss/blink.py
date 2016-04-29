@@ -52,7 +52,7 @@ def blink(pins):
 		pin=[pins[0],pins[1],9] # 9 = blink alternatively 
 		Pin="Alt."
 	numTimes=random.randint(1,3)
-	speed=random.randint(1,9)/float(18)
+	speed=random.randint(1,9)/float(9)
 	lapsed=time.time()-args.start
 	# which house light to turn off?
 	hL=1
