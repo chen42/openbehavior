@@ -57,6 +57,8 @@ if __name__ == '__main__':
 	RatID=ReadRFID("/dev/ttyUSB0")
 	gpio.output(touchLed,False)
 	subprocess.call("sudo python /home/pi/openbehavior/oss/motion.py " + " -RatID " + RatID, shell=True)
+        doneSignal()
 	subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh')
+
 
 
