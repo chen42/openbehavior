@@ -51,8 +51,8 @@ module col(){
 }
 module col4(){
 	zz=15;
-	translate([x0/2-4, y0/2-5, zz]) col();
-	translate([-x0/2+5, y0/2-5, zz]) col();
+	translate([x0/2-4, y0/2-9, zz]) col();
+	translate([-x0/2+5, y0/2-9, zz]) col();
 	translate([x0/2-5, -y0/2+5, zz]) col();
 	translate([-x0/2+5, -y0/2+5, zz]) col();
 
@@ -65,8 +65,8 @@ module screw() {
 
 module screw4(){
 	zz=15;
-	translate([x0/2-5, y0/2-5, zz]) screw();
-	translate([-x0/2+5, y0/2-5, zz]) screw();
+	translate([x0/2-5, y0/2-9, zz]) screw();
+	translate([-x0/2+5, y0/2-9, zz]) screw();
 	translate([x0/2-5, -y0/2+5, zz]) screw();
 	translate([-x0/2+5, -y0/2+5, zz]) screw();
 }
@@ -80,8 +80,8 @@ module case(){
 	difference(){
 		cube([x0, y0, z0], center=true); // outside 
 		translate([0,0,4]) cube([x0-4, y0-4, z0+5], center=true); // inside 
-		translate([-x0/2,0,1]) cube([8, 56, 41], center=true);
-		translate([0,60,21]) rotate([90,0,0]) cylinder(r=3,h=30); // power cords
+		translate([0,y0/2,1]) cube([56, 8, 41], center=true);
+		translate([0,-40,21]) rotate([90,0,0]) cylinder(r=3,h=30); // power cords
 		translate([-4,-53,-z0/2+10]) cube([20,10, 5], center=true); // sdcard slot  
 	}
 	translate([-4,-17,-z0/2+1]) rotate([0, 0, -90]) mounting_pi();
@@ -114,6 +114,7 @@ module motionBoxNeg() {
 	translate([14.5,0,0]) rotate([90,0,0]) cylinder(r=1, h=24); // motion sensor mounting screw
 	translate([-14.5, 0,0]) rotate([90,0,0]) cylinder(r=1, h=24); // motion sensor mounting screw
 	rotate([90,0,0]) cylinder(r=4.5, h=30); // motion sensor proper
+	translate([0,-25,0])rotate([90,0,0]) cylinder(r1=4.5, r2=15,h=2); // motion sensor proper
 }
 
 module motionBoardBox(){
@@ -123,8 +124,8 @@ module motionBoardBox(){
 	}
 }
 
-case();
-//translate([-34,0,1]) rotate([0,0,-90] ) motionBoardBox();
-//translate([0,0,25]) rotate([0,180,180]) cover();
+//case();
+//translate([0,48,1]) rotate([0,0,180] ) motionBoardBox();
+translate([0,0,25]) rotate([0,180,180]) cover();
 //color("yellow") volcover();
 
