@@ -28,6 +28,7 @@ import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
 import touchsensor
 import datalogger
+import os
 # END IMPORT PRELUDE
 
 # BEGIN CONSTANT DEFINITIONS
@@ -45,7 +46,7 @@ pumptimedout = False
 # END GLOBAL VARIABLES
 
 def stopProgram():
-	sys.exit(0)
+	os.system("sudo kill -9 `pgrep python`")
 
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')

@@ -44,7 +44,7 @@ def motionBlinkenLights():
 	
 # Define callback for shutting down program
 def stopProgram():
-	sys.exit(0)
+	os.system("sudo kill -9 `pgrep python`")
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired
 def recordMotionCallback(derp):
