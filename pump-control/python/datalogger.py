@@ -24,7 +24,7 @@ class DataLogger:
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		datafilePath = TDATA_FILEPRFX + self.boxid + '_' + startTime + '.csv'
+		datafilePath = TDATA_FILEPRFX + self.boxid + '_' + str(startTime) + '.csv'
 		# open data file
 		self.datafile = open(datafilePath, "a")
 	def logTouch(self, touchType):
