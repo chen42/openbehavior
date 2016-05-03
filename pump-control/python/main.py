@@ -44,6 +44,9 @@ timeout = 20
 pumptimedout = False
 # END GLOBAL VARIABLES
 
+def stopProgram():
+	sys.exit(0)
+
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
 	
@@ -93,15 +96,12 @@ dlogger = datalogger.DataLogger()
 # Get start time
 sTime = datetime.datetime.now()
 
+# Setup timer to shutdown program after two hours
+shutDownTimer = Timer(120, stopProgram)
+shutDownTimer.start()
+
 while True:
-	# Get current time
-	currTime = datetime.datetime.now()
-	# Calculate the difference
-	diffTime = currTime - sTime
-	# If the elapsed time is greater than two hours, quit the program
-	if diffTime.seconds >= 120:
-		sys.exit(0)
-	elif gpio.input(SW1):
+	if gpio.input(SW1):
 		pump.move(0.5)
 	elif gpio.input(SW2):
 		pump.move(-0.5)
