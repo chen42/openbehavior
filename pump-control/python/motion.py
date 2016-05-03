@@ -11,9 +11,9 @@ from threading import Timer
 MOTIONLED = int(31)
 MOTIONOUT = int(35)
 # Filesystem path to where the box id is stored
-BOXIDPATH = '/home/pi/boxid'
+DEVIDPATH = '/home/pi/deviceid'
 # Prefix to filesystem path where motion data will be stored
-PREFIXDAT = '/home/pi/pies/motion/mot'
+PREFIXDAT = '/home/pi/Pies/motion/mot'
 # Number of seconds to sleep after detecting motion
 SECS_TO_SLEEP_ON_MOTION = float(1.0)
 ### END CONSTANT DEFINITIONS
@@ -44,6 +44,7 @@ def motionBlinkenLights():
 	
 # Define callback for shutting down program
 def stopProgram():
+	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
 	os.system("sudo kill -9 `pgrep python`")
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired

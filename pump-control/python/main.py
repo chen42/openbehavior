@@ -46,6 +46,7 @@ pumptimedout = False
 # END GLOBAL VARIABLES
 
 def stopProgram():
+	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
 	os.system("sudo kill -9 `pgrep python`")
 
 def printUsage():
@@ -74,6 +75,9 @@ for opt, arg in opts:
 	elif opt == '-h':
 		printUsage()
 		sys.exit()
+
+# Run the deviceinfo script
+os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
 
 # Initialize GPIO
 gpio.setwarnings(False)
