@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 import os
 import sys
+from threading import Timer
 
 ### BEGIN CONSTANT DEFINITIONS
 # Pin numbers for GPIO
@@ -40,6 +41,10 @@ def motionBlinkenLights():
 	GPIO.output(MOTIONLED, GPIO.LOW)
 	# Explicit return because STRUCTURED PROGRAMMING IS THE WAY OF THE FUTURE!!!
 	return None
+	
+# Define callback for shutting down program
+def stopProgram():
+	sys.exit(0)
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired
 def recordMotionCallback(derp):
@@ -97,6 +102,10 @@ def motionMain():
 	
 	# Register interrupt event for pin used for motion detection
 	#GPIO.add_event_detect(MOTIONOUT, GPIO.RISING, callback=recordMotionCallback)
+	
+	# Setup timer to kill program after two hours
+	shutDownTimer = Timer(120, stopProgram)
+	shutDownTimer.start()
 	
 	# Main event loop
 	while(True):
