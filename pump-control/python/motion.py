@@ -13,7 +13,7 @@ MOTIONOUT = int(35)
 # Filesystem path to where the box id is stored
 DEVIDPATH = '/home/pi/deviceid'
 # Prefix to filesystem path where motion data will be stored
-PREFIXDAT = '/home/pi/Pies/motion/mot'
+PREFIXDAT = '/home/pi/Pies/motion/motion_'
 # Number of seconds to sleep after detecting motion
 SECS_TO_SLEEP_ON_MOTION = float(1.0)
 ### END CONSTANT DEFINITIONS
@@ -24,7 +24,7 @@ motionDataPath = ''
 # Global file handler for writing the motion data
 motionDataFile = None
 # ID string for the box data is being collected from
-boxID = ''
+devID = ''
 # Start time in various formats
 startLocalTime = None
 startLocalTimeString = ''
@@ -49,7 +49,7 @@ def stopProgram():
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired
 def recordMotionCallback(derp):
-	global boxID
+	global devID
 	global motionDataFile
 	global startEpochTime
 	# Get time of event
@@ -69,12 +69,12 @@ def recordMotionCallback(derp):
 # Program entry point (AKA main)
 def motionMain():
 	# Explicitly global variables for modification
-	global motionDataPath, motionDataFile, boxID, startLocalTime, startLocalTimeString, startEpochTime, pSleep
+	global motionDataPath, motionDataFile, devID, startLocalTime, startLocalTimeString, startEpochTime, pSleep
 	# Open file containing the box id, read the data, strip away whitespace, save the id into a global var, and close the file
 	try:
-		boxidfile = open(BOXIDPATH, 'r')
-		boxID = (boxidfile.read()).strip()
-		boxidfile.close()
+		devidfile = open(DEVIDPATH, 'r')
+		devID = (boxidfile.read()).strip()
+		devidfile.close()
 	except IOError as (errno, strerror):
 		sys.stderr.write("I/O Error({0}): {1}\n".format(errno, strerror))
 		sys.exit(1)
@@ -85,7 +85,7 @@ def motionMain():
 	startLocalTime = time.localtime(startEpochTime)
 	startLocalTimeStr = time.strftime("%Y-%m-%d_%H:%M:%S", startLocalTime)
 	# Using the recorded time, construct the path to the file used to store motion data
-	motionDataPath = PREFIXDAT + boxID + '_' + startLocalTimeStr + '.csv'
+	motionDataPath = PREFIXDAT + devID + '_' + startLocalTimeStr + '.csv'
 	
 	# Open motion data file in append mode and write a comment line to indicate the starting time
 	try:
