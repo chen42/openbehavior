@@ -8,7 +8,7 @@ import string
 # BEGIN CONSTANT DEFINITIONS
 DEVID_FILEPATH = '/home/pi/deviceid'
 RATID_FILEPATH = '/home/pi/ratid'
-TDATA_FILEPRFX = '/home/pi/Pies/ETOH/ETOH_'
+TDATA_FILEPRFX = '/home/pi/Pies/ETOH/Lick/ETOH_'
 # END CONSTANT DEFINITIONS
 
 class DataLogger:

@@ -13,7 +13,7 @@ MOTIONOUT = int(35)
 # Filesystem path to where the box id is stored
 DEVIDPATH = '/home/pi/deviceid'
 # Prefix to filesystem path where motion data will be stored
-PREFIXDAT = '/home/pi/Pies/motion/motion_'
+PREFIXDAT = '/home/pi/Pies/ETOH/Motion/ETOH_'
 # Number of seconds to sleep after detecting motion
 SECS_TO_SLEEP_ON_MOTION = float(1.0)
 ### END CONSTANT DEFINITIONS
@@ -75,7 +75,7 @@ def motionMain():
 	# Open file containing the box id, read the data, strip away whitespace, save the id into a global var, and close the file
 	try:
 		devidfile = open(DEVIDPATH, 'r')
-		devID = (boxidfile.read()).strip()
+		devID = (devidfile.read()).strip()
 		devidfile.close()
 	except IOError as (errno, strerror):
 		sys.stderr.write("I/O Error({0}): {1}\n".format(errno, strerror))
