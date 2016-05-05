@@ -43,11 +43,12 @@ touchcounter = 0
 fixedratio = 10
 timeout = 20
 pumptimedout = False
+pumppid = 99999
 # END GLOBAL VARIABLES
 
 def stopProgram():
 	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
-	os.system("sudo kill -9 `pgrep python`")
+	os.system("sudo kill -9 " + str(pumppid))
 
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
@@ -78,6 +79,9 @@ for opt, arg in opts:
 
 # Run the deviceinfo script
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
+
+# Get process ID
+pumppid = os.getpid()
 
 # Initialize GPIO
 gpio.setwarnings(False)

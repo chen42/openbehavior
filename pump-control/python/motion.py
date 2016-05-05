@@ -31,6 +31,8 @@ startLocalTimeString = ''
 startEpochTime = float()
 # Variable to control whether or not the program's main thread should sleep or not.
 pSleep = False
+# Motion sensing process id
+motionpid = 99999
 ### END GLOBAL DATA SECTION
 
 # Define helper function to blink the LED when a motion event is detected
@@ -45,7 +47,7 @@ def motionBlinkenLights():
 # Define callback for shutting down program
 def stopProgram():
 	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
-	os.system("sudo kill -9 `pgrep python`")
+	os.system("sudo kill -9 " + str(motionpid))
 
 # Define callback for writing motion data to file when appropriate GPIO interrupt is fired
 def recordMotionCallback(derp):
