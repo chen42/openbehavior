@@ -135,7 +135,7 @@ def motionMain():
 			# Calculate elapsed time since start
 			elapsedTime = time.time() - startEpochTime
 			# Write data point to file
-			motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(motionEventTime)) + boxID + "\t" + str(elapsedTime) + "\n")
+			motionDataFile.write(time.strftime("%Y-%m-%d\t", time.localtime(motionEventTime)) + devID + "\t" + str(elapsedTime) + "\n")
 			# Blink the LED
 			motionBlinkenLights()
 						
