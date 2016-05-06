@@ -89,8 +89,8 @@ def doneSignal():
 
 if __name__ == '__main__':
 	sessionLength=1800
+        time.sleep(20) ## allow wifi and htpdate to catch up
 	# disable python automatic garbage collection for greater sensitivity
-	gc.disable()
 	# session LEDs are on when data are being recorded. These LEDs are located at the end of the head poke holes and serve to attract the attension of the rats. 
 	# touchLed is on when touch sensor is activated  
 	# green and red Leds are for sensation seeking
@@ -140,8 +140,6 @@ if __name__ == '__main__':
 		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.close()
 	# reactivate automatic garbage collection and clean objects so no memory leaks
-	gc.enable()
-	gc.collect()
 	subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh')
 	doneSignal()
 

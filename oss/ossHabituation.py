@@ -50,6 +50,7 @@ if __name__ == '__main__':
 	# green and red Leds are for sensation seeking
 	touchLed=35 
 	# setting up the various LEDs.
+        time.sleep(20)
 	gpio.setwarnings(False)
 	gpio.setmode(gpio.BOARD)
 	gpio.setup(touchLed,gpio.OUT)
