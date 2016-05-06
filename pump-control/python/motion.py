@@ -110,7 +110,7 @@ def motionMain():
 	#GPIO.add_event_detect(MOTIONOUT, GPIO.RISING, callback=recordMotionCallback)
 	
 	# Setup timer to kill program after two hours
-	shutDownTimer = Timer(120, stopProgram)
+	shutDownTimer = Timer(7200, stopProgram)
 	shutDownTimer.start()
 	
 	# Main event loop

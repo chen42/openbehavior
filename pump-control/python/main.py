@@ -106,7 +106,7 @@ dlogger = datalogger.DataLogger()
 sTime = datetime.datetime.now()
 
 # Setup timer to shutdown program after two hours
-shutDownTimer = Timer(120, stopProgram)
+shutDownTimer = Timer(7200, stopProgram)
 shutDownTimer.start()
 
 while True:
