@@ -18,7 +18,7 @@ print (args.RatID)
 print (args.start )
 print ("\n")
 
-idfile=open("/home/pi/boxid")
+idfile=open("/home/pi/deviceid")
 boxid=idfile.read()
 boxid=boxid.strip()
 
