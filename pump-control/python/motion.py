@@ -71,7 +71,7 @@ def recordMotionCallback(derp):
 # Program entry point (AKA main)
 def motionMain():
 	# Explicitly global variables for modification
-	global motionDataPath, motionDataFile, devID, startLocalTime, startLocalTimeString, startEpochTime, pSleep
+	global motionpid, motionDataPath, motionDataFile, devID, startLocalTime, startLocalTimeString, startEpochTime, pSleep
 	# Open file containing the box id, read the data, strip away whitespace, save the id into a global var, and close the file
 	try:
 		devidfile = open(DEVIDPATH, 'r')
@@ -80,6 +80,9 @@ def motionMain():
 	except IOError as (errno, strerror):
 		sys.stderr.write("I/O Error({0}): {1}\n".format(errno, strerror))
 		sys.exit(1)
+		
+	# Get process id
+	motionpid = os.getpid()
 	
 	# Record the starting time
 	startEpochTime = time.time()
