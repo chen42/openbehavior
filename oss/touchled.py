@@ -9,7 +9,7 @@ def touchLED():
 	gpio.setwarnings(False)
 	gpio.setup(RFIDLed,gpio.OUT)
 	gpio.output(RFIDLed, True)
-	time.sleep(1)
+	time.sleep(0.2)
 	gpio.output(RFIDLed, False)
 
 touchLED()

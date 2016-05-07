@@ -38,9 +38,9 @@ while time.time()-start < sessionLength:
 			f.write(args.RatID+"\t"+time.strftime("%Y-%m-%d\t", localtime()) + boxid +"\t"+ str(lapsed) +"\n")
 			f.close()
 		gpio.output(motionLed, True)
-		time.sleep(0.5)
+		time.sleep(0.2)
 		gpio.output(motionLed, False)
-		time.sleep(0.5)
+		time.sleep(0.2)
 
 with open(motionDataFile, "a") as f:
 	f.write("#session Ended at " + time.strftime("%H:%M:%S", localtime())+"\n")

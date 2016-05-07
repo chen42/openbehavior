@@ -48,7 +48,7 @@ def touchSensor():
 	while time.time() - start < sessionLength:
 		sessiontime = time.time() - start
 		if cap.is_touched(1):
-			#subprocess.call("sudo python /home/pi/oss/touchled.py &", shell=True)
+			subprocess.call("sudo python /home/pi/openbehavior/oss/touchled.py &", shell=True)
 			if (time.time()-rewardtime>timeout):
 				rewardtime=time.time()
 				subprocess.call("sudo python /home/pi/openbehavior/oss/blink.py " + " -datafile "+  touchDataFile + " -RatID " + RatID +  " -start " + str(start) + " -interval " + str(timeout)  + " &", shell=True)
