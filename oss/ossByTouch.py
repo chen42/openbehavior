@@ -139,7 +139,8 @@ if __name__ == '__main__':
 	with open(touchDataFile,"a") as f:
 		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.close()
-	# reactivate automatic garbage collection and clean objects so no memory leaks
+        time.sleep(5) # wait for motion.py to stop
+        os.fsync(f)
 	subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh')
 	doneSignal()
 
