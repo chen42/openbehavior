@@ -7,7 +7,7 @@
 ## disconnect wifi thereafter to ensure time does not change during the run.
 
 
-year=`date |cut -d " " -f 7 ` 
+year=`date +"%Y"`
 if [ "$year" -lt "2016" ] 
 	then
 		date -s "Fri May 6 1:01:01 CDT 2016"
