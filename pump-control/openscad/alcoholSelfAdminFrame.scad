@@ -36,7 +36,7 @@ module outbox(){ // outside box for the frame
 module innerbox(){ // inside box for the frame
 	inn_w=max_w-10;
 	inn_h=max_h-20;
-	inn_d=max_d-7;
+	inn_d=max_d;
 	corner_wd=20;
 	corner_ln=max_d;
 	difference(){
@@ -51,7 +51,7 @@ module innerbox(){ // inside box for the frame
 module frame(){
 	difference () {
 		outbox();
-		translate([0,7,-max_h/2]) cube([max_w-20,max_d-7,max_h/2], center=true);
+		translate([0,4,-max_h/2]) cube([max_w-20,max_d-7,max_h/2], center=true);
 		translate([0,7,-8]) innerbox();
 	}
 }
@@ -84,9 +84,9 @@ module mounting_screws(){
 //	translate([-93,-33, max_h/2-2]) mounting_pi();
 	translate([-93,-30, max_h/2-2]) mounting_pi();
 //	#translate([-97.5,-35.0, max_h/2-2]) cube([85, 56,2]);//the pi
-	translate([16,-16, max_h/2-2]) mounting_touch();
-	translate([20,26, max_h/2-2]) mounting_RTC();
-	translate([80, 0, max_h/2+4]) rotate([0,0,90])  step_motor_control();
+	translate([8,-16, max_h/2-2]) mounting_touch();
+	translate([20,33, max_h/2-2]) mounting_RTC();
+	translate([70,-20, max_h/2+2]) rotate([0,0,0])  step_motor_control();
 }
 
 module top_groove(){ // for the top cover
@@ -138,11 +138,11 @@ module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic
 
 module step_motor_control(){
 	difference(){
-		cube([23+20, 18+4, 5],center=true);
+		cube([22+20, 17+4, 5],center=true);
 		union(){
-			translate([15,0,-3]) cylinder(r=1.7, h=8);
-			translate([-15,0,-3]) cylinder(r=1.7, h=8);
-			cube([23, 18, 9], center=true);
+			translate([15,0,-3]) cylinder(r=1.5, h=8);
+			translate([-15,0,-3]) cylinder(r=1.5, h=8);
+			cube([22, 17, 9], center=true);
 		}
 	}
 
@@ -195,7 +195,6 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 }
 
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
-!the_thing();
 module the_thing (){
 	union(){
 		difference(){
@@ -213,17 +212,17 @@ module the_thing (){
 				spout_holder(sh_x=70, sh_y=44.7, sh_z=20);
 				spout_holder(sh_x=-70, sh_y=44.7, sh_z=20);
 				//mounting holes for the spout holders
-				translate([-70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=9);
-				translate([70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=9); 
-				translate([-70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=9);
-				translate([70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=9); 
+				translate([-70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
+				translate([70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
+				translate([-70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
+				translate([70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
 			}
 		}
 		mounting_screws();
 	}
 }
 
-//the_thing();
+the_thing();
 //step_motor_fastener();
 
 
