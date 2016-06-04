@@ -32,7 +32,7 @@ class TouchSensor:
 	def readPinTouched(self):
 		self.lasttouched = self.touched
 		self.touched = self.cap.touched()
-		for i in range(12):
+		for i in range(3):
 			pinbit = 1 << i
 			if self.touched & pinbit and not self.lasttouched & pinbit:
 				return i

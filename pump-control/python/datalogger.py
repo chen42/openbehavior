@@ -24,14 +24,15 @@ class DataLogger:
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		datafilePath = TDATA_FILEPRFX + str(self.devid) + '_' + str(startTime) + '.csv'
+		self.datafilePath = TDATA_FILEPRFX + str(self.devid) + '_' + str(startTime) + '.csv'
 		# open data file
-		self.datafile = open(datafilePath, "a")
+		#self.datafile = open(datafilePath, "a")
 	def logTouch(self, touchType):
 		# Get current time in formatted string
 		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S:%f %Z\n")
 		# Create output string
 		outputstr = "" + str(self.devid) + "\t" + str(self.ratid) + "\t" + touchType + "\t" + currtimestr
 		# Append to file
-		(self.datafile).write(outputstr)
+                with open (self.datafilePath, "a") as datafile:
+                    datafile.write(outputstr)
 

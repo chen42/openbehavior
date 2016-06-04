@@ -79,6 +79,7 @@ for opt, arg in opts:
 
 # Run the deviceinfo script
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
+print "device info updated\n"
 
 # Get process ID
 pumppid = os.getpid()
@@ -132,6 +133,6 @@ while True:
 					dlogger.logTouch("ACTIVE")
 			else:
 				dlogger.logTouch("ACTIVE")
-		elif i == 7:
+		elif i == 2:
 			blinkTouchLED(0.1)
 			dlogger.logTouch("INACTIVE")
