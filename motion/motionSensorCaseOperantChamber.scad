@@ -92,11 +92,11 @@ module case(){
 }
 
 module volcover(){
-	sx=30;
-	sy=20;
-	sz=13;
+	sx=29;
+	sy=-20;
+	sz=10;
 	difference(){
-		translate([0, sy,sz]) cube([64,10,3],center=true);
+		translate([0, sy,sz]) cube([64,8,2],center=true);
 		translate([sx, sy,sz])screw();
 		translate([-sx, sy,sz])screw();
 	}
@@ -125,7 +125,7 @@ module motionBoardBox(){
 }
 
 //case();
-translate([0,48,1]) rotate([0,0,180] ) motionBoardBox();
+//translate([0,48,1]) rotate([0,0,180] ) motionBoardBox();
 //translate([0,0,25]) rotate([0,180,180]) cover();
-//color("yellow") volcover();
+color("yellow") volcover();
 
