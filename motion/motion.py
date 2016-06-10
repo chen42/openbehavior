@@ -15,7 +15,7 @@ gpio.setup(onPin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(motionLed, gpio.OUT)        
 
 while(True):
-	if gpio.input(onPin) == 0 :
+	if not gpio.input(onPin) :
                 sessionLength=7200
 		idfile=open("/home/pi/deviceid")
 		boxid=idfile.read()
