@@ -80,7 +80,7 @@ def prog(filename):
 
 try:
 	#gpio.output(led,False)
-	idfile=open("/home/pi/locationid")
+	idfile=open("/home/pi/deviceid")
 	location=idfile.read()
 	location=location.strip()
         year=datetime.date.today().year
