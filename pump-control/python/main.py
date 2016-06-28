@@ -2,6 +2,7 @@
 
 # Copyright 2016 University of Tennessee Health Sciences Center
 # Author: Matthew Longley <mlongle1@uthsc.edu>
+# Author: Hao Chen <hchen@uthsc.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -26,6 +27,7 @@ import subprocess32 as subprocess
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
+import serial
 import touchsensor
 import datalogger
 import os
@@ -43,7 +45,8 @@ touchcounter = 0
 fixedratio = 10
 timeout = 20
 pumptimedout = False
-pumppid = 99999
+sessionLength=7200
+#pumppid = 99999
 # END GLOBAL VARIABLES
 
 def stopProgram():
@@ -62,6 +65,32 @@ def blinkTouchLED(duration):
 	time.sleep(duration)
 	gpio.output(TOUCHLED, gpio.LOW)
 
+
+
+def ReadRFID(path_to_sensor) :
+	baud_rate = 9600 
+	time_out = 0.05
+	uart = serial.Serial(path_to_sensor, baud_rate, timeout = time_out)
+	uart.close()
+	uart.open()
+	uart.flushInput()
+	uart.flushOutput()
+	print(path_to_sensor + " initiated")
+	Startflag = "\x02"
+	Endflag = "\x03"
+	while True:
+		Z = 0
+		Tag = 0
+		ID = ""
+		Z = uart.read()
+		if Z == Startflag:
+			for Counter in range(13):
+				Z = uart.read()
+				ID = ID + str(Z)
+			ID = ID.replace(Endflag, "" ) 
+			print "RFID  detected: "+ ID
+			return (ID)
+
 # Parse command line arguments
 try:
 	opts, args = getopt.getopt(sys.argv[1:], "hf:t:")
@@ -77,8 +106,6 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
-# Run the deviceinfo script
-os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
 
 # Get process ID
 pumppid = os.getpid()
@@ -87,12 +114,22 @@ pumppid = os.getpid()
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 
+
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
+MOTIONLED=int(31)
+gpio.setup(MOTIONLED, gpio.OUT)
 
+# Run the deviceinfo script
+os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
+print "device info updated\n"
+gpio.output(TOUCHLED, gpio.HIGH)
+gpio.output(MOTIONLED, gpio.HIGH)
+
+os.system("/home/pi/openbehavior/pump-control/python/motion.py &")
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
 
@@ -106,8 +143,17 @@ dlogger = datalogger.DataLogger()
 sTime = datetime.datetime.now()
 
 # Setup timer to shutdown program after two hours
-shutDownTimer = Timer(7200, stopProgram)
+shutDownTimer = Timer(sessionLength, stopProgram)
 shutDownTimer.start()
+
+# wait for RFID scanner to get RatID
+
+RatID=ReadRFID("/dev/ttyAMA0")
+print RatID
+with open ("/home/pi/ratid", "w") as ratid:
+    ratid.write(RatID)
+
+## creat data files, Each box has its own ID
 
 while True:
 	if gpio.input(SW1):
@@ -132,6 +178,6 @@ while True:
 					dlogger.logTouch("ACTIVE")
 			else:
 				dlogger.logTouch("ACTIVE")
-		elif i == 7:
+		elif i == 2:
 			blinkTouchLED(0.1)
 			dlogger.logTouch("INACTIVE")
