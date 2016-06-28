@@ -163,11 +163,11 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			blinkTouchLED(0.1)
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
-					dlogger.logTouch("REWARD")
+					lapsed= datetime.datetime.now() - sTime
+					dlogger.logTouch("REWARD", lapsed)
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -175,9 +175,13 @@ while True:
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
-					dlogger.logTouch("ACTIVE")
+					lapsed= datetime.datetime.now() - sTime
+					dlogger.logTouch("ACTIVE", lapsed)
 			else:
-				dlogger.logTouch("ACTIVE")
+				lapsed= datetime.datetime.now() - sTime
+				dlogger.logTouch("ACTIVE", lapsed)
+			blinkTouchLED(0.05)
 		elif i == 2:
-			blinkTouchLED(0.1)
-			dlogger.logTouch("INACTIVE")
+			lapsed= datetime.datetime.now() - sTime
+			dlogger.logTouch("INACTIVE", lapsed)
+			blinkTouchLED(0.05)

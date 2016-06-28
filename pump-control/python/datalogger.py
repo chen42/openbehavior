@@ -19,20 +19,18 @@ class DataLogger:
 		devidfile.close()
 		# read rat id
 		ratidfile = open(RATID_FILEPATH)
-		self.ratid = int((ratidfile.read()).strip())
+		self.ratid = str((ratidfile.read()).strip())
 		ratidfile.close()
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		self.datafilePath = TDATA_FILEPRFX + str(self.devid) + '_' + str(startTime) + '.csv'
+		self.datafilePath = TDATA_FILEPRFX + str(self.ratid) + '_' + str(startTime) + '.csv'
 		# open data file
 		#self.datafile = open(datafilePath, "a")
-	def logTouch(self, touchType):
-		# Get current time in formatted string
-		currtimestr = time.strftime("%Y/%m/%d\t%H:%M:%S:%f %Z\n")
+	def logTouch(self, touchType, timelapsed):
 		# Create output string
-		outputstr = "" + str(self.devid) + "\t" + str(self.ratid) + "\t" + touchType + "\t" + currtimestr
+		outputstr = "" + self.ratid + "\t" + self.devid + "\t" + touchType + "\t" + str(timelapsed) + "\n"
 		# Append to file
-                with open (self.datafilePath, "a") as datafile:
-                    datafile.write(outputstr)
+		with open (self.datafilePath, "a") as datafile:
+			datafile.write(outputstr)
 
