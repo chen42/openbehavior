@@ -140,7 +140,7 @@ tsensor = touchsensor.TouchSensor()
 dlogger = datalogger.DataLogger()
 
 # Get start time
-sTime = datetime.datetime.now()
+sTime = time.time()
 
 # Setup timer to shutdown program after two hours
 shutDownTimer = Timer(sessionLength, stopProgram)
@@ -166,7 +166,7 @@ while True:
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
-					lapsed= datetime.datetime.now() - sTime
+					lapsed= time.time() - sTime
 					dlogger.logTouch("REWARD", lapsed)
 					touchcounter = 0
 					pumptimedout = True
@@ -175,13 +175,13 @@ while True:
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
-					lapsed= datetime.datetime.now() - sTime
+					lapsed= time.time() - sTime
 					dlogger.logTouch("ACTIVE", lapsed)
 			else:
-				lapsed= datetime.datetime.now() - sTime
+				lapsed= time.time() - sTime
 				dlogger.logTouch("ACTIVE", lapsed)
 			blinkTouchLED(0.05)
 		elif i == 2:
-			lapsed= datetime.datetime.now() - sTime
+			lapsed= time.time() - sTime
 			dlogger.logTouch("INACTIVE", lapsed)
 			blinkTouchLED(0.05)
