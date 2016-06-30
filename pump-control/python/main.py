@@ -48,12 +48,6 @@ pumptimedout = False
 sessionLength=60
 # END GLOBAL VARIABLES
 
-#def stopProgram():
-#	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
-#	lapsed= time.time() - sTime
-#	dlogger.logTouch("SessionEnd", lapsed)
-#	os.system("sudo kill -9 " + str(pumppid))
-
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
 	
@@ -124,14 +118,14 @@ gpio.setup(MOTIONLED, gpio.OUT)
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
 print ("Device info updated\n")
 # Initialize pump
-
 pump = pumpcontrol.Pump(gpio)
 
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
 
 # Initialize data logger
-dlogger = datalogger.DataLogger()
+dlogger = datalogger.LickLogger()
+dlogger.createDataFile()
 
 # turn lights on to indicate ready to run
 gpio.output(TOUCHLED, gpio.HIGH)
@@ -150,13 +144,9 @@ gpio.output(MOTIONLED, gpio.LOW)
 # Get start time
 sTime = time.time()
 
-# Setup timer to shutdown program after two hours
-#shutDownTimer = Timer(sessionLength, stopProgram)
-#shutDownTimer.start()
-
 # start motion sensor
-# todo: pass sTime to motion
-subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " + " -RatID " + RatID + " -SessionLength " + str(sessionLength) + " &", shell=True)
+#subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " + " -RatID " + RatID + " -SessionLength " + str(sessionLength) + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " &", shell=True)
 
 lapse=0 
 while lapse < sessionLength:
@@ -171,7 +161,7 @@ while lapse < sessionLength:
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
-					dlogger.logTouch("REWARD", lapse)
+					dlogger.logEvent("REWARD", lapse)
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -179,12 +169,12 @@ while lapse < sessionLength:
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
-					dlogger.logTouch("ACTIVE", lapse)
+					dlogger.logEvent("ACTIVE", lapse)
 			else:
-				dlogger.logTouch("ACTIVE", lapse)
+				dlogger.logEvent("ACTIVE", lapse)
 			blinkTouchLED(0.05)
 		elif i == 2:
-			dlogger.logTouch("INACTIVE", lapse)
+			dlogger.logEvent("INACTIVE", lapse)
 			blinkTouchLED(0.05)
 
-dlogger.logTouch("SessionEnd", lapse)
+dlogger.logEvent("SessionEnd", lapse)

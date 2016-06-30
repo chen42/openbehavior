@@ -8,12 +8,14 @@ import string
 # BEGIN CONSTANT DEFINITIONS
 DEVID_FILEPATH = '/home/pi/deviceid'
 RATID_FILEPATH = '/home/pi/ratid'
-TDATA_FILEPRFX = '/home/pi/Pies/ETOH/Lick/ETOH_'
+TDATA_FILEPRFX = '/home/pi/Pies/ETOH/ETOH_'
 # END CONSTANT DEFINITIONS
 
-class DataLogger:
+class LickLogger:
 	def __init__(self):
 		# read box id
+		self.datatype="lick"
+	def createDataFile(self):
 		devidfile = open(DEVID_FILEPATH)
 		self.devid = str((devidfile.read()).strip())
 		devidfile.close()
@@ -24,13 +26,19 @@ class DataLogger:
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		self.datafilePath = TDATA_FILEPRFX + str(self.ratid) + '_' + str(startTime) + '.csv'
+		self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + '_' + str(startTime) + '.csv'
 		# open data file
-		#self.datafile = open(datafilePath, "a")
-	def logTouch(self, touchType, timelapsed):
+		with open(self.datafile,"a") as f:
+			f.write("RatID\tdate\tboxid\tEventType\tseconds\n")
+			f.close()
+	def logEvent(self, EventType, timelapsed):
 		# Create output string
-		outputstr = "" + self.ratid + "\t" + self.devid + "\t" + touchType + "\t" + str(timelapsed) + "\n"
+		outputstr = self.ratid + "\t" + time.strftime("%Y-%m-%d", time.localtime()) + "\t" + self.devid + "\t" + EventType + "\t" + str(timelapsed) + "\n"
 		# Append to file
-		with open (self.datafilePath, "a") as datafile:
+		with open (self.datafile, "a") as datafile:
 			datafile.write(outputstr)
 
+
+class MotionLogger (LickLogger):
+	def __init__ (self):
+		self.datatype="motion"
