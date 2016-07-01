@@ -45,13 +45,8 @@ touchcounter = 0
 fixedratio = 10
 timeout = 20
 pumptimedout = False
-sessionLength=7200
-#pumppid = 99999
+sessionLength=60*60*2 # two hour assays
 # END GLOBAL VARIABLES
-
-def stopProgram():
-	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
-	os.system("sudo kill -9 " + str(pumppid))
 
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
@@ -64,8 +59,6 @@ def blinkTouchLED(duration):
 	gpio.output(TOUCHLED, gpio.HIGH)
 	time.sleep(duration)
 	gpio.output(TOUCHLED, gpio.LOW)
-
-
 
 def ReadRFID(path_to_sensor) :
 	baud_rate = 9600 
@@ -106,7 +99,6 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
-
 # Get process ID
 pumppid = os.getpid()
 
@@ -125,11 +117,8 @@ gpio.setup(MOTIONLED, gpio.OUT)
 
 # Run the deviceinfo script
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-print "device info updated\n"
-gpio.output(TOUCHLED, gpio.HIGH)
-gpio.output(MOTIONLED, gpio.HIGH)
+print ("Device info updated\n")
 
-os.system("/home/pi/openbehavior/pump-control/python/motion.py &")
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
 
@@ -137,25 +126,32 @@ pump = pumpcontrol.Pump(gpio)
 tsensor = touchsensor.TouchSensor()
 
 # Initialize data logger
-dlogger = datalogger.DataLogger()
+dlogger = datalogger.LickLogger()
+dlogger.createDataFile()
 
-# Get start time
-sTime = datetime.datetime.now()
-
-# Setup timer to shutdown program after two hours
-shutDownTimer = Timer(sessionLength, stopProgram)
-shutDownTimer.start()
+# turn lights on to indicate ready to run
+gpio.output(TOUCHLED, gpio.HIGH)
+gpio.output(MOTIONLED, gpio.HIGH)
 
 # wait for RFID scanner to get RatID
-
 RatID=ReadRFID("/dev/ttyAMA0")
-print RatID
+print (RatID)
 with open ("/home/pi/ratid", "w") as ratid:
     ratid.write(RatID)
 
-## creat data files, Each box has its own ID
+#turn lights off to indicate RFID recieved
+gpio.output(TOUCHLED, gpio.LOW)
+gpio.output(MOTIONLED, gpio.LOW)
 
-while True:
+# Get start time
+sTime = time.time()
+
+# start motion sensor
+subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " &", shell=True)
+
+lapse=0 
+while lapse < sessionLength:
+	lapse= time.time() - sTime
 	if gpio.input(SW1):
 		pump.move(0.5)
 	elif gpio.input(SW2):
@@ -163,11 +159,10 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			blinkTouchLED(0.1)
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
-					dlogger.logTouch("REWARD")
+					dlogger.logEvent("REWARD", lapse)
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -175,9 +170,12 @@ while True:
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
-					dlogger.logTouch("ACTIVE")
+					dlogger.logEvent("ACTIVE", lapse)
 			else:
-				dlogger.logTouch("ACTIVE")
+				dlogger.logEvent("ACTIVE", lapse)
+				blinkTouchLED(0.05)
 		elif i == 2:
-			blinkTouchLED(0.1)
-			dlogger.logTouch("INACTIVE")
+			dlogger.logEvent("INACTIVE", lapse)
+			blinkTouchLED(0.05)
+
+dlogger.logEvent("SessionEnd", lapse)
