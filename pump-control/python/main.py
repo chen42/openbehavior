@@ -2,6 +2,7 @@
 
 # Copyright 2016 University of Tennessee Health Sciences Center
 # Author: Matthew Longley <mlongle1@uthsc.edu>
+# Author: Hao Chen <hchen@uthsc.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -26,6 +27,7 @@ import subprocess32 as subprocess
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
+import serial
 import touchsensor
 import datalogger
 import os
@@ -43,12 +45,8 @@ touchcounter = 0
 fixedratio = 10
 timeout = 20
 pumptimedout = False
-pumppid = 99999
+sessionLength=60*60*2 # two hour assays
 # END GLOBAL VARIABLES
-
-def stopProgram():
-	os.system("/home/pi/openbehavior/wifi-network/rsync.sh")
-	os.system("sudo kill -9 " + str(pumppid))
 
 def printUsage():
 	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
@@ -61,6 +59,30 @@ def blinkTouchLED(duration):
 	gpio.output(TOUCHLED, gpio.HIGH)
 	time.sleep(duration)
 	gpio.output(TOUCHLED, gpio.LOW)
+
+def ReadRFID(path_to_sensor) :
+	baud_rate = 9600 
+	time_out = 0.05
+	uart = serial.Serial(path_to_sensor, baud_rate, timeout = time_out)
+	uart.close()
+	uart.open()
+	uart.flushInput()
+	uart.flushOutput()
+	print(path_to_sensor + " initiated")
+	Startflag = "\x02"
+	Endflag = "\x03"
+	while True:
+		Z = 0
+		Tag = 0
+		ID = ""
+		Z = uart.read()
+		if Z == Startflag:
+			for Counter in range(13):
+				Z = uart.read()
+				ID = ID + str(Z)
+			ID = ID.replace(Endflag, "" ) 
+			print "RFID  detected: "+ ID
+			return (ID)
 
 # Parse command line arguments
 try:
@@ -77,9 +99,6 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
-# Run the deviceinfo script
-os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-
 # Get process ID
 pumppid = os.getpid()
 
@@ -87,11 +106,18 @@ pumppid = os.getpid()
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 
+
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
+MOTIONLED=int(31)
+gpio.setup(MOTIONLED, gpio.OUT)
+
+# Run the deviceinfo script
+os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
+print ("Device info updated\n")
 
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
@@ -100,16 +126,32 @@ pump = pumpcontrol.Pump(gpio)
 tsensor = touchsensor.TouchSensor()
 
 # Initialize data logger
-dlogger = datalogger.DataLogger()
+dlogger = datalogger.LickLogger()
+dlogger.createDataFile()
+
+# turn lights on to indicate ready to run
+gpio.output(TOUCHLED, gpio.HIGH)
+gpio.output(MOTIONLED, gpio.HIGH)
+
+# wait for RFID scanner to get RatID
+RatID=ReadRFID("/dev/ttyAMA0")
+print (RatID)
+with open ("/home/pi/ratid", "w") as ratid:
+    ratid.write(RatID)
+
+#turn lights off to indicate RFID recieved
+gpio.output(TOUCHLED, gpio.LOW)
+gpio.output(MOTIONLED, gpio.LOW)
 
 # Get start time
-sTime = datetime.datetime.now()
+sTime = time.time()
 
-# Setup timer to shutdown program after two hours
-shutDownTimer = Timer(7200, stopProgram)
-shutDownTimer.start()
+# start motion sensor
+subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " &", shell=True)
 
-while True:
+lapse=0 
+while lapse < sessionLength:
+	lapse= time.time() - sTime
 	if gpio.input(SW1):
 		pump.move(0.5)
 	elif gpio.input(SW2):
@@ -117,11 +159,10 @@ while True:
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
-			blinkTouchLED(0.1)
 			if not pumptimedout:
 				touchcounter += 1
 				if touchcounter == fixedratio:
-					dlogger.logTouch("REWARD")
+					dlogger.logEvent("REWARD", lapse)
 					touchcounter = 0
 					pumptimedout = True
 					pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -129,9 +170,12 @@ while True:
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 					pump.move(-0.06)
 				else:
-					dlogger.logTouch("ACTIVE")
+					dlogger.logEvent("ACTIVE", lapse)
 			else:
-				dlogger.logTouch("ACTIVE")
-		elif i == 7:
-			blinkTouchLED(0.1)
-			dlogger.logTouch("INACTIVE")
+				dlogger.logEvent("ACTIVE", lapse)
+				blinkTouchLED(0.05)
+		elif i == 2:
+			dlogger.logEvent("INACTIVE", lapse)
+			blinkTouchLED(0.05)
+
+dlogger.logEvent("SessionEnd", lapse)
