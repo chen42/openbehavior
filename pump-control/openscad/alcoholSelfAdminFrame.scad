@@ -81,43 +81,53 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-//	translate([-93,-33, max_h/2-2]) mounting_pi();
 	translate([-93,-30, max_h/2-2]) mounting_pi();
-//	#translate([-97.5,-35.0, max_h/2-2]) cube([85, 56,2]);//the pi
 	translate([8,-16, max_h/2-2]) mounting_touch();
 	translate([20,33, max_h/2-2]) mounting_RTC();
 	translate([70,-20, max_h/2+2]) rotate([0,0,0])  step_motor_control();
 }
 
+
+
 module top_groove(){ // for the top cover
+	xw=max_w-5;
+	xd=max_d-5;
 	difference(){
-		translate([0,0,max_h/2-4]) cube([max_w-6, max_d-6, 10], center=true);
-		translate([0,0,max_h/2-4-11/2]) round_corner_box(r0=5, wd=max_w-6-8-10, lg=max_d-6-8-10,ht=11);
-		// -8  produces a gap of 4 mm for the grove. -10 is for r0=5
+		union (){
+			translate([xw/2-.5, xd/2-.5,-5]) corner2();
+			translate([-xw/2+0.5, -xd/2+0.5,-5]) corner2() ;
+			translate([-xw/2+0.5, xd/2-0.5,-5]) corner2() ;
+			translate([xw/2-0.5, -xd/2+0.5,-5]) corner2() ;
+			cube([xw, xd, 10], center=true);
+		}
+		translate([0,0, -5.6])round_corner_box(r0=5, wd=max_w-24, lg=max_d-24,ht=11);
 	}
 }
 
-top_cover();
+module corner2(){
+	//rotate([0,0,45]) scale([0.7,1,1]) cylinder(r=1.5	,h=10);
+	 cylinder(r=1.5	,h=10);
+}
+
+
 module top_cover(){
-   union(){#rotate([180,0,180]) translate([104.5,10,-35]) rfid_antenna_housing();//box on side to hold antennae
-difference(){  
-    //round_corner_box(r0=3.6, wd=max_w-15, lg=max_d-15,ht=58); // outside 
-    translate([0,40,0]) rotate([90,0,270]) slant_box();//outside
-    difference()
-	 	{//translate([0,0,-0.1])round_corner_box(r0=6, wd=max_w-24, lg=max_d-24,ht=56); // inside
-        translate([0,38,-2]) rotate([90,0,270]) scale([0.95,1,0.98]) slant_box();//inside    
-        translate([-70,42,23]) rotate([90,0,0]) drill();
-        }
-	translate([-130,0,3]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-	translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
-	translate([101-11,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=10, ht=21); // power cord 
-    translate([0,max_d/2,5]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
-    translate([-max_w/2+5,-10,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=11); // side wire hole for antennae
-   
-//		translate([60, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
-//		translate([73, max_d/2,40]) rotate([90,0,0]) cylinder(r=2, 10);//led
-translate([-70,42,23]) rotate([90,0,0]) alltheholes();
-	}}}
+   union(){
+	   rotate([180,0,180]) translate([104.5,10,-35]) rfid_antenna_housing();//box on side to hold antennae
+		difference(){  
+			translate([0,40,0]) rotate([90,0,270]) slant_box();//outside
+				difference() {
+				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
+				translate([-70,42,23]) rotate([90,0,0]) drill(); // for dev board
+		}
+		translate([-130,0,3]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
+		translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+		translate([101-11,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=10, ht=21); // power cord 
+		translate([0,max_d/2,5]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
+		translate([-max_w/2+5,-10,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=11); // side wire hole for antennae
+		translate([-70,42,23]) rotate([90,0,0]) alltheholes();
+		}
+	}
+}
     
     
 
@@ -148,8 +158,8 @@ module drill() //all four inside columns
 {
     translate([4,4,2.23]) column();
     translate([44,4,2.23]) column();
-   translate([4,26,2.23]) column();
-   translate([44,26,2.23]) column();
+    translate([4,26,2.23]) column();
+    translate([44,26,2.23]) column();
 }
 module hollow() {cylinder(9.1,1.5,1.5);} //the screw holes
 module drillholes() //all four screw holes for switches board
@@ -274,7 +284,7 @@ module the_thing (){
 			//	pg=50;// spout holder height z
 			frame();
 			union(){
-				top_groove();
+				translate([0,0,max_h/2-4]) top_groove();
 				rotate([90,0,0]) translate([0,0,34]) motion_sensor();
 				translate([-max_w/2,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side;
 				translate([max_w/2-10,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side; 
@@ -295,5 +305,7 @@ module the_thing (){
 }
 }
 
+translate([0,0,68])top_cover();
+//top_groove();
 //the_thing();
 //step_motor_fastener();
