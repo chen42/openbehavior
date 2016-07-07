@@ -45,7 +45,7 @@ touchcounter = 0
 fixedratio = 10
 timeout = 20
 pumptimedout = False
-sessionLength=60*60*2 # two hour assays
+sessionLength=60*60*1 # one hour assay
 # END GLOBAL VARIABLES
 
 def printUsage():
