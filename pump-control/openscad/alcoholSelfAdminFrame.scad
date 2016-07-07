@@ -119,11 +119,11 @@ module top_cover(){
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
 				translate([-70,42,23]) rotate([90,0,0]) drill(); // for dev board
 		}
-		translate([-130,0,3]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
+		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
 		translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
-		translate([101-11,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=10, ht=21); // power cord 
-		translate([0,max_d/2,5]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
-		translate([-max_w/2+5,-8,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side wire hole for antennae
+		translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
+		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
+		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side wire hole for antennae
 		translate([-70,42,23]) rotate([90,0,0]) alltheholes();
 		}
 	}
@@ -309,3 +309,9 @@ translate([0,0,68])top_cover();
 //top_groove();
 //the_thing();
 //step_motor_fastener();
+
+//the_thing is printed in two halves to save time
+
+//difference() { the_thing(); translate([0,0,65]) cube([212,120,30],center=true);} //bottom half
+
+//translate([0,0,30]) difference(){ the_thing(); translate([0,0,-15]) cube([212,120,132],center=true);}//top half
