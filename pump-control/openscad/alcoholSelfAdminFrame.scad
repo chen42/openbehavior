@@ -112,7 +112,7 @@ module corner2(){
 
 module top_cover(){
    union(){
-	   rotate([180,0,180]) translate([104,13.5,-38]) rfid_antenna_housing();//box on side to hold antennae
+	   rotate([180,0,180]) translate([103.5,13.5,-28]) rfid_antenna_housing();//box on side to hold antennae
 		difference(){  
 			translate([0,40,0]) rotate([90,0,270]) slant_box();//outside
 				difference() {
@@ -120,8 +120,8 @@ module top_cover(){
 				translate([-70,42,23]) rotate([90,0,0]) drill(); // for dev board
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-		translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
-		translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
+		translate([max_w/2-10,6,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=12.5,lg=2.5, ht=20); // sd card slot
+		translate([101-15.5,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=10, ht=21); // power cord 
 		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
 		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side wire hole for antennae
 		translate([-70,42,23]) rotate([90,0,0]) alltheholes();
@@ -271,7 +271,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 	}
 }
 
-module rfid_antenna_housing()//to hold RFID antennae
+module rfid_antenna_housing() //to hold RFID antennae
 	{
     rotate([270,0,270]) difference(){
 		cube([53,40,7], center=true); // rfid antenna outside;
@@ -310,9 +310,9 @@ module the_thing (){
 }
 }
 
-//translate([0,0,68])top_cover();
+translate([0,0,68])top_cover();
 
-spout_holder(sh_x=70, sh_y=40, sh_z=20);
+//spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
 //the_thing();
 //step_motor_fastener();
