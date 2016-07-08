@@ -153,9 +153,9 @@ lapse=0
 while lapse < sessionLength:
 	lapse= time.time() - sTime
 	if gpio.input(SW1):
-		pump.move(0.5)
-	elif gpio.input(SW2):
 		pump.move(-0.5)
+	elif gpio.input(SW2):
+		pump.move(0.5)
 	elif not gpio.input(TIR):
 		i = tsensor.readPinTouched()
 		if i == 1:
@@ -168,7 +168,7 @@ while lapse < sessionLength:
 					pumpTimer = Timer(timeout, resetPumpTimeout)
 					pumpTimer.start()
 					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
-					pump.move(-0.06)
+					pump.move(0.08)
 				else:
 					dlogger.logEvent("ACTIVE", lapse)
 			else:
