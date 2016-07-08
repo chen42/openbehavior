@@ -23,3 +23,4 @@ button2.pack(side=RIGHT, padx=2, pady=2)
 
 
 root.mainloop()
+root.destroy()
