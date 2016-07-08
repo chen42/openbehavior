@@ -252,8 +252,15 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 		union(){
 			translate([-sh_x,-sh_y+10,sh_z-5]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
 			translate([-sh_x-30,-sh_y-10,sh_z]) rotate([0,90,0]) cylinder(r=2.5, h=55); //holes for alignment of the spout tip 
-			translate([-sh_x,-sh_y-10,sh_z+20]) cylinder(r=2.5, h=14); //hole for cue LED 
-			translate([-sh_x,-sh_y-10,sh_z+20]) cylinder(r1=4, r2=2.55, h=4); //hole for cue LED 
+
+			translate([-sh_x,-sh_y-10,sh_z+18]) rotate([25,0,0])
+				union(){
+				cylinder(r=2.75, h=18); //hole for cue LED 
+				cylinder(r1=5, r2=2.75, h=5); //hole for cue LED 
+				}
+
+//			translate([-sh_x,-sh_y-10,sh_z+18]) rotate([25,0,0]) 
+
 			translate([-sh_x,-sh_y,sh_z]) rotate([90,0,0]) cylinder(r=12, h=55); //holes for obverving the rat 
 			translate([-sh_x,-sh_y-10,sh_z]) rotate([35,0,0]) cylinder(r=4.6, h=55); // location of the spout 
 			translate([-sh_x,-sh_y-42, sh_z+31]) rotate([-55, 0,0]) cube([8.4, 18, 4.1], center=true);// hex screw for spout 
@@ -263,7 +270,6 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 		}
 	}
 }
-spout_holder(sh_x=70, sh_y=40, sh_z=20);
 
 module rfid_antenna_housing()//to hold RFID antennae
 	{
@@ -305,12 +311,11 @@ module the_thing (){
 }
 
 //translate([0,0,68])top_cover();
+
+spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
 //the_thing();
 //step_motor_fastener();
-
 //the_thing is printed in two halves to save time
-
 //difference() { the_thing(); translate([0,0,65]) cube([212,120,30],center=true);} //bottom half
-
 //translate([0,0,30]) difference(){ the_thing(); translate([0,0,-15]) cube([212,120,132],center=true);}//top half
