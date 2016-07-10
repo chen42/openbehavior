@@ -267,6 +267,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 			translate([-sh_x,-sh_y-60,sh_z+14]) rotate([-55,0,0]) cylinder(r=1.9, h=50); //screw hole for tightening the spout 
 			translate([-sh_x,-sh_y-10,sh_z-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
 			translate([-sh_x,-sh_y-10,sh_z+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
+			translate([-54,-50,55])	cylinder(r=1.5,h=10,center=true); // screw for led cue light wire fastner
 		}
 	}
 }
@@ -310,8 +311,21 @@ module the_thing (){
 }
 }
 
-translate([0,0,68])top_cover();
+module cue_light_wires () {
+	difference () {
+		cube([16, 9,5], center=true);
+		rotate ([90,0,10]) scale([1,2.6,1])  union () { // wires track
+			translate([4.5,1.7,0])cylinder (r=2, h=20,center=true);
+			translate([-4.5,1.7,0])cylinder (r=2, h=20,center=true);
+		}
+		cylinder(r=1.7,h=10,center=true); // screw
+	}
+}
 
+
+
+//translate([0,0,68])top_cover();
+translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
 //the_thing();
