@@ -114,6 +114,14 @@ gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
 MOTIONLED=int(31)
 gpio.setup(MOTIONLED, gpio.OUT)
+# falsh leds to indicate program is running
+for i in range(6):
+		gpio.output(TOUCHLED, gpio.HIGH)
+		gpio.output(MOTIONLED, gpio.HIGH)
+		time.sleep(0.3)
+		gpio.output(TOUCHLED, gpio.LOW)
+		gpio.output(MOTIONLED, gpio.LOW)
+		time.sleep(0.3)
 
 # Run the deviceinfo script
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
