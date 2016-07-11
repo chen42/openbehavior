@@ -81,7 +81,7 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-	translate([-93,-30, max_h/2-2]) mounting_pi();
+	translate([-93,-16, max_h/2-2]) mounting_pi();
 	translate([8,-16, max_h/2-2]) mounting_touch();
 	translate([20,33, max_h/2-2]) mounting_RTC();
 	translate([70,-20, max_h/2+2]) rotate([0,0,0])  step_motor_control();
@@ -120,9 +120,10 @@ module top_cover(){
 				translate([-70,42,23]) rotate([90,0,0]) drill(); // for dev board
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-		translate([max_w/2-10,8,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+		translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+        translate([max_w/2-10,-30,16]) cube([10,6,4]); // power light hole
 		translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
-		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
+		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=15); // new, longer wire hole
 		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side wire hole for antennae
 		translate([-70,42,23]) rotate([90,0,0]) alltheholes();
 		}
@@ -255,7 +256,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 		union(){
 			translate([-sh_x,-sh_y+10,sh_z-5]) rotate([90,0,0]) round_corner_box(r0=3,wd=pw-6, ht=ph+5,lg=pg-16); // spout holder inside
 			translate([-sh_x-30,-sh_y-10,sh_z]) rotate([0,90,0]) cylinder(r=2.5, h=55); //holes for alignment of the spout tip 
-			translate([-sh_x,-sh_y,sh_z]) rotate([90,0,0]) cylinder(r=12, h=55); //holes for obverving the rat 
+			translate([-sh_x,-sh_y,sh_z]) rotate([90,0,0]) cylinder(r=12, h=55); //holes for observing the rat 
 			translate([-sh_x,-sh_y-10,sh_z]) rotate([35,0,0]) cylinder(r=4.6, h=55); // location of the spout 
 			translate([-sh_x,-sh_y-42, sh_z+31]) rotate([-55, 0,0]) cube([8.4, 18, 4.1], center=true);// hex screw for spout 
 			translate([-sh_x,-sh_y-60,sh_z+14]) rotate([-55,0,0]) cylinder(r=1.9, h=50); //screw hole for tightening the spout 
@@ -300,18 +301,21 @@ module the_thing (){
 			}
 		}
 		mounting_screws();
-	}
-    translate([78,30,67]) cube([11.5,3,5],center=true); // rfid board connection via the pins in groove; 
+	translate([70,4,70]) difference(){
+		cube([27,22,12],center=true);
+		cube([23,18,12.1],center=true);} //voltage converter housing
+        }
+    translate([78,33,67]) cube([11.5,3,5],center=true); // rfid board connection via the pins in groove; 
 }
 }
 
-translate([0,0,68])top_cover();
+
+        
+top_cover();
 //top_groove();
 //the_thing();
 //step_motor_fastener();
 
 //the_thing is printed in two halves to save time
-
 //difference() { the_thing(); translate([0,0,65]) cube([212,120,30],center=true);} //bottom half
-
 //translate([0,0,30]) difference(){ the_thing(); translate([0,0,-15]) cube([212,120,132],center=true);}//top half
