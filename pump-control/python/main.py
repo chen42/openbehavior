@@ -100,12 +100,11 @@ for opt, arg in opts:
 		sys.exit()
 
 # Get process ID
-pumppid = os.getpid()
+# pumppid = os.getpid()
 
 # Initialize GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
-
 
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
@@ -114,13 +113,24 @@ gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
 MOTIONLED=int(31)
 gpio.setup(MOTIONLED, gpio.OUT)
+# falsh leds to indicate program is running
+for i in range(6):
+		gpio.output(TOUCHLED, gpio.HIGH)
+		gpio.output(MOTIONLED, gpio.HIGH)
+		time.sleep(0.3)
+		gpio.output(TOUCHLED, gpio.LOW)
+		gpio.output(MOTIONLED, gpio.LOW)
+		time.sleep(0.3)
+
+# Initialize pump
+pump = pumpcontrol.Pump(gpio)
+
+# enable the switches to move the pump
+subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/pumpmove.py" + " &", shell=True)
 
 # Run the deviceinfo script
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
 print ("Device info updated\n")
-
-# Initialize pump
-pump = pumpcontrol.Pump(gpio)
 
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
@@ -152,30 +162,31 @@ subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py
 lapse=0 
 while lapse < sessionLength:
 	lapse= time.time() - sTime
-	if gpio.input(SW1):
-		pump.move(0.5)
-	elif gpio.input(SW2):
-		pump.move(-0.5)
-	elif not gpio.input(TIR):
-		i = tsensor.readPinTouched()
-		if i == 1:
-			if not pumptimedout:
-				touchcounter += 1
-				if touchcounter == fixedratio:
-					dlogger.logEvent("REWARD", lapse)
-					touchcounter = 0
-					pumptimedout = True
-					pumpTimer = Timer(timeout, resetPumpTimeout)
-					pumpTimer.start()
-					subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
-					pump.move(-0.06)
-				else:
-					dlogger.logEvent("ACTIVE", lapse)
+#	if gpio.input(SW1):
+#		pump.move(-0.5)
+#	elif gpio.input(SW2):
+#		pump.move(0.5)
+#	el
+#	if not gpio.input(TIR):
+	i = tsensor.readPinTouched()
+	if i == 1:
+		if not pumptimedout:
+			touchcounter += 1
+			if touchcounter == fixedratio:
+				dlogger.logEvent("REWARD", lapse)
+				touchcounter = 0
+				pumptimedout = True
+				pumpTimer = Timer(timeout, resetPumpTimeout)
+				pumpTimer.start()
+				subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
+				pump.move(0.08)
 			else:
 				dlogger.logEvent("ACTIVE", lapse)
-				blinkTouchLED(0.05)
-		elif i == 2:
-			dlogger.logEvent("INACTIVE", lapse)
+		else:
+			dlogger.logEvent("ACTIVE", lapse)
 			blinkTouchLED(0.05)
+	elif i == 2:
+		dlogger.logEvent("INACTIVE", lapse)
+		blinkTouchLED(0.05)
 
 dlogger.logEvent("SessionEnd", lapse)

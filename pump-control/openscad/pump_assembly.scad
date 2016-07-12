@@ -12,7 +12,9 @@ include<bearings.scad>
 
 $fn = 96;
 
-//render_part(8);
+render_part(8);
+
+//motor_housing_cover();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -545,7 +547,7 @@ module cage_mount() {
 			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
 		}
 		union(){
-		#	translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true); // motor end
+			translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true); // motor end
 			translate([0,spaceX+1,7.5]) cube([63.4,20.6, 6], center=true);
 			translate([0,-spaceX-3,0]) mounting_screw_bottom(h=10);
 			translate([0,spaceX+1,0]) mounting_screw_bottom(h=10);
@@ -564,7 +566,7 @@ module cage_mount() {
 
 module mounting_screw_bottom(h=5){
 	cylinder(r=1.7, h);
-	translate([0,0,-3]) cylinder(r1=3, r2=1.7, 3);
+	translate([0,0,-3]) cylinder(r1=6, r2=1.7, 3);
 }
 
 module motor_housing(){
@@ -575,7 +577,6 @@ module motor_housing(){
 	}
 }
 
-!motor_housing_cover();
 module motor_housing_cover(){
 difference(){
 #	rotate([90,0,0]) rounded_box(l1=60, l2=1, r_corner=1.2, height=40);
