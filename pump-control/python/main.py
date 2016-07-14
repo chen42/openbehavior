@@ -81,8 +81,11 @@ def ReadRFID(path_to_sensor) :
 				Z = uart.read()
 				ID = ID + str(Z)
 			ID = ID.replace(Endflag, "" ) 
-			print "RFID  detected: "+ ID
-			return (ID)
+			if int(ID, 16) != 0:
+				if len(ID) > 8:
+					ID=ID[-8:]
+					print "RFID  detected: "+ ID
+					return (ID)
 
 # Parse command line arguments
 try:
