@@ -10,15 +10,16 @@
 year=`date +"%Y"`
 if [ "$year" -lt "2016" ] 
 	then
-		date -s "Fri May 6 1:01:01 CDT 2016"
+		date -s "Fri July 6 1:01:01 CDT 2016"
 fi
 
 while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 	do
 	sleep 3
 	cnt=$[$cnt+1]
-	if [ $cnt -eq 5 ] 
+	if [ $cnt -eq 10 ] 
 		then 
+			ifconfig wlan0 down
 			break
 	fi
 done
