@@ -41,7 +41,7 @@ module cover(){
 			translate([14,2,0])rotate([0,0,90]) lcd_mounting();
 		}
 		rotate([0,0,180]) translate([0,0,-20]) color("blue") screw4();
-		translate([14,2,15]) rotate([0,180,90])lcd();
+		translate([13,2,15]) rotate([0,180,90])lcd();
 	}
 }
 
