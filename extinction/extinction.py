@@ -64,15 +64,13 @@ def recordLicks(sessionLength):
 				f.write(str(deviceid) + "\t" + "ratID\t"+today +"\t" + startTime + "\t" + "inactive\t" +  str(lapsed) + "\n")
 				f.close()
 	# finishing the data files
-	with open(lickDataFile,"a") as f:
-		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
-		f.close()
 	updatelcd(active, inactive, lapsed)
 	print (active, inactive, lapsed)
 
 if __name__ == '__main__':
 	lcd=initLCD()
-	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh ")
+	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh")
+        os.system("ifconfig wlan0 down")
 	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
 	today= time.strftime("%Y-%m-%d", time.localtime())
 	startTime= time.strftime("%H:%M:%S", time.localtime())
@@ -89,6 +87,9 @@ if __name__ == '__main__':
 		f.write("device\tRatID\tDate\tStartTime\tSpout\tlapsed\n")
 		f.close()
 	recordLicks(3600) # session length in seconds
-	time.sleep(5) # wait for motion.py to stop
-	os.system('/home/pi/openbehavior/wifi-network/rsync.sh')
+	with open(lickDataFile,"a") as f:
+		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
+		f.close()
+
+	os.system('/home/pi/openbehavior/wifi-network/rsync.sh &')
 

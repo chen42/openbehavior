@@ -2,10 +2,6 @@
 
 
 ## set approximate clock date if need to.
-## wait for wifi connection before run htpdate (because ntp is blocked on my network
-## then set hwclock
-## disconnect wifi thereafter to ensure time does not change during the run.
-
 
 year=`date +"%Y"`
 if [ "$year" -lt "2016" ] 
@@ -13,17 +9,23 @@ if [ "$year" -lt "2016" ]
 		date -s "Fri July 6 1:01:01 CDT 2016"
 fi
 
+## wait for wifi connection before run htpdate (because ntp is blocked on my network
+## then set hwclock
+
 while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 	do
 	sleep 2
 	cnt=$[$cnt+1]
+	echo "waiting $cnt"
 	if [ $cnt -eq 10 ] # max 20 sec  
 		then 
 			sudo ifconfig wlan0 down # disconnect wifi if not connected
+			echo "Give up on wifi"
 			break
 	fi
 done
 
+echo "Sync time with the internet"
 htpdate -s www.uthsc.edu www.google.com	
 hwclock -w
 
