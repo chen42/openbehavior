@@ -15,16 +15,16 @@ fi
 
 while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 	do
-	sleep 3
+	sleep 2
 	cnt=$[$cnt+1]
-	if [ $cnt -eq 10 ] 
+	if [ $cnt -eq 10 ] # max 20 sec  
 		then 
-			ifconfig wlan0 down
+			sudo ifconfig wlan0 down # disconnect wifi if not connected
 			break
 	fi
 done
 
-htpdate -s www.freebsd.org www.linux.org www.google.com	
+htpdate -s www.uthsc.edu www.google.com	
 hwclock -w
 
 date >>/home/pi/Pies/DeviceInfo/`cat /home/pi/deviceid`.info

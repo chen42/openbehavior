@@ -22,7 +22,8 @@ def initLCD():
 	# Initialize the LCD using the pins above.
 	lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 	lcd.clear()
-	lcd.message("Session Starts\n" + startTime )
+	sysTime= time.strftime("%H:%M:%S", time.localtime())
+	lcd.message("Waiting for wifi\n" + sysTime )
 	return lcd 
 
 def initTouch():
@@ -70,15 +71,17 @@ def recordLicks(sessionLength):
 	print (active, inactive, lapsed)
 
 if __name__ == '__main__':
+	lcd=initLCD()
 	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh ")
 	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
+	today= time.strftime("%Y-%m-%d", time.localtime())
+	startTime= time.strftime("%H:%M:%S", time.localtime())
+        lcd.clear()
+        lcd.message("Session starts\n" + startTime)
 	cap=initTouch()
 	idfile=open('/home/pi/deviceid')
 	deviceid=idfile.read()
 	deviceid=deviceid.strip()
-	today= time.strftime("%Y-%m-%d", time.localtime())
-	startTime= time.strftime("%H:%M:%S", time.localtime())
-	lcd=initLCD()
 	currentTime=today + "_" + startTime
 	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + currentTime + ".csv"
 	with open(lickDataFile,"a") as f:

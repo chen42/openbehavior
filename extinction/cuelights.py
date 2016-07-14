@@ -3,14 +3,16 @@
 import RPi.GPIO as gpio
 import time
 
+# BEGIN CONSTANT DEFINITIONS
+LED1 = int(33)
+LED2 = int(29)
+duration=int(1)
+
 # setup GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
-
-# BEGIN CONSTANT DEFINITIONS
-LED1 = int(7)
-LED2 = int(9)
-duration=int(1)
+gpio.setup(LED1, gpio.OUT)
+gpio.setup(LED2, gpio.OUT)
 
 start=time.time()
 
