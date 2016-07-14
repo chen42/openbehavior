@@ -70,7 +70,7 @@ def recordLicks(sessionLength):
 if __name__ == '__main__':
 	lcd=initLCD()
 	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh")
-        os.system("ifconfig wlan0 down")
+        os.system("sudo ifconfig wlan0 down")
 	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
 	today= time.strftime("%Y-%m-%d", time.localtime())
 	startTime= time.strftime("%H:%M:%S", time.localtime())

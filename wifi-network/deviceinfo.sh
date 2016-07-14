@@ -26,7 +26,7 @@ while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 done
 
 echo "Sync time with the internet"
-htpdate -s www.uthsc.edu www.google.com	
+htpdate -s www.ntp.org www.linux.org www.freebsd.org	
 hwclock -w
 
 date >>/home/pi/Pies/DeviceInfo/`cat /home/pi/deviceid`.info
