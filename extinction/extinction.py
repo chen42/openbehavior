@@ -5,21 +5,32 @@ import time
 import os
 import sys
 import Adafruit_MPR121.MPR121 as MPR121
-import Adafruit_CharLCD
+import Adafruit_CharLCD as LCD
 
 def initLCD():
-	lcd = Adafruit_CharLCD.Adafruit_CharLCD()
-	lcd.begin(16,1)
+	# Raspberry Pi pin configuration:
+	lcd_rs        = 25
+	lcd_en        = 24
+	lcd_d4        = 23
+	lcd_d5        = 17
+	lcd_d6        = 21
+	lcd_d7        = 22
+	lcd_backlight = 4
+	# Define LCD column and row size for 16x2 LCD.
+	lcd_columns = 16
+	lcd_rows    = 2
+	# Initialize the LCD using the pins above.
+	lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 	lcd.clear()
-	lcd.message("Session Starts")
+	lcd.message("Session Starts\n" + startTime )
 	return lcd 
 
 def initTouch():
 	cap = MPR121.MPR121()
 	if not cap.begin():
 		print ("Error initializing MPR121.  Check your wiring!") 
-		#lcd.clean()
-		#lcd.message("Touch Sensor Connection Error")
+		lcd.clean()
+		lcd.message("Touch Sensor \nConnection Error")
 		sys.exit(1)
 	print ("Touch Sensor Started\n")
 	return cap
@@ -27,19 +38,7 @@ def initTouch():
 def updatelcd(active, inactive, seconds):
 	minutes=str(int(seconds/60))
 	lcd.clear()
-	lcd.message("Act:" + active + "Ina" + inactive + "\n" + "at " + minutes + "minutes" )
-
-#def createDataFile():
-#	idfile=open('/home/pi/deviceid')
-#	deviceid=idfile.read()
-#	deviceid=deviceid.strip()
-#	currentTime= time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())
-#	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + currentTime + ".csv"
-#	with open(lickDataFile,"a") as f:
-#		f.write("#Session Started on " + currentTime + "\n")
-#		f.write("device\tRatID\tSpout\tlapsed\n")
-#		f.close()
-#	return lickDataFile
+        lcd.message("A:" + str(active) + " I:" + str(inactive) + "\n" + "Min:" + str(minutes) + " "+ deviceid )
 
 def recordLicks(sessionLength):
 	active=0
@@ -50,7 +49,7 @@ def recordLicks(sessionLength):
 		lapsed = time.time() - start
 		if cap.is_touched(1):
 			active+=1
-			#updatelcd(active, inactive, lapsed)
+			updatelcd(active, inactive, lapsed)
 			print(active, inactive, lapsed)
 			with open(lickDataFile,"a") as f:
 				f.write(str(deviceid) + "\t" + "ratID\t"+today +"\t" + startTime + "\t" + "active\t" +  str(lapsed) + "\n")
@@ -58,45 +57,35 @@ def recordLicks(sessionLength):
 		elif cap.is_touched(0):
 			inactive+=1
 			lapsed=time.time()-start
-			#updatelcd(active, inactive, lapsed)
+			updatelcd(active, inactive, lapsed)
 			print (active, inactive, lapsed)
 			with open(lickDataFile,"a") as f:
 				f.write(str(deviceid) + "\t" + "ratID\t"+today +"\t" + startTime + "\t" + "inactive\t" +  str(lapsed) + "\n")
 				f.close()
 	# finishing the data files
-	with open(touchDataFile,"a") as f:
+	with open(lickDataFile,"a") as f:
 		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.close()
-	#updatelcd(active, inactive, lapsed)
+	updatelcd(active, inactive, lapsed)
 	print (active, inactive, lapsed)
 
-#def setupGPIO():
-#	Led1=32
-#	Led2=36
-#	gpio.setwarnings(False)
-#	gpio.setmode(gpio.BOARD)
-#	gpio.setup(Led1, gpio.OUT)
-#	gpio.setup(Led2, gpio.OUT)
-
 if __name__ == '__main__':
-#	os.system("python /home/pi/openbehavior/wifi-network/deviceinfo.sh &")
-#	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
-#	setupGPIO()
-	#initLCD()
+	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh ")
+	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
 	cap=initTouch()
 	idfile=open('/home/pi/deviceid')
 	deviceid=idfile.read()
 	deviceid=deviceid.strip()
 	today= time.strftime("%Y-%m-%d", time.localtime())
 	startTime= time.strftime("%H:%M:%S", time.localtime())
+	lcd=initLCD()
 	currentTime=today + "_" + startTime
 	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + currentTime + ".csv"
 	with open(lickDataFile,"a") as f:
 		f.write("#Session Started on " + currentTime + "\n")
 		f.write("device\tRatID\tDate\tStartTime\tSpout\tlapsed\n")
 		f.close()
-	recordLicks(3600) # session length
+	recordLicks(3600) # session length in seconds
 	time.sleep(5) # wait for motion.py to stop
-	os.fsync(f)
 	os.system('/home/pi/openbehavior/wifi-network/rsync.sh')
 
