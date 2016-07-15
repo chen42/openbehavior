@@ -94,27 +94,7 @@ module case(){
 	}
 }
 
-module motionBoxPos() {
-	translate([0,-2/2,0]) 	cube([63.4, 2,40], center=true) ; //backplate
-	translate([0,-2/2-4.5,0]) cube([63.4, 2,40], center=true) ;//bbackplate
-	translate([0,-25,0]) cube([77.4, 2,40], center=true); //faceplete
-	translate([0,-25/2,0])	cube([55.4,25,40], center=true); // outside 
-}
 
-module motionBoxNeg() {
-	translate([0,-25/2+2, 0]) cube([51.4, 26, 31], center=true); // inside 
-	translate([14.5,0,0]) rotate([90,0,0]) cylinder(r=1, h=25); // motion sensor mounting screw
-	translate([-14.5, 0,0]) rotate([90,0,0]) cylinder(r=1, h=25); // motion sensor mounting screw
-	rotate([90,0,0]) cylinder(r=4.5, h=30); // motion sensor proper
-	translate([0,-25,0])rotate([90,0,0]) cylinder(r1=4.5, r2=14,h=3); // motion sensor proper
-}
-
-module motionBoardBox(){
-	difference() {
-		motionBoxPos();
-		motionBoxNeg();
-	}
-}
 
 module lcd_mounting(){
 		w=75;
@@ -143,6 +123,4 @@ module mounting_touch(){
 } 
 
 case();
-//translate([0,48,1]) rotate([0,0,180] ) motionBoardBox();
 //translate([0,0,25]) rotate([0,180,180]) cover();
-//translate([-50,0,50]) rotate([90,0,270]) frontCover();
