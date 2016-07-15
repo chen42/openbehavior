@@ -45,6 +45,7 @@ def recordLicks(sessionLength):
 	active=0
 	inactive=0
 	start=time.time()
+        updateTime=start
         print ("session started\n")
 	while time.time() - start < sessionLength:
 		time.sleep(0.20) # sets time resolution
@@ -52,6 +53,7 @@ def recordLicks(sessionLength):
 		if cap.is_touched(1):
 			active+=1
 			updatelcd(active, inactive, lapsed)
+                        updateTime=time.time()
 			print(active, inactive, lapsed)
 			with open(lickDataFile,"a") as f:
 				f.write(str(deviceid) + "\t" + "ratID\t"+today +"\t" + startTime + "\t" + "active\t" +  str(lapsed) + "\n")
@@ -60,10 +62,14 @@ def recordLicks(sessionLength):
 			inactive+=1
 			lapsed=time.time()-start
 			updatelcd(active, inactive, lapsed)
+                        updateTime=time.time()
 			print (active, inactive, lapsed)
 			with open(lickDataFile,"a") as f:
 				f.write(str(deviceid) + "\t" + "ratID\t"+today +"\t" + startTime + "\t" + "inactive\t" +  str(lapsed) + "\n")
 				f.close()
+                if time.time() - updateTime > 60 : # update LCD every 60 sec 
+			updatelcd(active, inactive, lapsed)
+                        updateTime=time.time()
 	# finishing the data files
 	updatelcd(active, inactive, lapsed)
 	print (active, inactive, lapsed)
