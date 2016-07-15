@@ -6,6 +6,7 @@ module LEDBoxPos() {
 	translate([0,-25,0]) cube([77.4, 2,40], center=true); //faceplete
 	translate([0,-25/2,0])	cube([55.4,25,40], center=true); // outside 
 }
+
 module LEDBoxNeg() {
 	translate([0,-25/2+2, 0]) cube([52, 26, 35.5], center=true); // inside 
 }
@@ -29,20 +30,19 @@ module cols4LED(){ //all four inside columns
 }
 
 module column(){
-	cylinder(2.5,4,4);
+	cylinder(r=4,6);
 } //the inside column
 
 module led() { // hole for the LED lights
 	cube([22,10,6],center=true);
 }
 
-
 module CueLightBox() {
 	difference() {
 		LEDBoxPos();
 		difference() {
 			LEDBoxNeg(); 
-			rotate([90,0,0]) translate([-24,-15,20]) cols4LED();
+			rotate([90,0,0]) translate([-24,-15,17]) cols4LED();
 		}
 		rotate([90,0,0]) translate([-24,-15,14]) drillholes();
 		translate([0,-25,12.5]) led();
@@ -53,12 +53,12 @@ module CueLightPanel() {
 		difference(){
 			union(){
 				translate([0,-25,0]) cube([77.4, 2,40], center=true); //faceplete
-				rotate([90,0,0]) translate([-24,-15,20]) cols4LED();
+				rotate([90,0,0]) translate([-24,-15,17]) cols4LED();
 			}
-		rotate([90,0,0]) translate([-24,-15,14]) drillholes();
+		rotate([90,0,0]) translate([-24,-15,16]) drillholes();
 		translate([0,-25,12.5]) led();
 	}
 }
-translate([0,48,1]) rotate([0,0,180] ) CueLightBox();
-//translate([0,48,1]) rotate([0,0,180] ) CueLightPanel();
+//translate([0,48,1]) rotate([0,0,180] ) CueLightBox();
+translate([0,48,1]) rotate([0,0,180] ) CueLightPanel();
 
