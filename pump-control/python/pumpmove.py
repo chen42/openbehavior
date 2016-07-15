@@ -39,6 +39,6 @@ pump = pumpcontrol.Pump(gpio)
 
 while True:
 	if gpio.input(SW1):
-		pump.move(-0.4)
+		pump.move(-0.3)
 	elif gpio.input(SW2):
-		pump.move(0.4)
+		pump.move(0.3)
