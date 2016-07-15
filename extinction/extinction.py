@@ -23,7 +23,7 @@ def initLCD():
 	lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 	lcd.clear()
 	sysTime= time.strftime("%H:%M:%S", time.localtime())
-	lcd.message("Waiting for wifi\n" + sysTime )
+	lcd.message("Hurry up, Wifi!\n" + deviceid + sysTime)
 	return lcd 
 
 def initTouch():
@@ -45,6 +45,7 @@ def recordLicks(sessionLength):
 	active=0
 	inactive=0
 	start=time.time()
+        print ("session started\n")
 	while time.time() - start < sessionLength:
 		time.sleep(0.20) # sets time resolution
 		lapsed = time.time() - start
@@ -68,18 +69,19 @@ def recordLicks(sessionLength):
 	print (active, inactive, lapsed)
 
 if __name__ == '__main__':
+	idfile=open('/home/pi/deviceid')
+	deviceid=idfile.read()
+	deviceid=deviceid.strip()
 	lcd=initLCD()
+        time.sleep(1)
 	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh")
         os.system("sudo ifconfig wlan0 down")
 	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
 	today= time.strftime("%Y-%m-%d", time.localtime())
 	startTime= time.strftime("%H:%M:%S", time.localtime())
         lcd.clear()
-        lcd.message("Session starts\n" + startTime)
+        lcd.message("Session started\n" + startTime)
 	cap=initTouch()
-	idfile=open('/home/pi/deviceid')
-	deviceid=idfile.read()
-	deviceid=deviceid.strip()
 	currentTime=today + "_" + startTime
 	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + currentTime + ".csv"
 	with open(lickDataFile,"a") as f:
@@ -90,6 +92,5 @@ if __name__ == '__main__':
 	with open(lickDataFile,"a") as f:
 		f.write("#Session Ended on " +time.strftime("%Y-%m-%d\t%H:%M:%S\t", time.localtime())+"\n")
 		f.close()
-
 	os.system('/home/pi/openbehavior/wifi-network/rsync.sh &')
 
