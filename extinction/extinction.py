@@ -48,7 +48,7 @@ def recordLicks(sessionLength):
         updateTime=start
         print ("session started\n")
 	while time.time() - start < sessionLength:
-		time.sleep(0.20) # sets time resolution
+		time.sleep(0.07) # sets time resolution
 		lapsed = time.time() - start
 		if cap.is_touched(1):
 			active+=1
