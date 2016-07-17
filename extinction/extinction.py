@@ -39,7 +39,7 @@ def initTouch():
 def updatelcd(active, inactive, seconds):
 	minutes=str(int(seconds/60))
 	lcd.clear()
-        lcd.message("A:" + str(active) + " I:" + str(inactive) + "\n" + "Min:" + str(minutes) + " "+ deviceid )
+        lcd.message("A:" + str(active) + " I:" + str(inactive) + "\n" + "Min:" + str(minutes) + " "+ deviceid[3:] + "S" +sessionid )
 
 def recordLicks(sessionLength):
 	active=0
@@ -78,12 +78,12 @@ if __name__ == '__main__':
 	idfile=open('/home/pi/deviceid')
 	deviceid=idfile.read()
 	deviceid=deviceid.strip()
-        with open (sessionFile, "r+") as f:
+        with open ("/home/pi/sessionid", "r+") as f:
             sessionid=f.read()
             sessionid=sessionid.strip()
             nextSession=int(sessionid)+1  
             f.seek(0)
-            f.write("nextSession")
+            f.write(str(nextSession))
             f.close()
 	lcd=initLCD()
         time.sleep(1)
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         lcd.message("Session started\n" + startTime)
 	cap=initTouch()
 	currentTime=today + "_" + startTime
-	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + sessionid + ".csv"
+	lickDataFile="/home/pi/Pies/Extinction/" + deviceid + "S"+ sessionid + "_" + today + ".csv"
 	with open(lickDataFile,"a") as f:
 		f.write("#Session Started on " + currentTime + "\n")
 		f.write("device\tRatID\tDate\tStartTime\tSpout\tlapsed\n")
