@@ -23,7 +23,7 @@ def initLCD():
 	lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 	lcd.clear()
 	sysTime= time.strftime("%H:%M:%S", time.localtime())
-	lcd.message("Hurry up, Wifi!\n" + deviceid + sysTime)
+	lcd.message("Hurry up, Wifi!\n" + deviceid + "Sess."+ sessionid)
 	return lcd 
 
 def initTouch():
@@ -78,6 +78,13 @@ if __name__ == '__main__':
 	idfile=open('/home/pi/deviceid')
 	deviceid=idfile.read()
 	deviceid=deviceid.strip()
+        with open (sessionFile, "r+") as f:
+            sessionid=f.read()
+            sessionid=sessionid.strip()
+            nextSession=int(sessionid)+1  
+            f.seek(0)
+            f.write("nextSession")
+            f.close()
 	lcd=initLCD()
         time.sleep(1)
 	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh")
@@ -89,7 +96,7 @@ if __name__ == '__main__':
         lcd.message("Session started\n" + startTime)
 	cap=initTouch()
 	currentTime=today + "_" + startTime
-	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + currentTime + ".csv"
+	lickDataFile="/home/pi/Pies/Extinction/"+ deviceid + sessionid + ".csv"
 	with open(lickDataFile,"a") as f:
 		f.write("#Session Started on " + currentTime + "\n")
 		f.write("device\tRatID\tDate\tStartTime\tSpout\tlapsed\n")
