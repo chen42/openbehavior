@@ -165,12 +165,7 @@ subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py
 lapse=0 
 while lapse < sessionLength:
 	lapse= time.time() - sTime
-#	if gpio.input(SW1):
-#		pump.move(-0.5)
-#	elif gpio.input(SW2):
-#		pump.move(0.5)
-#	el
-#	if not gpio.input(TIR):
+	time.sleep(0.07) # set delay to adjust sensitivity of the sensor.
 	i = tsensor.readPinTouched()
 	if i == 1:
 		if not pumptimedout:
