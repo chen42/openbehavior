@@ -84,7 +84,9 @@ module case(){
 		translate([-25,-44,16]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
 		translate([3,-44,16]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
 		translate([30,21,8]) cube ([10,10,13]); // potential meter for lcd
-		translate([30,-45,-16])cube([20,16,10]); //powercord
+		translate([30,-45,-16])cube([20,14,8]); //powercord
+		translate([-40, -45, -16]) cube([5,2,20]); // peak slit for the Pi LEDs,
+		translate([-40, -49, -16]) cube([5,2,20]); // peak slit for the Pi LEDs,
 	}
 	translate([-4,-17,-z0/2+1]) rotate([0, 0, -90]) mounting_pi();
 	translate([-25,-47,16]) rotate([90,0,0]) mounting_touch();
