@@ -29,7 +29,7 @@ module col2nd(){
 
 
 module lcd(){ // model:  HD44780 
-	translate([0,0, 13.1]) cube([70, 25, 8.4], center=true);
+	translate([0,0, 13.1]) cube([71.5, 25, 8.4], center=true);
 	//translate([0,0, 13.1-3.7]) cube([80.6, 36, 0.1], center=true); // base plate
 }
 
@@ -81,15 +81,15 @@ module case(){
 		translate([0,y0/2,1]) cube([56, 8, 41], center=true);
 		translate([0,-40,21]) rotate([90,0,0]) cylinder(r=3,h=30); // cables 
 		translate([-4,-53,-z0/2+5]) cube([20,10, 5], center=true); // sdcard slot  
-		translate([-25,-44,16]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
-		translate([3,-44,16]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
+		translate([-25,-44,14]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
+#		translate([3,-44,14]) rotate([90,0,0]) cylinder (r=1.5, h=20); // touch sensor
 		translate([30,21,8]) cube ([10,10,13]); // potential meter for lcd
 		translate([30,-45,-16])cube([20,14,8]); //powercord
 		translate([-40, -45, -16]) cube([5,2,20]); // peak slit for the Pi LEDs,
 		translate([-40, -49, -16]) cube([5,2,20]); // peak slit for the Pi LEDs,
 	}
 	translate([-4,-17,-z0/2+1]) rotate([0, 0, -90]) mounting_pi();
-	translate([-25,-47,16]) rotate([90,0,0]) mounting_touch();
+//	translate([-25,-47,14]) rotate([90,0,0]) mounting_touch();
 	difference(){
 		col4();
 		screw4();
