@@ -12,6 +12,9 @@ fi
 ## wait for wifi connection before run htpdate (because ntp is blocked on my network
 ## then set hwclock
 
+## make sure wlan0 is up
+sudo ifconfig wlan0 up
+
 while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 	do
 	sleep 2
