@@ -22,15 +22,19 @@
 # BEGIN IMPORT PRELUDE
 import sys
 import time
+import RPi.GPIO as gpio
+
 # END IMPORT PRELUDE
 
+gpio.setmode(gpio.BCM) 
 # BEGIN Pin configuration
-DIR = int(11) #int(config['dir-pin'])
-STEP = int(13) #int(config['step-pin'])
-SLEEP = int(15) #int(config['sleep-pin'])
-MS3 = int(19) #int(config['ms3-pin'])
-MS2 = int(21) #int(config['ms2-pin'])
-MS1 = int(23) #int(config['ms1-pin'])
+DIR   = int(17)  # pin 11
+STEP  = int(27)  # pin 13  
+SLEEP = int(22)  # pin 15 
+MS3   = int(10)  # pin 19  
+MS2   = int(9)   # pin 21 
+MS1   = int(11)  # pin 23 
+
 #gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 #gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 # END Pin configuration
