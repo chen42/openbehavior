@@ -132,7 +132,6 @@ module lcd_mounting_neg(){
 	translate([-w/2,  l/2,0])cylinder(r=1.4, h=21);
 }
 
-
 module rfid_antenna_holder(){
 	difference(){
 		cube([8,20,5], center=true);
@@ -163,7 +162,6 @@ module top_cover(){
 		}
 	}
 }
-    
 
 module slant_box() {
 	linear_extrude(height=max_w-8,center=true) polygon(points=[[0,0],[0,58],[55,58],[max_d-9,29],[max_d-9,0]]);
@@ -205,23 +203,6 @@ module controlPanel() {  //holes for the screws, LED, and buttons
 		drillholes();
 	}
 }
-
-
-
-
-
-//dev_board is now obsolete
-module dev_board(){
-//	difference(){
-//		cube([72,47,1],center=true);
-		translate([72/2-3, 47/2-3,0])cylinder(r=2, h=10);
-		translate([-72/2+3, -47/2+3,0])cylinder(r=2, h=10);
-		translate([-72/2+3, 47/2-3,0])cylinder(r=2, h=10);
-		translate([72/2-3, -47/2+3,0])cylinder(r=2, h=10);
-		cube([40,20,30],center=true);
-//	}
-}
-
 
 
 module round_corner_box( r0=10, wd=20, ht=30, lg=40) { // generic 
@@ -307,6 +288,16 @@ module rfid_antenna_housing() //to hold RFID antennae
 	}
 }
 
+module rfid_door() {// to close teh RFID antennae housing
+	difference(){
+		union(){
+			translate([0,-7,0]) cube([6,12,4], center=true) ;
+			cube([46,3,3.5], center=true); // rfid antenna groove;
+		}
+		translate([0,-8,2]) rotate([90,0,0]) cylinder (r=1, h=20, center=true);
+	}
+}
+
 module the_thing (){
  difference(){
     union(){
@@ -368,9 +359,12 @@ module top_half(){
 	}
 }
 
+
+//rfid_antenna_housing();
+rfid_door();
 //top_half();
 //lower_half();
-translate([0,0,90])top_cover();
+//translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
