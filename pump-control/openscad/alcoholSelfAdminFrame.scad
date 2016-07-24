@@ -94,23 +94,20 @@ module top_groove(){ // for the top cover
 	xd=max_d-5;
 	difference(){
 		union (){
-			translate([xw/2-.5, xd/2-.5,-5]) corner2();
-			translate([-xw/2+0.5, -xd/2+0.5,-5]) corner2() ;
-			translate([-xw/2+0.5, xd/2-0.5,-5]) corner2() ;
-			translate([xw/2-0.5, -xd/2+0.5,-5]) corner2() ;
+	//		translate([xw/2-.5, xd/2-.5,-5]) corner2();
+	//		translate([-xw/2+0.5, -xd/2+0.5,-5]) corner2() ;
+	//		translate([-xw/2+0.5, xd/2-0.5,-5]) corner2() ;
+	//		translate([xw/2-0.5, -xd/2+0.5,-5]) corner2() ;
 			cube([xw, xd, 10], center=true);
 		}
 		translate([0,0, -5.6])round_corner_box(r0=5, wd=max_w-24, lg=max_d-24,ht=11);
 	}
 }
 
-module corner2(){
+//module corner2(){
 	//rotate([0,0,45]) scale([0.7,1,1]) cylinder(r=1.5	,h=10);
-	 cylinder(r=1.5	,h=10);
-}
-
-
-
+//	 cylinder(r=1.5	,h=10);
+//}
 
 module lcd(){ // model:  HD44780 
 	translate([0,0, 13.1]) cube([71.5, 25, 8.4], center=true);
@@ -135,11 +132,19 @@ module lcd_mounting_neg(){
 	translate([-w/2,  l/2,0])cylinder(r=1.4, h=21);
 }
 
+
+module rfid_antenna_holder(){
+	difference(){
+		cube([8,20,5], center=true);
+		translate([1,0,2]) cube([6,22,5], center=true);
+	}
+}
+
 module top_cover(){
    union(){
-	   	rotate([180,0,180]) translate([103.5,13.5,-28]) rfid_antenna_housing();//box on side to hold antennae
+		translate([-105,22,45]) rfid_antenna_holder(); //box on side to hold antennae
 		difference(){  
-			translate([0,40,0]) rotate([90,0,270]) slant_box();//outside
+			translate([0,40,0]) rotate([90,0,270]) slant_box(); //outside
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
 				translate([-72,42,20]) rotate([90,0,0]) drill(); // for controlPanel
@@ -151,7 +156,7 @@ module top_cover(){
         translate([max_w/2-10,-30,16]) cube([10,6,4]); // power light hole
 		translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
 		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=15); // new, longer wire exits 
-		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side exit for antennae
+		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=9); // side exit for antennae
 		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
 		translate([20,53,33]) rotate([90,0,0]) lcd();
 		translate([20,48,34]) rotate([90,0,0]) lcd_mounting_neg();
@@ -292,11 +297,12 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 	}
 }
 
+
 module rfid_antenna_housing() //to hold RFID antennae
 	{
-    rotate([270,0,270]) difference(){
-		cube([53,40,7], center=true); // rfid antenna outside;
-	translate([0,-6,-2]) cube([47,46,6], center=true); // rfid antenna groove;
+	difference(){
+	cube([53,40,7], center=true); // rfid antenna outside;
+	translate([0,-6,0]) cube([47,46,4], center=true); // rfid antenna groove;
 	cube([36,25,15], center=true); //rfid antenna loop inside  
 	}
 }
