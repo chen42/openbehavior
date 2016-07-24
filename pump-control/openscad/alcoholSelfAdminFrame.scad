@@ -110,80 +110,95 @@ module corner2(){
 }
 
 
+
+
+module lcd(){ // model:  HD44780 
+	translate([0,0, 13.1]) cube([71.5, 25, 8.4], center=true);
+	//translate([0,0, 13.1-3.7]) cube([80.6, 36, 0.1], center=true); // base plate
+}
+
+module lcd_mounting(){
+	w=75;
+	l=31;
+	translate([w/2,   l/2,0])cylinder(r=3.4, h=7);
+	translate([w/2,  -l/2,0])cylinder(r=3.4, h=7);
+	translate([-w/2, -l/2,0])cylinder(r=3.4, h=7);
+	translate([-w/2,  l/2,0])cylinder(r=3.4, h=7);
+}
+
+module lcd_mounting_neg(){
+	w=75;
+	l=31;
+	translate([w/2,   l/2,0])cylinder(r=1.4, h=21);
+	translate([w/2,  -l/2,0])cylinder(r=1.4, h=21);
+	translate([-w/2, -l/2,0])cylinder(r=1.4, h=21);
+	translate([-w/2,  l/2,0])cylinder(r=1.4, h=21);
+}
+
 module top_cover(){
    union(){
-	   rotate([180,0,180]) translate([103.5,13.5,-28]) rfid_antenna_housing();//box on side to hold antennae
+	   	rotate([180,0,180]) translate([103.5,13.5,-28]) rfid_antenna_housing();//box on side to hold antennae
 		difference(){  
 			translate([0,40,0]) rotate([90,0,270]) slant_box();//outside
-				difference() {
+			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
-				translate([-70,42,23]) rotate([90,0,0]) drill(); // for dev board
+				translate([-72,42,20]) rotate([90,0,0]) drill(); // for controlPanel
+				translate([20,38,34]) rotate([90,0,0]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-//<<<<<<< HEAD
-		translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot
+		translate([max_w/2-10,0,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
+		//translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
         translate([max_w/2-10,-30,16]) cube([10,6,4]); // power light hole
 		translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
-		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=15); // new, longer wire hole
-//=======
-		//translate([max_w/2-10,6,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=12.5,lg=2.5, ht=20); // sd card slot
-		//translate([101-15.5,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=10, ht=21); // power cord 
-		//translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=14); // new, longer wire hole
-//>>>>>>> 661cf5d26978e348622d7899074339fe55555913
-		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side wire hole for antennae
-		translate([-70,42,23]) rotate([90,0,0]) alltheholes();
+		translate([0,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=25,lg=10, ht=15); // new, longer wire exits 
+		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=19); // side exit for antennae
+		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
+		translate([20,53,33]) rotate([90,0,0]) lcd();
+		translate([20,48,34]) rotate([90,0,0]) lcd_mounting_neg();
 		}
 	}
 }
     
-    
 
-module slant_box()
-{
-linear_extrude(height=max_w-8,center=true) polygon(points=[[0,0],[0,58],[55,58],[max_d-9,29],[max_d-9,0]]);
+module slant_box() {
+	linear_extrude(height=max_w-8,center=true) polygon(points=[[0,0],[0,58],[55,58],[max_d-9,29],[max_d-9,0]]);
 }
 
-//translate([0,40,0]) rotate([90,0,270]) difference()
-//{slant_box();
-//translate([2,-1,0]) scale([0.95,1,0.98]) slant_box();}
-    
-    
-
-
-
-module switch() //holes for the switch buttons
-{
+module switch() { //holes for the switch buttons
     translate([11,23,0]) cube([8,7,7]);
     translate([29,23,0]) cube([8,7,7]);
 }
-module led() // hole for the LED lights
-{
+module led() { // hole for the LED lights
     translate([19,0,0]) cube([10,5,7]);
 }
-module column(){cylinder(2.5,4,4);} //the inside column
-module drill() //all four inside columns
-{
+
+module column(){
+ 	cylinder(2.5,4,4);
+} //the inside column
+
+module drill() {//all four inside columns
     translate([4,4,2.23]) column();
     translate([44,4,2.23]) column();
     translate([4,26,2.23]) column();
     translate([44,26,2.23]) column();
 }
-module hollow() {cylinder(9.1,1.5,1.5);} //the screw holes
-module drillholes() //all four screw holes for switches board
-{
-translate([4,4,0]) hollow();
+
+module hollow() {
+	cylinder(9.1,1.5,1.5);
+} //the screw holes
+
+module drillholes() {//all four screw holes for switches board
+	translate([4,4,0]) hollow();
     translate([44,4,0]) hollow();
-   translate([4,26,0]) hollow();
-   translate([44,26,0]) hollow();
+   	translate([4,26,0]) hollow();
+   	translate([44,26,0]) hollow();
 }
-module alltheholes() //holes for the screws, LED, and buttons
-{
- union()
-{
-    switch();
-    led();
-    drillholes();
-}
+module controlPanel() {  //holes for the screws, LED, and buttons
+	union() {
+		switch();
+		led();
+		drillholes();
+	}
 }
 
 
@@ -311,7 +326,7 @@ module the_thing (){
 			}
 		}
 		mounting_screws();
-	translate([70,4,70]) difference(){
+	translate([70,0,70]) difference(){
 		cube([27,22,12],center=true);
 		cube([23,18,12.1],center=true);} //voltage converter housing
         }
@@ -340,12 +355,18 @@ module lower_half () {
 	} 
 }
 
-// lower_half();
-//top_cover();
+module top_half(){
+	translate([0,0,30]) difference(){ 
+		the_thing(); 
+		translate([0,0,-15]) cube([212,120,132],center=true);
+	}
+}
+
+//top_half();
+//lower_half();
+translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
-spout_holder(sh_x=70, sh_y=40, sh_z=20);
+//spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
 //the_thing();
 //step_motor_fastener();
-//the_thing is printed in two halves to save time
-//translate([0,0,30]) difference(){ the_thing(); translate([0,0,-15]) cube([212,120,132],center=true);}//top half
