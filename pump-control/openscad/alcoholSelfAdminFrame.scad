@@ -134,7 +134,7 @@ module lcd_mounting_neg(){
 
 module rfid_antenna_holder(){
 	difference(){
-		cube([8,20,5], center=true);
+		cube([8,20,7], center=true);
 		translate([1,0,2]) cube([6,22,5], center=true);
 	}
 }
@@ -361,10 +361,10 @@ module top_half(){
 
 
 //rfid_antenna_housing();
-rfid_door();
+//rfid_door();
 //top_half();
 //lower_half();
-//translate([0,0,90])top_cover();
+translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
