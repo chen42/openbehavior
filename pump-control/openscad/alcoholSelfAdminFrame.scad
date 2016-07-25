@@ -146,8 +146,8 @@ module top_cover(){
 			translate([0,40,0]) rotate([90,0,270]) slant_box(); //outside
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
-				translate([-72,42,20]) rotate([90,0,0]) drill(); // for controlPanel
-				translate([20,38,34]) rotate([90,0,0]) lcd_mounting();
+				translate([-71,41,20]) rotate([90,0,0]) drill(); // for controlPanel
+				translate([20,40,34]) rotate([90,0,0]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
 		translate([max_w/2-10,0,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
@@ -362,9 +362,9 @@ module top_half(){
 
 //rfid_antenna_housing();
 //rfid_door();
-top_half();
+//top_half();
 //lower_half();
-//translate([0,0,90])top_cover();
+translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
