@@ -81,7 +81,7 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-	translate([-93,-16, max_h/2-2]) mounting_pi();
+	translate([-93,-17, max_h/2-2]) mounting_pi();
 	translate([8,-16, max_h/2-2]) mounting_touch();
 	translate([20,33, max_h/2-2]) mounting_RTC();
 	translate([70,-20, max_h/2+2]) rotate([0,0,0])  step_motor_control();
@@ -362,9 +362,9 @@ module top_half(){
 
 //rfid_antenna_housing();
 //rfid_door();
-//top_half();
+top_half();
 //lower_half();
-translate([0,0,90])top_cover();
+//translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
