@@ -52,12 +52,13 @@ sessionLength=60*60*1 # one hour assay
 
 def initLCD():
 	# Raspberry Pi pin configuration:
-	lcd_rs        = 18  # PIN 12 
-	lcd_en        = 23  # PIN 18 
-	lcd_d4        = 24  # PIN 22
-	lcd_d5        = 25  # PIN 24
-	lcd_d6        =  8  # PIN 26
-	lcd_d7        =  7  # PIN 40
+	lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
+                            # RPi PIN 14 // LCD pin 5 
+	lcd_en        = 23  # RPi PIN 16 // LCD pin 6
+	lcd_d4        = 24  # RPi PIN 18 // LCD pin 11
+	lcd_d5        = 25  # RPi PIN 22 // LCD pin 12
+	lcd_d6        =  8  # RPi PIN 24 // LCD pin 13
+	lcd_d7        =  7  # RPi PIN 26 // LCD pin 14
 	lcd_backlight =  4 
 	# Define LCD column and row size for 16x2 LCD.
 	lcd_columns = 16
