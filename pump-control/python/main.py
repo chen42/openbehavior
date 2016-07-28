@@ -31,6 +31,7 @@ import serial
 import touchsensor
 import datalogger
 import os
+import random
 import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
 
@@ -44,7 +45,7 @@ MOTIONLED= int(6) #pin 31
 
 # BEGIN GLOBAL VARIABLES
 touchcounter = 0
-fixedratio = 10
+ratio = 10
 timeout = 20
 pumptimedout = False
 sessionLength=60*60*1 # one hour assay
@@ -120,12 +121,17 @@ except getopt.GetoptError:
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-f':
-		fixedratio = int(arg)
+		ratio = int(arg)
 	elif opt == '-t':
 		timeout = int(arg)
 	elif opt == '-h':
 		printUsage()
 		sys.exit()
+
+
+
+# variable ratio
+variable_ratio=1
 
 # Initialize GPIO
 gpio.setwarnings(False)
@@ -207,16 +213,18 @@ while lapse < sessionLength:
 		dlogger.logEvent("ACTIVE", lapse)
 		if not pumptimedout:
 			touchcounter += 1
-			if touchcounter == fixedratio:
+			if touchcounter == ratio:
 				rew+=1
 				updateTime=showdata()
-				dlogger.logEvent("REWARD", lapse)
+				dlogger.logEvent("REWARD", lapse, ratio)
 				touchcounter = 0
 				pumptimedout = True
 				pumpTimer = Timer(timeout, resetPumpTimeout)
 				pumpTimer.start()
 				subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
 				pump.move(0.08)
+				if variable_ratio:
+					ratio=random.randint(1,20)
 			else:
 #				dlogger.logEvent("ACTIVE", lapse)
 				updateTime=showdata()
