@@ -134,8 +134,8 @@ module lcd_mounting_neg(){
 
 module rfid_antenna_holder(){
 	difference(){
-		cube([8,20,7], center=true);
-		translate([1,0,2]) cube([6,22,5], center=true);
+		cube([10,20,9], center=true);
+		translate([1,0,2]) cube([8,22,7], center=true);
 	}
 }
 
@@ -147,16 +147,15 @@ module top_cover(){
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
 				translate([-72,41,20]) rotate([90,0,0]) drill(); // for controlPanel
-
 				translate([20,20,51]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-		translate([max_w/2-10,0,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
+		translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
 		//translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
         //translate([max_w/2-10,-30,16]) cube([10,6,4]); // power light hole
 		//translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
-		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=9); // side exit for antennae
+#		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
 		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
 		translate([20,20,43]) rotate([0,0,0]) lcd();
 		translate([20,20,43]) rotate([0,0,0]) lcd_mounting_neg();
@@ -323,9 +322,9 @@ module the_thing (){
 			}
 		}
 		mounting_screws();
-	translate([70,0,70]) difference(){
-		cube([27,22,12],center=true);
-		cube([23,18,12.1],center=true);} //voltage converter housing
+		translate([70,0,70]) difference(){
+			cube([27,22,12],center=true);
+			cube([23,18,12.1],center=true);} //voltage converter housing
         }
     translate([78,33,67]) cube([11.5,3,5],center=true); // rfid board connection via the pins in groove; 
 }
