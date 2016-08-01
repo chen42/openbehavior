@@ -281,8 +281,8 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 module rfid_antenna_housing() //to hold RFID antennae
 	{
 	difference(){
-	cube([53,40,7], center=true); // rfid antenna outside;
-	translate([0,-6,0]) cube([47,46,4], center=true); // rfid antenna groove;
+	cube([53,40,6], center=true); // rfid antenna outside;
+	translate([0,-6,0]) cube([47,46,3], center=true); // rfid antenna groove;
 	cube([36,25,15], center=true); //rfid antenna loop inside  
 	}
 }
@@ -290,10 +290,11 @@ module rfid_antenna_housing() //to hold RFID antennae
 module rfid_door() {// to close teh RFID antennae housing
 	difference(){
 		union(){
-			translate([0,-7,0]) cube([6,12,4], center=true) ;
-			cube([46,3,3.5], center=true); // rfid antenna groove;
+			translate([0,-11,0]) cube([12,20,4], center=true) ;
+			cube([46,3,2.5], center=true); // rfid antenna groove;
 		}
-		translate([0,-8,2]) rotate([90,0,0]) cylinder (r=1, h=20, center=true);
+		scale([1.2,1,0.9])translate([0,-13,2]) rotate([90,0,0]) cylinder (r=3, h=26, center=true);
+		translate([0,-9,2]) rotate([90,0,0]) cylinder (r=2, h=26, center=true);
 	}
 }
 
@@ -360,10 +361,10 @@ module top_half(){
 
 
 //rfid_antenna_housing();
-//rfid_door();
+rfid_door();
 //top_half();
 //lower_half();
-rotate([0,0,180]) translate([0,0,90])top_cover();
+//rotate([0,0,180]) translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
