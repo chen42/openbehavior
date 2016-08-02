@@ -26,11 +26,11 @@ class LickLogger:
 		ratidfile.close()
                 # read sessin id
                 sessionid=open(SESSIONID)
-                sessionid=str(sessionid.read().strip())
+                self.sessid=str(sessionid.read().strip())
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 		# construct file name
-		self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + '_S' + sessionid + '.csv'
+                self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + "_" + str(self.devid)[5:] + '_S' + self.sessid + '.csv'
 		# open data file
 		with open(self.datafile,"a") as f:
 			f.write("RatID\tdate\tboxid\tEventType\tseconds\n")
