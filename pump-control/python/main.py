@@ -208,7 +208,7 @@ lapse=0
 updateTime=0
 def showdata():
 	mins=int((sessionLength-lapse)/60)
-	mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + str(act)+","+str(ina) + "=AI\n" + RatID[-6:] + " " + "R=" + str(rew) + " "+ str(mins) + "Left")
+	mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + RatID[-4:] + " " + str(mins) + "Left\n"+ "A" + str(act)+"I"+str(ina) + "R" +  str(rew) + "T"+ str(ratio))
 	return time.time()
 
 while lapse < sessionLength:
