@@ -26,11 +26,9 @@ def printIDtoLCD(lcd, idstring):
 	lcd.clear()
 	lcd.message(td)
         lcd.message("Tag Found!\n")
-	time.sleep(.5)
+	time.sleep(.1)
 	lcd.clear()
-        lcd.message(td)
-        lcd.message("ID:"+ idstring)
-	
+        lcd.message(idstring)
 
 def main():
 	# UART data
@@ -54,6 +52,8 @@ def main():
 	lcd.clear()
 	lcd.message("Ready to scan!")
 	
+        # time of scan
+        firstsaw={}
 	# Main program loop
 	while True:
 		time.sleep(0.25)
@@ -68,7 +68,11 @@ def main():
 			for i in range(12):
 				chardata = UART.read()
 				idstring = idstring + str(chardata)
-			printIDtoLCD(lcd, idstring)
+                        if idstring not in firstsaw:
+                                firstsaw[idstring]=time.time()
+                        lapsed=int((time.time()-firstsaw[idstring])/60)
+                        msg=idstring + "\n"+ "Seen "+ str(lapsed) + " m ago"
+			printIDtoLCD(lcd, msg)
 			with open(datafile, "a") as f:
 				f.write(time.strftime("%Y-%m-%d\t%H:%M:%S\t") + idstring + "\n")
 			f.close()
