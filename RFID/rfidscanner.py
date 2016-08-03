@@ -26,7 +26,7 @@ def printIDtoLCD(lcd, idstring):
 	lcd.clear()
 	lcd.message(td)
         lcd.message("Tag Found!\n")
-	time.sleep(.1)
+	time.sleep(.5)
 	lcd.clear()
         lcd.message(idstring)
 
