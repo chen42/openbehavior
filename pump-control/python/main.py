@@ -213,11 +213,11 @@ def showdata():
 
 while lapse < sessionLength:
 	lapse= time.time() - sTime
-	time.sleep(0.07) # set delay to adjust sensitivity of the sensor.
+	time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
 	i = tsensor.readPinTouched()
 	if i == 1:
 		act+=1
-		blinkTouchLED(0.05)
+		blinkTouchLED(0.03)
 		dlogger.logEvent("ACTIVE", lapse)
 		if not pumptimedout:
 			touchcounter += 1
@@ -234,10 +234,7 @@ while lapse < sessionLength:
 				if variable_ratio:
 					ratio=random.randint(1,20)
 			else:
-#				dlogger.logEvent("ACTIVE", lapse)
 				updateTime=showdata()
-#		else:
-#			dlogger.logEvent("ACTIVE", lapse)
 	elif i == 2:
 		ina+=1
 		dlogger.logEvent("INACTIVE", lapse)
@@ -246,6 +243,6 @@ while lapse < sessionLength:
 	elif time.time() - updateTime > 60:
 		updateTime=showdata()
 
-
 dlogger.logEvent("SessionEnd", lapse)
+mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
 

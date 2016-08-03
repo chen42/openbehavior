@@ -37,7 +37,7 @@ class LickLogger:
 			f.close()
 	def logEvent(self, EventType, timelapsed, ratio=0):
 		# Create output string
-		outputstr = self.ratid + "\t" + time.strftime("%Y-%m-%d", time.localtime()) + "\t" + self.devid + "\t" + EventType + "\t" + str(ratio) + "\t"+ str(timelapsed) + "\n"
+		outputstr = self.ratid + "\t" + time.strftime("%Y-%m-%d", time.localtime()) + "\t" + self.devid + "_S" + self.sessid+ "\t" + EventType + "\t" + str(ratio) + "\t"+ str(timelapsed) + "\n"
 		# Append to file
 		with open (self.datafile, "a") as datafile:
 			datafile.write(outputstr)
