@@ -21,7 +21,6 @@
 import sys
 import getopt
 import time
-#import datetime
 from threading import Timer
 import subprocess32 as subprocess
 import RPi.GPIO as gpio
@@ -162,10 +161,6 @@ print ("Device info updated")
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
 
-# Initialize data logger
-dlogger = datalogger.LickLogger()
-dlogger.createDataFile()
-
 # turn lights on to indicate ready to run
 gpio.output(TOUCHLED, gpio.HIGH)
 gpio.output(MOTIONLED, gpio.HIGH)
@@ -179,36 +174,43 @@ mesg("Pls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
 mesg("RatID: "+ RatID)
 print (RatID)
-# save RatID to sdcard for motions data
-with open ("/home/pi/ratid", "w") as ratid:
-    ratid.write(RatID)
-
-# session id
-with open ("/home/pi/sessionid", "r+") as f:
-    sessionid=f.read().strip()
-    nextSession=int(sessionid)+1  
-    f.seek(0)
-    f.write(str(nextSession))
-    f.close()
 
 #turn lights off to indicate RFID recieved
 mesg("Session Started")
 gpio.output(TOUCHLED, gpio.LOW)
 gpio.output(MOTIONLED, gpio.LOW)
 
+
+# session id, must be incremented the data loggers 
+with open ("/home/pi/sessionid", "r+") as f:
+    storedSessionID=f.read().strip()
+    sessionID=int(storedSessionID)+1  
+    f.seek(0)
+    f.write(str(sessionID))
+    f.close()
+
+
+# start motion sensor Note: motion sensor needs to be started before session ID is incremented
+#print ("staring motion sensor")
+subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
+
+# Initialize data logger 
+dlogger = datalogger.LickLogger()
+dlogger.createDataFile(RatID)
+
 # Get start time
 sTime = time.time()
 
-# start motion sensor
-subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " &", shell=True)
+# initiate variables
 act=0
 ina=0
 rew=0
 lapse=0 
 updateTime=0
+
 def showdata():
 	mins=int((sessionLength-lapse)/60)
-	mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + RatID[-4:] + " " + str(mins) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + "Rt"+ str(ratio))
+	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(mins) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + "Rt"+ str(ratio))
 	return time.time()
 
 while lapse < sessionLength:
@@ -244,5 +246,5 @@ while lapse < sessionLength:
 		updateTime=showdata()
 
 dlogger.logEvent("SessionEnd", lapse)
-mesg("B" + deviceId[-2:]+  "S"+str(sessionid) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
+mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
 

@@ -16,21 +16,25 @@ class LickLogger:
 	def __init__(self):
 		# read box id
 		self.datatype="lick"
-	def createDataFile(self):
+	def createDataFile(self, RatID):
 		devidfile = open(DEVID_FILEPATH)
 		self.devid = str((devidfile.read()).strip())
 		devidfile.close()
+
 		# read rat id
-		ratidfile = open(RATID_FILEPATH)
-		self.ratid = str((ratidfile.read()).strip())
-		ratidfile.close()
+		self.ratid = RatID 
+
                 # read sessin id
                 sessionid=open(SESSIONID)
                 self.sessid=str(sessionid.read().strip())
+                #print ("sessionid ", self.sessid, "\n") 
+
 		# get start time
 		startTime=time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+
 		# construct file name
-                self.datafile = TDATA_FILEPRFX + self.datatype + "_" + str(self.ratid) + "_" + str(self.devid)[5:] + '_S' + self.sessid + '.csv'
+                self.datafile = TDATA_FILEPRFX + self.datatype + "_" +  str(self.devid)[5:] + '_S' + self.sessid +  "_" +  str(self.ratid) + '.csv'
+
 		# open data file
 		with open(self.datafile,"a") as f:
 			f.write("RatID\tdate\tboxid\tEventType\tratio\tseconds\n")

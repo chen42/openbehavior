@@ -9,6 +9,7 @@ import time
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-SessionLength',  type=int)
+parser.add_argument('-RatID',  type=str)
 args=parser.parse_args()
 sessionLength=args.SessionLength
 
@@ -22,7 +23,7 @@ gpio.setup(pirPin, gpio.IN)
 gpio.setup(motionLed, gpio.OUT)        
 
 dlogger = datalogger.MotionLogger()
-dlogger.createDataFile()
+dlogger.createDataFile(args.RatID)
 
 start=time.time()
 
