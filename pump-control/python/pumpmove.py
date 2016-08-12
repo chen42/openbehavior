@@ -22,13 +22,13 @@ import RPi.GPIO as gpio
 import pumpcontrol
 
 # BEGIN CONSTANT DEFINITIONS
-SW1 = int(37)
-SW2 = int(38)
+SW1 = int(26) #pin 37
+SW2 = int(20) #pin 38
 # END CONSTANT DEFINITIONS
 
 # Initialize GPIO
 gpio.setwarnings(False)
-gpio.setmode(gpio.BOARD)
+gpio.setmode(gpio.BCM)
 
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)

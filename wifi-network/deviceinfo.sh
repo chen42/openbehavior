@@ -1,16 +1,8 @@
 #!/bin/bash
 
 
-## set approximate clock date if need to.
-
-year=`date +"%Y"`
-if [ "$year" -lt "2016" ] 
-	then
-		date -s "Fri July 6 1:01:01 CDT 2016"
-fi
-
-## wait for wifi connection before run htpdate (because ntp is blocked on my network
-## then set hwclock
+# wait for wifi connection before run htpdate (because ntp is blocked on my network
+# then set hwclock
 
 ## make sure wlan0 is up
 sudo ifconfig wlan0 up
@@ -29,8 +21,14 @@ while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
 done
 
 echo "Sync time with the internet"
-sudo htpdate -s www.ntp.org www.uthsc.edu #www.freebsd.org	
-sudo hwclock -w
+sudo htpdate  -t -s www.ntp.org www.uthsc.edu www.freebsd.org > /home/pi/htpdateout 	
+if grep -q "Setting.*seconds" /home/pi/htpdateout ; then 
+	cat /home/pi/htpdateout
+	echo "update hw clock"
+	sudo hwclock -w
+else 
+	sudo hwclock -s
+fi
 
 date >>/home/pi/Pies/DeviceInfo/`cat /home/pi/deviceid`.info
 cat /home/pi/deviceid >>/home/pi/Pies/DeviceInfo/`cat /home/pi/deviceid`.info
