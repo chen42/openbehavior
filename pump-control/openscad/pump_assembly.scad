@@ -16,7 +16,7 @@ $fn = 96;
 //cage_mount();
 //translate([0,-65,23]) rotate([90,0,0]) end_motor();
 //motor_housing_cover();
-carriage_with_syringe_slot();
+rotate([90,0,0]) carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -177,6 +177,7 @@ module end_idler() {
 	}	
 }
 
+//!carriage_body();
 module carriage_body() {
 	hull() {
 		for (i = [-1, 1])
@@ -187,6 +188,7 @@ module carriage_body() {
 	}
 }
 
+//!carriage_relief();
 module carriage_relief() {
 	for (i = [-1, 1])
 		translate([i * cc_guides / 2, offset_guides, 0]) {
@@ -194,9 +196,9 @@ module carriage_relief() {
 			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			cylinder(r = (guide_bearing[0] / 2)-0.2, h = guide_bearing[2] + 0.4, center = true);
+			color("red") cylinder(r = (guide_bearing[0] / 2)-0.1, h = guide_bearing[2] + 0.4, center = true);
 
-			translate([i * (guide_bearing[0] / 2 - 2), -(guide_bearing[0] / 2 - 2), , 0])
+			translate([i * (guide_bearing[0] / 2 - 2.5), -(guide_bearing[0] / 2 - 2.5), , 0])
 				cylinder(r = (guide_bearing[0] / 2 +0.2), h = guide_bearing[2] + 0.4, center = true);
 	}
 
