@@ -247,4 +247,4 @@ while lapse < sessionLength:
 
 dlogger.logEvent("SessionEnd", lapse)
 mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
-
+subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
