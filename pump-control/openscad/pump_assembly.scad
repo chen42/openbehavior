@@ -14,8 +14,9 @@ $fn = 96;
 
 //translate([0,69,23]) rotate([90,0,0])  end_idler_mod();
 //cage_mount();
-translate([0,-65,23]) rotate([90,0,0]) end_motor();
+//translate([0,-65,23]) rotate([90,0,0]) end_motor();
 //motor_housing_cover();
+carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -162,7 +163,7 @@ module end_idler() {
 
 		// outboard idler bearing
 		translate([0, 0, -t_idler_end / 2])
-			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2, center = true);
+			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2+1, center = true);
 
 		// inboard idler bearing
 		translate([0, 0, t_idler_end / 2])
@@ -193,10 +194,10 @@ module carriage_relief() {
 			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 0.4, center = true);
+			cylinder(r = (guide_bearing[0] / 2)-0.2, h = guide_bearing[2] + 0.4, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2), -(guide_bearing[0] / 2 - 2), , 0])
-				cylinder(r = (guide_bearing[0] / 2), h = guide_bearing[2] + 0.4, center = true);
+				cylinder(r = (guide_bearing[0] / 2 +0.2), h = guide_bearing[2] + 0.4, center = true);
 	}
 
 	// nut trap for fixed nut
@@ -581,14 +582,13 @@ module motor_housing(){
 
 module motor_housing_cover(){
 difference(){
-#	rotate([90,0,0]) rounded_box(l1=60, l2=1, r_corner=1.2, height=40);
+	rotate([90,0,0]) rounded_box(l1=60, l2=1, r_corner=1.2, height=40);
 	
 	}
 
 }
 
 module end_idler_mod() {
-    union() {
         difference() {
             union() {
                 end_idler();
@@ -599,28 +599,22 @@ module end_idler_mod() {
 	 		translate([0,-10,0]) rotate([90,0,0]) mounting_screw_bottom(h=10);
         }
         translate([-22, t_idler_end+2, -3.5]) rubber_band_hook();
-        translate([24.3, t_idler_end-2, 3.5]) rubber_band_post();
-    }
+        translate([24.3, t_idler_end-2, 10]) rubber_band_post();
 }
 
 module rubber_band_hook() {
-    union() {
-        difference() {
-            difference() {
-                cylinder(h=7, r=4);
-                cylinder(h=7, r=1.5);
-            }
-            translate([-7,-0.5,0]) cube([7,1,7]);
-        }
-        *translate([0,-1.5,0.75]) rotate([90,0,0]) cylinder(h=4, r=0.7);
-    }
+	difference() {
+		cylinder(h=14, r=4);
+		cylinder(h=14, r=1.5);
+		translate([-7,-0.5,0]) cube([7,1,14]);
+	}
 }
 
 module rubber_band_post() {
     rotate([0,180,0])
     union() {
-        cube([3,4,7]);
-        translate([-4,4,0]) cube([7,3,7]);
+        cube([3,4,14]);
+        translate([-4,4,0]) cube([7,3,14]);
     }
 }
 
@@ -656,8 +650,8 @@ module carriage_with_syringe_slot() {
 						r_corner = 3,
 						height = t_holder);
 
-				translate([0, guide_bearing[0] / 2 + pad_guide_bearing_radius + offset_guides, t_holder / 2])
-					cylinder(r1 = d_syringe / 2, r2 = 0, h = t_carriage - t_holder, center = true);
+				//translate([0, guide_bearing[0] / 2 + pad_guide_bearing_radius + offset_guides, t_holder / 2])
+				//	cylinder(r1 = d_syringe / 2, r2 = 0, h = t_carriage - t_holder, center = true);
 
 			}
 
