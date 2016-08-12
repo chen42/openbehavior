@@ -12,8 +12,9 @@ include<bearings.scad>
 
 $fn = 96;
 
-render_part(8);
-
+//translate([0,69,23]) rotate([90,0,0])  end_idler_mod();
+//cage_mount();
+translate([0,-65,23]) rotate([90,0,0]) end_motor();
 //motor_housing_cover();
 
 module render_part(part_to_render) {
@@ -139,6 +140,7 @@ module end_motor() {
             translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
         }
         translate([0,0,-t_motor_mount/2]) rotate([180, 0, 0]) mounting_screw_bottom(h=20);
+        translate([0,-10,6]) rotate([90,0,0]) cylinder(r=1.5,h=20); // mounting screw
     }
 }
 
@@ -676,7 +678,7 @@ module carriage_with_syringe_slot() {
 
 module end_idler_mod_mount() {
 	difference(){
-%		translate([0,0,-18])	cube([80,30,15], center=true);
+		translate([0,0,-18])	cube([80,30,15], center=true);
 		rotate([90,0,0])	scale([1.05, 1.05,1  ]) end_idler_mod();
 	}
 
