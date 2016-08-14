@@ -134,14 +134,14 @@ module lcd_mounting_neg(){
 
 module rfid_antenna_holder(){
 	difference(){
-		cube([10,20,9], center=true);
-		translate([1,0,2]) cube([8,22,7], center=true);
+		cube([10,20,19], center=true);
+		translate([1,0,5]) cube([8,22,19], center=true);
 	}
 }
 
 module top_cover(){
    union(){
-		translate([-105,22,45]) rfid_antenna_holder(); //box on side to hold antennae
+		translate([-105,22,48.5]) rfid_antenna_holder(); //box on side to hold antennae
 		difference(){  
 			translate([0,40,0]) rotate([90,0,270]) slant_box(); //outside
 			difference() {
@@ -299,39 +299,40 @@ module rfid_door() {// to close teh RFID antennae housing
 }
 
 module the_thing (){
- difference(){
-    union(){
-		difference(){
-			//	pw=40;// spout holder width x 
-			//	ph=40;// spout holder length y
-			//	pg=50;// spout holder height z
-			frame();
-			union(){
-				translate([0,0,max_h/2-4]) top_groove();
-				rotate([90,0,0]) translate([0,0,34]) motion_sensor();
-				translate([-max_w/2,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side;
-				translate([max_w/2-10,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side; 
-				spout_holder_inner(sh_x=-70);
-				spout_holder_inner(sh_x=70);
-				spout_holder(sh_x=70, sh_y=44.7, sh_z=20);
-				spout_holder(sh_x=-70, sh_y=44.7, sh_z=20);
-				//mounting holes for the spout holders
-				translate([-70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
-				translate([70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
-				translate([-70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
-				translate([70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
+	difference(){
+		union(){
+			difference(){
+				//	pw=40;// spout holder width x 
+				//	ph=40;// spout holder length y
+				//	pg=50;// spout holder height z
+				frame();
+				union(){
+					translate([0,0,max_h/2-4]) top_groove();
+					rotate([90,0,0]) translate([0,0,34]) motion_sensor();
+					translate([-max_w/2,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side;
+					translate([max_w/2-10,0,65]) rotate([0,90,0]) cylinder(r=1.9, h=10); //screw hole for the top cover on the side; 
+					spout_holder_inner(sh_x=-70);
+					spout_holder_inner(sh_x=70);
+					spout_holder(sh_x=70, sh_y=44.7, sh_z=20);
+					spout_holder(sh_x=-70, sh_y=44.7, sh_z=20);
+					//mounting holes for the spout holders
+					translate([-70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
+					translate([70,-45,20-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
+					translate([-70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7);
+					translate([70,-45,20+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.7, h=7); 
+				}
+			}
+			mounting_screws();
+			translate([70,0,70]) difference(){
+				cube([42,22,7],center=true);
+				cube([23,18,9.1],center=true); //voltage converter housing
+				translate([15,0,0]) cylinder(r=1.5, h=8);
+				translate([-15,0,0]) cylinder(r=1.5, h=8);
 			}
 		}
-		mounting_screws();
-		translate([70,0,70]) difference(){
-			cube([27,22,12],center=true);
-			cube([23,18,12.1],center=true);} //voltage converter housing
-        }
-    translate([78,33,67]) cube([11.5,3,5],center=true); // rfid board connection via the pins in groove; 
+		translate([78,33,67]) cube([11.5,3,5],center=true); // rfid board connection via the pins in groove; 
+	}
 }
-}
-
-
         
 
 module cue_light_wires () {
@@ -359,12 +360,11 @@ module top_half(){
 	}
 }
 
-
 //rfid_antenna_housing();
-rfid_door();
+//rfid_door();
 //top_half();
 //lower_half();
-//rotate([0,0,180]) translate([0,0,90])top_cover();
+rotate([0,0,180]) translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
