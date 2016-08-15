@@ -72,12 +72,19 @@ module mounting_pi(){
 
 module mounting_touch(){
 	mounting_m25(innR=1.2);
-	translate([28,0,0]) mounting_m25(innR=1.5);
+	translate([28,0,0]) mounting_m25(innR=1.2);
 } 
 
 module mounting_RTC(){
 	mounting_m25();
-	translate([22.5,0,0]) mounting_m25();
+	difference(){
+		union(){
+			translate([22.5,0,0]) cylinder(r=3.8, h=10);
+			translate([24.5,0,0]) cylinder(r=3.8, h=10) ;
+		}
+		translate([22.5,0,0]) cylinder(r=1.2, h=10);
+		translate([24.5,0,0]) cylinder(r=1.2, h=10); 
+	}
 }
 
 module mounting_screws(){
@@ -362,9 +369,9 @@ module top_half(){
 
 //rfid_antenna_housing();
 //rfid_door();
-//top_half();
+top_half();
 //lower_half();
-rotate([0,0,180]) translate([0,0,90])top_cover();
+//rotate([0,0,180]) translate([0,0,90])top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
