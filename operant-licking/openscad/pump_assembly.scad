@@ -6,13 +6,16 @@
 // It is released under CC-BY-SA
 // includes may be found at http://github.com/mtu-most/most-scad-libraries
 
+// modified by Hao Chen and Matthew Longley 
+// University of Tennessee Health Science Center
+
 include<fasteners.scad>
 include<steppers.scad>
 include<bearings.scad>
 
 $fn = 96;
 
-translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // rubberband
+translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount();
 //translate([0,-65,23]) rotate([90,0,0]) end_motor();
 //motor_housing_cover();
@@ -78,7 +81,7 @@ od_antibacklash_spring = 7;
 l_antibacklash_spring = 10;
 
 offset_guides = 3.5; // offset from centerline of motor shaft towards top (+y)
-d_guide_rod = 6.4; // 6mm guide rods
+d_guide_rod = 6.8; // 6mm guide rods
 guide_bearing = bearing_lm6uu;
 pad_guide_bearing_radius = 3;
 
