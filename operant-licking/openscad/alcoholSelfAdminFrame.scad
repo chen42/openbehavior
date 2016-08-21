@@ -10,7 +10,7 @@ max_d=90;
 pw=40;// spout holder width x 
 ph=45;// spout holder length y
 pg=60;// spout holder height z
-r=10; // forgot what this is for??
+//r=10;
 fv=0.1; // for better visualization
 
 module corner(ln=20, wd=30 ){ // a negative part for making a round corner 
@@ -58,8 +58,8 @@ module frame(){
 
 module mounting_m25(innR=1.9){ // screw 
 	difference(){
-		cylinder(r=3.8, h=10);
-		cylinder(r=innR, h=10);
+		cylinder(r=3.8, h=5);
+		cylinder(r=innR, h=5+fv);
 	}
 }
 
@@ -79,8 +79,8 @@ module mounting_RTC(){
 	mounting_m25();
 	difference(){
 		union(){
-			translate([22.5,0,0]) cylinder(r=3.8, h=10);
-			translate([24.5,0,0]) cylinder(r=3.8, h=10) ;
+			translate([22.5,0,0]) cylinder(r=3.8, h=5);
+			translate([24.5,0,0]) cylinder(r=3.8, h=5) ;
 		}
 		translate([22.5,0,0]) cylinder(r=1.2, h=10);
 		translate([24.5,0,0]) cylinder(r=1.2, h=10); 
@@ -124,10 +124,10 @@ module lcd(){ // model:  HD44780
 module lcd_mounting(){
 	w=75;
 	l=31;
-	translate([w/2,   l/2,0])cylinder(r=3.4, h=7);
-	translate([w/2,  -l/2,0])cylinder(r=3.4, h=7);
-	translate([-w/2, -l/2,0])cylinder(r=3.4, h=7);
-	translate([-w/2,  l/2,0])cylinder(r=3.4, h=7);
+	translate([w/2,   l/2,0])cylinder(r=3.4, h=3);
+	translate([w/2,  -l/2,0])cylinder(r=3.4, h=3);
+	translate([-w/2, -l/2,0])cylinder(r=3.4, h=3);
+	translate([-w/2,  l/2,0])cylinder(r=3.4, h=3);
 }
 
 module lcd_mounting_neg(){
@@ -154,15 +154,13 @@ module top_cover(){
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
 				translate([-72,41,20]) rotate([90,0,0]) drill(); // for controlPanel
-				translate([20,20,51]) lcd_mounting();
+				translate([20,20,54]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
-		translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
-		//translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
-        //translate([max_w/2-10,-30,16]) cube([10,6,4]); // power light hole
-		//translate([101-14,max_d/2,19]) rotate([90,0,0]) round_corner_box(r0=1, wd=12,lg=11, ht=21); // power cord 
+		//translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
+		translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
-#		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
+		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
 		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
 		translate([20,20,43]) rotate([0,0,0]) lcd();
 		translate([20,20,43]) rotate([0,0,0]) lcd_mounting_neg();
@@ -369,9 +367,9 @@ module top_half(){
 
 //rfid_antenna_housing();
 //rfid_door();
-top_half();
+//top_half();
 //lower_half();
-//rotate([0,0,180]) translate([0,0,90])top_cover();
+rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
