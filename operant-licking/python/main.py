@@ -44,12 +44,22 @@ MOTIONLED= int(6) #pin 31
 
 # BEGIN GLOBAL VARIABLES
 touchcounter = 0
-ratio = 10
-timeout = 20
 pumptimedout = False
+timeout = 20
+schedule = "pr" # options are vr fr pr
+ratio=10
 sessionLength=60*60*1 # one hour assay
-# END GLOBAL VARIABLES
+## initial ratio
+if schedule=="pr":
+        breakpoint=2.0
+        nextratio=int(5*2.72**(breakpoint/5)-5)
+        sessionLength=20*60 # session ends after 20 min inactivity
+elif schedule=="vr":
+        nextratio=range(1,ratio*2)
+else: # fr
+        nextratio=ratio
 
+# END GLOBAL VARIABLES
 def initLCD():
 	# Raspberry Pi pin configuration:
 	lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
@@ -119,18 +129,15 @@ except getopt.GetoptError:
 	printUsage()
 	sys.exit(2)
 for opt, arg in opts:
-	if opt == '-f':
-		ratio = int(arg)
+	if opt == '-s':
+		schedule = str(arg)
 	elif opt == '-t':
 		timeout = int(arg)
+        elif opt== '-l':
+                sessionLength=int(arg)*60
 	elif opt == '-h':
 		printUsage()
 		sys.exit()
-
-
-
-# variable ratio
-variable_ratio=1
 
 # Initialize GPIO
 gpio.setwarnings(False)
@@ -151,7 +158,7 @@ mesg("Prog. Started")
 pump = pumpcontrol.Pump(gpio)
 
 # enable the switches to move the pump
-subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/pumpmove.py" + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/pumpmove.py" + " &", shell=True)
 
 # Run the deviceinfo script
 mesg("Hurry up, Wifi!")
@@ -192,7 +199,7 @@ with open ("/home/pi/sessionid", "r+") as f:
 
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
 #print ("staring motion sensor")
-subprocess.call("sudo python /home/pi/openbehavior/pump-control/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
@@ -200,6 +207,7 @@ dlogger.createDataFile(RatID)
 
 # Get start time
 sTime = time.time()
+lastActiveLick=sTime
 
 # initiate variables
 act=0
@@ -209,12 +217,16 @@ lapse=0
 updateTime=0
 
 def showdata():
-	mins=int((sessionLength-lapse)/60)
-	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(mins) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + "Rt"+ str(ratio))
+	minsLeft=int((sessionLength-lapse)/60)
+        #print (sessionLength, lapse, lastActiveLick, minsLeft)
+	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + "Rt"+ str(nextratio))
 	return time.time()
 
 while lapse < sessionLength:
-	lapse= time.time() - sTime
+        if schedule=="pr":
+                lapse = time.time() - lastActiveLick 
+        else:
+                lapse = time.time() - sTime
 	time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
 	i = tsensor.readPinTouched()
 	if i == 1:
@@ -223,7 +235,7 @@ while lapse < sessionLength:
 		dlogger.logEvent("ACTIVE", lapse)
 		if not pumptimedout:
 			touchcounter += 1
-			if touchcounter == ratio:
+			if touchcounter == nextratio:
 				rew+=1
 				updateTime=showdata()
 				dlogger.logEvent("REWARD", lapse, ratio)
@@ -231,10 +243,17 @@ while lapse < sessionLength:
 				pumptimedout = True
 				pumpTimer = Timer(timeout, resetPumpTimeout)
 				pumpTimer.start()
-				subprocess.call('python /home/pi/openbehavior/pump-control/python/blinkenlights.py &', shell=True)
+				subprocess.call('python /home/pi/openbehavior/operant-licking/python/blinkenlights.py &', shell=True)
 				pump.move(0.08)
-				if variable_ratio:
-					ratio=random.randint(1,20)
+                                if schedule == "fr":
+                                        nextratio=ratio
+				elif schedule == "vr":
+					nextratio=random.randint(1,ratio*2)
+                                elif schedule == "pr":
+                                        breakpoint+=1.0
+                                        nextratio=int(5*2.72**(breakpoint/5)-5)
+                                        lastActiveLick=time.time()
+                                        #print ('pr next ratio', nextratio)
 			else:
 				updateTime=showdata()
 	elif i == 2:
