@@ -34,32 +34,6 @@ import random
 import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
 
-# BEGIN CONSTANT DEFINITIONS
-TIR = int(16) # Pin 36
-SW1 = int(26) # Pin 37
-SW2 = int(20) # Pin 38
-TOUCHLED = int(12) #pin 32
-MOTIONLED= int(6) #pin 31
-# END CONSTANT DEFINITIONS
-
-# BEGIN GLOBAL VARIABLES
-touchcounter = 0
-pumptimedout = False
-timeout = 20
-schedule = "vr" # options are vr fr pr
-ratio=10
-sessionLength=60*60*1 # one hour assay
-## initial ratio
-if schedule=="pr":
-        breakpoint=2.0
-        nextratio=int(5*2.72**(breakpoint/5)-5)
-        sessionLength=20*60 # session ends after 20 min inactivity
-elif schedule=="vr":
-        nextratio=random.randint(1,ratio*2)
-else: # fr
-        nextratio=ratio
-
-# END GLOBAL VARIABLES
 def initLCD():
 	# Raspberry Pi pin configuration:
 	lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
@@ -139,6 +113,22 @@ for opt, arg in opts:
 		printUsage()
 		sys.exit()
 
+# BEGIN CONSTANT DEFINITIONS
+TIR = int(16) # Pin 36
+SW1 = int(26) # Pin 37
+SW2 = int(20) # Pin 38
+TOUCHLED = int(12) #pin 32
+MOTIONLED= int(6) #pin 31
+# END CONSTANT DEFINITIONS
+
+# BEGIN GLOBAL VARIABLES
+touchcounter = 0
+pumptimedout = False
+timeout = 20
+schedule = "vr" # options are vr fr pr, default is vr
+ratio=10
+sessionLength=60*60*1 # one hour assay
+
 # Initialize GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BCM)
@@ -179,16 +169,35 @@ deviceId=dId.read().strip()
 # wait for RFID scanner to get RatID
 mesg("Pls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
+
+# the default schedule is vr10. These two RFIDs are used to change the schedules
+if RatID=="1E003E3B0C17":
+    schedule="pr"
+    RatID=ReadRFID("/dev/ttyAMA0")
+elif RatID=="2E90EDD079FA":
+    schedule="fr"
+    RatID=ReadRFID("/dev/ttyAMA0")
+
 mesg("RatID: "+ RatID)
 print (RatID)
+
+# initial ratio
+if schedule=="pr":
+        breakpoint=2.0
+        nextratio=int(5*2.72**(breakpoint/5)-5)
+        sessionLength=20*60 # session ends after 20 min inactivity
+elif schedule=="vr":
+        nextratio=random.randint(1,ratio*2)
+else: # fr
+        nextratio=ratio
+
 
 #turn lights off to indicate RFID recieved
 mesg("Session Started")
 gpio.output(TOUCHLED, gpio.LOW)
 gpio.output(MOTIONLED, gpio.LOW)
 
-
-# session id, must be incremented the data loggers 
+# session id 
 with open ("/home/pi/sessionid", "r+") as f:
     storedSessionID=f.read().strip()
     sessionID=int(storedSessionID)+1  
@@ -219,7 +228,7 @@ updateTime=0
 def showdata():
 	minsLeft=int((sessionLength-lapse)/60)
         #print (sessionLength, lapse, lastActiveLick, minsLeft)
-	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + "Rt"+ str(nextratio))
+	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
 	return time.time()
 
 while lapse < sessionLength:
