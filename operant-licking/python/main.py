@@ -171,11 +171,15 @@ mesg("Pls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
 
 # the default schedule is vr10. These two RFIDs are used to change the schedules
-if RatID=="1E003E3B0C17":
+if RatID=="3E3B0C17":
     schedule="pr"
+    mesg("Loading PR Prog.\nPls Scan Rat")
+    time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID=="2E90EDD079FA":
+elif RatID=="EDD079FA":
     schedule="fr"
+    mesg("Loading FR Prog.\nPls Scan Rat")
+    time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
 
 mesg("RatID: "+ RatID)
