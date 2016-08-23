@@ -46,7 +46,7 @@ MOTIONLED= int(6) #pin 31
 touchcounter = 0
 pumptimedout = False
 timeout = 20
-schedule = "pr" # options are vr fr pr
+schedule = "vr" # options are vr fr pr
 ratio=10
 sessionLength=60*60*1 # one hour assay
 ## initial ratio
@@ -55,7 +55,7 @@ if schedule=="pr":
         nextratio=int(5*2.72**(breakpoint/5)-5)
         sessionLength=20*60 # session ends after 20 min inactivity
 elif schedule=="vr":
-        nextratio=range(1,ratio*2)
+        nextratio=random.randint(1,ratio*2)
 else: # fr
         nextratio=ratio
 
