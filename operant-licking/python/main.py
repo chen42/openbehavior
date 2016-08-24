@@ -53,9 +53,8 @@ def initLCD():
     return lcd 
 
 def mesg(m):
-    datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     lcd.clear()
-    lcd.message(m + "\n"  + datetime)
+    lcd.message(m) 
 
 def printUsage():
     print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
@@ -112,6 +111,7 @@ ina=0 # number of licks on the inactive spout
 rew=0 # number of reward
 lapse=0  # time since program start
 updateTime=0 # time since last LCD update
+datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 # ENG GLOBAL VARIABLES
 
 # Initialize GPIO
@@ -151,7 +151,7 @@ dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
 # wait for RFID scanner to get RatID
-mesg("Default to VR10\nPls scan RFID")
+mesg("Pls scan RFID VR10\n"+datetime)
 RatID=ReadRFID("/dev/ttyAMA0")
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
