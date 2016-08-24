@@ -97,21 +97,21 @@ def ReadRFID(path_to_sensor) :
 					return (ID)
 
 # Parse command line arguments
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "hf:t:")
-except getopt.GetoptError:
-	printUsage()
-	sys.exit(2)
-for opt, arg in opts:
-	if opt == '-s':
-		schedule = str(arg)
-	elif opt == '-t':
-		timeout = int(arg)
-        elif opt== '-l':
-                sessionLength=int(arg)*60
-	elif opt == '-h':
-		printUsage()
-		sys.exit()
+#try:
+#	opts, args = getopt.getopt(sys.argv[1:], "hf:t:")
+#except getopt.GetoptError:
+#	printUsage()
+#	sys.exit(2)
+#for opt, arg in opts:
+#	if opt == '-s':
+#		schedule = str(arg)
+#	elif opt == '-t':
+#		timeout = int(arg)
+#        elif opt== '-l':
+#                sessionLength=int(arg)*60
+#	elif opt == '-h':
+#		printUsage()
+#		sys.exit()
 
 # BEGIN CONSTANT DEFINITIONS
 TIR = int(16) # Pin 36
@@ -124,6 +124,14 @@ MOTIONLED= int(6) #pin 31
 # BEGIN GLOBAL VARIABLES
 touchcounter = 0
 pumptimedout = False
+act=0 # number of licks on the active spout
+ina=0 # number of licks on the inactive spout
+rew=0 # number of reward
+lapse=0  # time since program start
+updateTime=0 # time since last LCD update
+# ENG GLOBAL VARIABLES
+
+# default operant schedule
 timeout = 20
 schedule = "vr" # options are vr fr pr, default is vr
 ratio=10
@@ -153,7 +161,6 @@ subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/pumpmo
 # Run the deviceinfo script
 mesg("Hurry up, Wifi!")
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-print ("Device info updated")
 
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
@@ -162,7 +169,7 @@ tsensor = touchsensor.TouchSensor()
 gpio.output(TOUCHLED, gpio.HIGH)
 gpio.output(MOTIONLED, gpio.HIGH)
 
-#device id
+# device id
 dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
@@ -170,7 +177,8 @@ deviceId=dId.read().strip()
 mesg("Pls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
 
-# the default schedule is vr10. These two RFIDs are used to change the schedules
+# the default schedule is vr10 to20. Other reinforcemnt schedules can be started by using RFIDs.
+
 if RatID=="3E3B0C17":
     schedule="pr"
     mesg("Loading PR Prog.\nPls Scan Rat")
@@ -191,8 +199,10 @@ if schedule=="pr":
         nextratio=int(5*2.72**(breakpoint/5)-5)
         sessionLength=20*60 # session ends after 20 min inactivity
 elif schedule=="vr":
+        ratio=10
         nextratio=random.randint(1,ratio*2)
 else: # fr
+        ratio=10
         nextratio=ratio
 
 
@@ -209,9 +219,8 @@ with open ("/home/pi/sessionid", "r+") as f:
     f.write(str(sessionID))
     f.close()
 
-
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
-#print ("staring motion sensor")
+# print ("staring motion sensor")
 subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
 
 # Initialize data logger 
@@ -221,13 +230,6 @@ dlogger.createDataFile(RatID)
 # Get start time
 sTime = time.time()
 lastActiveLick=sTime
-
-# initiate variables
-act=0
-ina=0
-rew=0
-lapse=0 
-updateTime=0
 
 def showdata():
 	minsLeft=int((sessionLength-lapse)/60)
@@ -251,7 +253,7 @@ while lapse < sessionLength:
 			if touchcounter == nextratio:
 				rew+=1
 				updateTime=showdata()
-				dlogger.logEvent("REWARD", lapse, ratio)
+				dlogger.logEvent("REWARD", lapse, nextratio)
 				touchcounter = 0
 				pumptimedout = True
 				pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -266,7 +268,6 @@ while lapse < sessionLength:
                                         breakpoint+=1.0
                                         nextratio=int(5*2.72**(breakpoint/5)-5)
                                         lastActiveLick=time.time()
-                                        #print ('pr next ratio', nextratio)
 			else:
 				updateTime=showdata()
 	elif i == 2:
