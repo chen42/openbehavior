@@ -23,7 +23,7 @@ gpio.setup(pirPin, gpio.IN)
 gpio.setup(motionLed, gpio.OUT)        
 
 dlogger = datalogger.MotionLogger()
-dlogger.createDataFile(args.RatID)
+dlogger.createDataFile(args.RatID, "NA")
 
 start=time.time()
 

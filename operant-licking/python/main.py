@@ -91,10 +91,10 @@ def ReadRFID(path_to_sensor) :
                 ID = ID + str(Z)
             ID = ID.replace(Endflag, "" ) 
             if int(ID, 16) != 0:
-                if len(ID) > 8:
-                    ID=ID[-8:]
-                    print "RFID  detected: "+ ID
-                    return (ID)
+                #if len(ID) > 12:
+                #    ID=ID[-12:]
+                print ("RFID  detected: "+ ID)
+                return (ID)
 
 # BEGIN CONSTANT DEFINITIONS
 TIR = int(16) # Pin 36
@@ -155,7 +155,7 @@ mesg("Default to VR10\nPls scan RFID")
 RatID=ReadRFID("/dev/ttyAMA0")
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
-if RatID=="3E3B0C17":
+if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     schedule="pr"
     breakpoint=2.0
     timeout = 20
@@ -165,13 +165,13 @@ if RatID=="3E3B0C17":
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID=="EDD079FA":
+elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     schedule="fr"
     ratio=10
     timeout = 20
     sessionLength=60*60*1 # one hour assay
-    nextratio=random.randint(1,ratio*2)
-    mesg("Run FR"+ratio+" Prog.\nPls Scan Rat")
+    nextratio=ratio
+    mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
 else: # vr
@@ -203,7 +203,7 @@ subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
-dlogger.createDataFile(RatID, schedule+ratio)
+dlogger.createDataFile(RatID, schedule+str(ratio))
 
 # Get start time
 sTime = time.time()
