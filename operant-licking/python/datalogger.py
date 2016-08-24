@@ -16,7 +16,7 @@ class LickLogger:
 	def __init__(self):
 		# read box id
 		self.datatype="lick"
-	def createDataFile(self, RatID):
+	def createDataFile(self, RatID, schedule):
 		devidfile = open(DEVID_FILEPATH)
 		self.devid = str((devidfile.read()).strip())
 		devidfile.close()
@@ -37,7 +37,7 @@ class LickLogger:
 
 		# open data file
 		with open(self.datafile,"a") as f:
-			f.write("RatID\tdate\tboxid\tEventType\tratio\tseconds\n")
+			f.write("RatID\tdate\tboxid\tEventType\t"+schedule+"\tseconds\n")
 			f.close()
 	def logEvent(self, EventType, timelapsed, ratio=0):
 		# Create output string
