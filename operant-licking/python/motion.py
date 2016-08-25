@@ -10,6 +10,7 @@ import time
 parser=argparse.ArgumentParser()
 parser.add_argument('-SessionLength',  type=int)
 parser.add_argument('-RatID',  type=str)
+parser.add_argument('-Schedule',  type=str)
 args=parser.parse_args()
 sessionLength=args.SessionLength
 
@@ -23,7 +24,7 @@ gpio.setup(pirPin, gpio.IN)
 gpio.setup(motionLed, gpio.OUT)        
 
 dlogger = datalogger.MotionLogger()
-dlogger.createDataFile(args.RatID, "NA")
+dlogger.createDataFile(args.RatID, args.Schedule)
 
 start=time.time()
 
@@ -36,5 +37,13 @@ while lapse <  sessionLength:
 		time.sleep(1)
 		gpio.output(motionLed, False)
 		time.sleep(1)
+        if args.Schedule=="pr":
+                if int(time.time())%5==0:
+                        sessionEnd=open("/home/pi/prend").read().strip()
+                        if sessionEnd=="yes":
+                                 sessionLength=lapse-100
+                        else:
+                                 sessionLength=lapse+100
 
 dlogger.logEvent("SessionEnd", lapse)
+
