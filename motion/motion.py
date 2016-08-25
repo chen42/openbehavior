@@ -31,7 +31,7 @@ while(True):
 		motionDataFile='/home/pi/Pies/OCMotion/'+ boxid + "_s" + str(sessionID) + "_" + startTime + ".csv"
 		with open(motionDataFile,"a") as f:
 			f.write("#Session started at " + startTime +"\n")
-			f.write("date\tboxid\tseconds\n")
+			f.write("seconds\n")
 			f.close()
 		print ("session starts at " + startTime)
                 cnt=0
@@ -41,10 +41,10 @@ while(True):
 #                        time.sleep(0.1) # time resolution of motion data
 			if gpio.input(pirPin):
                                 cnt=cnt+1
-                                print ("motion cnt " + str(cnt))
+#                                print ("motion cnt " + str(cnt))
 				with open(motionDataFile,"a") as f:
                                     lapsed=time.time()-start
-                                    f.write(time.strftime("%Y-%m-%d\t", time.localtime()) + boxid +"\t"+ str(lapsed) +"\n")
+                                    f.write(str(lapsed) +"\n")
 				    f.close()
 				gpio.output(motionLed, True)
 				time.sleep(0.2)
@@ -52,8 +52,7 @@ while(True):
 				time.sleep(0.2)
 #               print "session ended\n"
                 with open(motionDataFile,"a") as f:
-                    f.write("#Session ended at \t" + time.strftime("%H:%M:%S", time.localtime()) + "\n") 
-                    f.write(boxid + "\t" + str(cnt)+"\n")
+                    f.write("#Session ended\t" + boxid + "\tsession"+ str(sessionid)+ "\t"+ time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + str(cnt)+"\n")
                     f.close()
                 os.system("sudo ifconfig wlan0 up")
                 os.system("/home/pi/openbehavior/wifi-network/rsync.sh &")
