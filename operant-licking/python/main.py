@@ -35,83 +35,65 @@ import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
 
 def initLCD():
-	# Raspberry Pi pin configuration:
-	lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
-                            # RPi PIN 14 // LCD pin 5 
-	lcd_en        = 23  # RPi PIN 16 // LCD pin 6
-	lcd_d4        = 24  # RPi PIN 18 // LCD pin 11
-	lcd_d5        = 25  # RPi PIN 22 // LCD pin 12
-	lcd_d6        =  8  # RPi PIN 24 // LCD pin 13
-	lcd_d7        =  7  # RPi PIN 26 // LCD pin 14
-	lcd_backlight =  4 
-	# Define LCD column and row size for 16x2 LCD.
-	lcd_columns = 16
-	lcd_rows    =  2
-	# Initialize the LCD using the pins above.
-	lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
-	lcd.clear()
-	return lcd 
+    # Raspberry Pi pin configuration:
+    lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
+                        # RPi PIN 14 // LCD pin 5 
+    lcd_en        = 23  # RPi PIN 16 // LCD pin 6
+    lcd_d4        = 24  # RPi PIN 18 // LCD pin 11
+    lcd_d5        = 25  # RPi PIN 22 // LCD pin 12
+    lcd_d6        =  8  # RPi PIN 24 // LCD pin 13
+    lcd_d7        =  7  # RPi PIN 26 // LCD pin 14
+    lcd_backlight =  4 
+    # Define LCD column and row size for 16x2 LCD.
+    lcd_columns = 16
+    lcd_rows    =  2
+    # Initialize the LCD using the pins above.
+    lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+    lcd.clear()
+    return lcd 
 
 def mesg(m):
-	datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-	lcd.clear()
-	lcd.message(m + "\n"  + datetime)
+    lcd.clear()
+    lcd.message(m) 
 
 def printUsage():
-	print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
-	
+    print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
+    
 def resetPumpTimeout():
-	global pumptimedout
-	pumptimedout = False
-	
+    global pumptimedout
+    pumptimedout = False
+
 def blinkTouchLED(duration):
-	gpio.output(TOUCHLED, gpio.HIGH)
-	time.sleep(duration)
-	gpio.output(TOUCHLED, gpio.LOW)
+    gpio.output(TOUCHLED, gpio.HIGH)
+    time.sleep(duration)
+    gpio.output(TOUCHLED, gpio.LOW)
 
 def ReadRFID(path_to_sensor) :
-	baud_rate = 9600 
-	time_out = 0.05
-	uart = serial.Serial(path_to_sensor, baud_rate, timeout = time_out)
-	uart.close()
-	uart.open()
-	uart.flushInput()
-	uart.flushOutput()
-	print(path_to_sensor + " initiated")
-	Startflag = "\x02"
-	Endflag = "\x03"
-	while True:
-		Z = 0
-		Tag = 0
-		ID = ""
-		Z = uart.read()
-		if Z == Startflag:
-			for Counter in range(13):
-				Z = uart.read()
-				ID = ID + str(Z)
-			ID = ID.replace(Endflag, "" ) 
-			if int(ID, 16) != 0:
-				if len(ID) > 8:
-					ID=ID[-8:]
-					print "RFID  detected: "+ ID
-					return (ID)
-
-# Parse command line arguments
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "hf:t:")
-except getopt.GetoptError:
-	printUsage()
-	sys.exit(2)
-for opt, arg in opts:
-	if opt == '-s':
-		schedule = str(arg)
-	elif opt == '-t':
-		timeout = int(arg)
-        elif opt== '-l':
-                sessionLength=int(arg)*60
-	elif opt == '-h':
-		printUsage()
-		sys.exit()
+    baud_rate = 9600 
+    time_out = 0.05
+    uart = serial.Serial(path_to_sensor, baud_rate, timeout = time_out)
+    uart.close()
+    uart.open()
+    uart.flushInput()
+    uart.flushOutput()
+    print(path_to_sensor + " initiated")
+    Startflag = "\x02"
+    Endflag = "\x03"
+    while True:
+        Z = 0
+        Tag = 0
+        ID = ""
+        Z = uart.read()
+        if Z == Startflag:
+            for Counter in range(13):
+                Z = uart.read()
+                ID = ID + str(Z)
+            ID = ID.replace(Endflag, "" ) 
+            if int(ID, 16) != 0:
+                #if len(ID) > 12:
+                #    ID=ID[-12:]
+                print ("RFID  detected: "+ ID)
+                return (ID)
 
 # BEGIN CONSTANT DEFINITIONS
 TIR = int(16) # Pin 36
@@ -124,10 +106,13 @@ MOTIONLED= int(6) #pin 31
 # BEGIN GLOBAL VARIABLES
 touchcounter = 0
 pumptimedout = False
-timeout = 20
-schedule = "vr" # options are vr fr pr, default is vr
-ratio=10
-sessionLength=60*60*1 # one hour assay
+act=0 # number of licks on the active spout
+ina=0 # number of licks on the inactive spout
+rew=0 # number of reward
+lapse=0  # time since program start
+updateTime=0 # time since last LCD update
+datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+# ENG GLOBAL VARIABLES
 
 # Initialize GPIO
 gpio.setwarnings(False)
@@ -153,7 +138,6 @@ subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/pumpmo
 # Run the deviceinfo script
 mesg("Hurry up, Wifi!")
 os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-print ("Device info updated")
 
 # Initialize touch sensor
 tsensor = touchsensor.TouchSensor()
@@ -162,35 +146,46 @@ tsensor = touchsensor.TouchSensor()
 gpio.output(TOUCHLED, gpio.HIGH)
 gpio.output(MOTIONLED, gpio.HIGH)
 
-#device id
+# device id
 dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
 # wait for RFID scanner to get RatID
-mesg("Pls scan RFID")
+mesg("Pls scan RFID VR10\n"+datetime)
 RatID=ReadRFID("/dev/ttyAMA0")
 
-# the default schedule is vr10. These two RFIDs are used to change the schedules
-if RatID=="1E003E3B0C17":
+# the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
+if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     schedule="pr"
+    breakpoint=2.0
+    timeout = 20 
+    nextratio=int(5*2.72**(breakpoint/5)-5)
+    sessionLength=20*60 # session ends after 20 min inactivity
+    ratio=""
+    mesg("Run PR Schedule.\nPls Scan Rat")
+    time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID=="2E90EDD079FA":
+    #signal motion sensor to keep recording until this is changed
+    with open ("/home/pi/prend", "w") as f:
+        f.write("no")
+elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     schedule="fr"
+    ratio=10
+    timeout = 20
+    sessionLength=60*60*1 # one hour assay
+    nextratio=ratio
+    mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
+    time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
+else: # vr
+    schedule="vr"
+    ratio=10
+    nextratio=ratio
+    timeout = 20
+    sessionLength=60*60*1 # one hour assay
 
 mesg("RatID: "+ RatID)
 print (RatID)
-
-# initial ratio
-if schedule=="pr":
-        breakpoint=2.0
-        nextratio=int(5*2.72**(breakpoint/5)-5)
-        sessionLength=20*60 # session ends after 20 min inactivity
-elif schedule=="vr":
-        nextratio=random.randint(1,ratio*2)
-else: # fr
-        nextratio=ratio
-
 
 #turn lights off to indicate RFID recieved
 mesg("Session Started")
@@ -205,74 +200,76 @@ with open ("/home/pi/sessionid", "r+") as f:
     f.write(str(sessionID))
     f.close()
 
-
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
-#print ("staring motion sensor")
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
+# print ("staring motion sensor")
+subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
-dlogger.createDataFile(RatID)
+dlogger.createDataFile(RatID, schedule+str(ratio))
 
 # Get start time
 sTime = time.time()
 lastActiveLick=sTime
 
-# initiate variables
-act=0
-ina=0
-rew=0
-lapse=0 
-updateTime=0
-
 def showdata():
-	minsLeft=int((sessionLength-lapse)/60)
-        #print (sessionLength, lapse, lastActiveLick, minsLeft)
-	mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
-	return time.time()
+    if schedule=='pr':
+        minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
+    else:
+        minsLeft=int((sessionLength-lapse)/60)
+    mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
+    return time.time()
 
 while lapse < sessionLength:
-        if schedule=="pr":
-                lapse = time.time() - lastActiveLick 
-        else:
-                lapse = time.time() - sTime
-	time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
-	i = tsensor.readPinTouched()
-	if i == 1:
-		act+=1
-		blinkTouchLED(0.03)
-		dlogger.logEvent("ACTIVE", lapse)
-		if not pumptimedout:
-			touchcounter += 1
-			if touchcounter == nextratio:
-				rew+=1
-				updateTime=showdata()
-				dlogger.logEvent("REWARD", lapse, ratio)
-				touchcounter = 0
-				pumptimedout = True
-				pumpTimer = Timer(timeout, resetPumpTimeout)
-				pumpTimer.start()
-				subprocess.call('python /home/pi/openbehavior/operant-licking/python/blinkenlights.py &', shell=True)
-				pump.move(0.08)
-                                if schedule == "fr":
-                                        nextratio=ratio
-				elif schedule == "vr":
-					nextratio=random.randint(1,ratio*2)
-                                elif schedule == "pr":
-                                        breakpoint+=1.0
-                                        nextratio=int(5*2.72**(breakpoint/5)-5)
-                                        lastActiveLick=time.time()
-                                        #print ('pr next ratio', nextratio)
-			else:
-				updateTime=showdata()
-	elif i == 2:
-		ina+=1
-		dlogger.logEvent("INACTIVE", lapse)
-		blinkTouchLED(0.05)
-		updateTime=showdata()
-	elif time.time() - updateTime > 60:
-		updateTime=showdata()
+    lapse = time.time() - sTime
+#   print ("lapse", lapse)
+    time.sleep(0.01) # set delay to adjust sensitivity of the sensor.
+    i = tsensor.readPinTouched()
+    if i == 1:
+        act+=1
+        lastActiveLick=time.time()
+        blinkTouchLED(0.02)
+        dlogger.logEvent("ACTIVE", lapse)
+        if not pumptimedout:
+            touchcounter += 1
+            if touchcounter == nextratio:
+                rew+=1
+                updateTime=showdata()
+                dlogger.logEvent("REWARD", lapse, nextratio)
+                touchcounter = 0
+                pumptimedout = True
+                pumpTimer = Timer(timeout, resetPumpTimeout)
+                pumpTimer.start()
+                subprocess.call('python /home/pi/openbehavior/operant-licking/python/blinkenlights.py &', shell=True)
+                pump.move(0.08) # This is 60ul
+                if schedule == "fr":
+                    nextratio=ratio
+                elif schedule == "vr":
+                    nextratio=random.randint(1,ratio*2)
+                elif schedule == "pr":
+                    breakpoint+=1.0
+                    nextratio=int(5*2.72**(breakpoint/5)-5)
+            else:
+                updateTime=showdata()
+    elif i == 2:
+        ina+=1
+        dlogger.logEvent("INACTIVE", lapse)
+        blinkTouchLED(0.05)
+        updateTime=showdata()
+    elif time.time() - updateTime > 60:
+        updateTime=showdata()
+    # keep this here so that the PR data file will record lapse from sesion start 
+    if schedule=="pr":
+        lapse = time.time() - lastActiveLick 
+#        print ("prlaps", lapse)
+ 
+# signal the motion script to stop recording
+if schedule=='pr':
+    with open("/home/pi/prend", "w") as f:
+        f.write("yes")
 
-dlogger.logEvent("SessionEnd", lapse)
+dlogger.logEvent("SessionEnd", time.time()-sTime)
+
 mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
+
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
