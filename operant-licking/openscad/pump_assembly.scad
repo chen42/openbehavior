@@ -15,11 +15,11 @@ include<bearings.scad>
 
 $fn = 96;
 
-translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+//translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount();
 //translate([0,-65,23]) rotate([90,0,0]) end_motor();
 //motor_housing_cover();
-//rotate([90,0,0]) carriage_with_syringe_slot();
+rotate([90,0,0]) carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -199,7 +199,7 @@ module carriage_relief() {
 			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			color("red") cylinder(r = (guide_bearing[0] / 2)-0.1, h = guide_bearing[2] + 0.4, center = true);
+			cylinder(r = (guide_bearing[0] / 2)-0.1, h = guide_bearing[2] + 0.4, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2.5), -(guide_bearing[0] / 2 - 2.5), , 0])
 				cylinder(r = (guide_bearing[0] / 2 +0.2), h = guide_bearing[2] + 0.4, center = true);
@@ -210,7 +210,7 @@ module carriage_relief() {
 		for (i = [0, -1])
 			translate([0, i * t_carriage, -t_carriage / 2 + 2])
 				rotate([0, 0, 30])
-					cylinder(r = d_lead_nut / 2, h = h_lead_nut, $fn = 6);
+					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut+.5, $fn = 6); //.3 an d.5  added by Hao
 
 	// lead nuts and anti-backlash spring
 	hull()
