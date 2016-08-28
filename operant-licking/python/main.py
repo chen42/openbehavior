@@ -111,7 +111,6 @@ ina=0 # number of licks on the inactive spout
 rew=0 # number of reward
 lapse=0  # time since program start
 updateTime=0 # time since last LCD update
-datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 # ENG GLOBAL VARIABLES
 
 # Initialize GPIO
@@ -127,7 +126,7 @@ gpio.setup(MOTIONLED, gpio.OUT)
 
 # initiate LCD
 lcd=initLCD()
-mesg("Prog. Started")
+#mesg("Prog. Started")
 
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
@@ -151,6 +150,7 @@ dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
 # wait for RFID scanner to get RatID
+datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 mesg("Pls scan RFID VR10\n"+datetime)
 RatID=ReadRFID("/dev/ttyAMA0")
 
@@ -160,7 +160,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     breakpoint=2.0
     timeout = 20 
     nextratio=int(5*2.72**(breakpoint/5)-5)
-    sessionLength=20*60 # session ends after 20 min inactivity
+    sessionLength=10*60 # session ends after 10 min inactivity
     ratio=""
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
