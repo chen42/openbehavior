@@ -147,6 +147,10 @@ module rfid_antenna_holder(){
 }
 
 module top_cover(){
+	lcdx=-30;
+	lcdy=17;
+	lcdz1=54;
+	lcdz2=43;
    union(){
 		translate([-105,22,48.5]) rfid_antenna_holder(); //box on side to hold antennae
 		difference(){  
@@ -154,7 +158,7 @@ module top_cover(){
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
 				translate([-72,41,20]) rotate([90,0,0]) drill(); // for controlPanel
-				translate([20,20,54]) lcd_mounting();
+				translate([lcdx,lcdy,lcdz1]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
 		//translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
@@ -162,8 +166,8 @@ module top_cover(){
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
 		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
 		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
-		translate([20,20,43]) rotate([0,0,0]) lcd();
-		translate([20,20,43]) rotate([0,0,0]) lcd_mounting_neg();
+		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd();
+		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd_mounting_neg();
 		}
 	}
 }
