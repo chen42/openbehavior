@@ -16,10 +16,10 @@ include<bearings.scad>
 $fn = 96;
 
 translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
-cage_mount(); // i.e. pump base
-translate([0,-65,23]) rotate([90,0,180]) end_motor();
-color("green") translate([0,-100, 46]) motor_housing_cover();
-translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+//cage_mount(); // i.e. pump base
+//translate([0,-65,23]) rotate([90,0,180]) end_motor();
+//color("green") translate([0,-100, 46]) motor_housing_cover();
+//translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -293,13 +293,14 @@ module clamp_body(thickness) {
 	}
 }
 
+
 module clamp_relief(
 	thickness,
 	pad_ends) {
 			// guide rods have backing, so are off the end of the body
 			for (i = [-1, 1])
 				translate([i * cc_guides / 2, offset_guides, pad_ends])
-					cylinder(r = (d_guide_rod / 2) - 0.2, h = thickness, center = true);
+					color("blue") cylinder(r = (d_guide_rod / 2) - 0.15, h = thickness, center = true);
 
 			// slots for clamping guide rods
 			for (i = [-1, 1])
@@ -309,23 +310,23 @@ module clamp_relief(
 							translate([0, j * w_ends, 0])
 								cylinder(r = 0.5, h = thickness + 2, center = true);
 
-			// holes for clamp screws
-			translate([0, w_ends / 4 + offset_guides, 0]) {
-				for (i = [-1, 1])
-					for (j = [1]) {
-						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
-							rotate([0, 90, 0])
-	//#							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
-
-						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
-							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
-
+// holes for clamp screws
+//			translate([0, w_ends / 4 + offset_guides, 0]) {
+//				for (i = [-1, 1])
+//					for (j = [1]) {
+//						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
+//							rotate([0, 90, 0])
+//							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
+//
+//						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
+//							rotate([0, 90, 0])
+//								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
+//
 //						translate([0, 0, j * (thickness - pad_ends) / 4])
 //							rotate([0, 90, 0])
-//#								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
-					}
-			}
+//								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
+//}
+//}
 
 }
 
