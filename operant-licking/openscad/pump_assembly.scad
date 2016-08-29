@@ -210,7 +210,7 @@ module carriage_relief() {
 		for (i = [0, -1])
 			translate([0, i * t_carriage, -t_carriage / 2 + 2])
 				rotate([0, 0, 30])
-					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut+.5, $fn = 6); //.3 an d.5  added by Hao
+					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut+.3, $fn = 6); //.3 added by Hao
 
 	// lead nuts and anti-backlash spring
 	hull()
