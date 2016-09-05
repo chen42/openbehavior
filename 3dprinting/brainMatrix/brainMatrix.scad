@@ -1,5 +1,5 @@
 $fn=100;
-module slide(){
+module slider(){
 	difference(){
 		translate([0,-8,9])cube([28,28,14], center=true);
 		translate([0,-6,9]) cube ([14,28,15], center=true);
@@ -33,8 +33,8 @@ module side(){
 }
 
 
-color("yellow") translate([0,5,0]) slide();
-//translate([0,-2,23]) cutter();
+color("yellow") translate([0,5,0]) slider(); // 
+translate([0,-2,23]) cutter();
 
-//color("grey") base();
+color("grey") base();
 

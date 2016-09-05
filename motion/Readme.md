@@ -15,4 +15,7 @@ EdiMax WiFi USB. [Amazon] (http://www.amazon.com/gp/product/B003MTTJOY)
 
 Step-down LM2596 power converter. [eBay] (http://www.ebay.com/itm/161476280982)  
 
+## Notes
+
+Two step down DC-DC converters are used. One is set to 5 V to power the RPi. This is always on. The other one is set to 3.3 V. This is only on when the output port in the MedPC is activated. This then controls the on and off of the motion.py program.
 
