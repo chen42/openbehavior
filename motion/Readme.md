@@ -1,7 +1,7 @@
-#Adding motion sensor to operant conditioning chambers
+#Adding  motion sensors to operant conditioning chambers
 
 ## Description
-This project adds a motion sensor to the commercial MedPC operant chambers. The motion sensor is controlled by a RPi. The RPi is powered by the 28V power source available in the operant chamber. The RPi is turned on and off via MedPC programs. The data are stored in the SD card of the Pi. Each operant chamber use one Pi. All the Pi computers are connected by a WiFi network and data are transferred to a remote server via sftp.
+This project adds a motion sensor to the commercial MedPC operant chambers. The motion sensor is controlled by a RPi. The RPi is powered by the 28V power source available in the operant chamber (via a step down converter). The RPi is turned on and off via MedPC programs. The data are stored in the SD card of the Pi. Each operant chamber use one Pi. All the Pi computers are connected by a WiFi network and data are transferred to a remote server via sftp.
 
 ## Parts list
 
