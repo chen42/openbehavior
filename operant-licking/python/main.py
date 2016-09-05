@@ -111,7 +111,6 @@ ina=0 # number of licks on the inactive spout
 rew=0 # number of reward
 lapse=0  # time since program start
 updateTime=0 # time since last LCD update
-datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 # ENG GLOBAL VARIABLES
 
 # Initialize GPIO
@@ -127,7 +126,7 @@ gpio.setup(MOTIONLED, gpio.OUT)
 
 # initiate LCD
 lcd=initLCD()
-mesg("Prog. Started")
+#mesg("Prog. Started")
 
 # Initialize pump
 pump = pumpcontrol.Pump(gpio)
@@ -151,6 +150,7 @@ dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
 # wait for RFID scanner to get RatID
+datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 mesg("Pls scan RFID VR10\n"+datetime)
 RatID=ReadRFID("/dev/ttyAMA0")
 
@@ -158,13 +158,16 @@ RatID=ReadRFID("/dev/ttyAMA0")
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     schedule="pr"
     breakpoint=2.0
-    timeout = 20
+    timeout = 20 
     nextratio=int(5*2.72**(breakpoint/5)-5)
-    sessionLength=20*60 # session ends after 20 min inactivity
+    sessionLength=10*60 # session ends after 10 min inactivity
     ratio=""
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
+    #signal motion sensor to keep recording until this is changed
+    with open ("/home/pi/prend", "w") as f:
+        f.write("no")
 elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     schedule="fr"
     ratio=10
@@ -199,7 +202,7 @@ with open ("/home/pi/sessionid", "r+") as f:
 
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
 # print ("staring motion sensor")
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID+ " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
@@ -210,21 +213,22 @@ sTime = time.time()
 lastActiveLick=sTime
 
 def showdata():
-    minsLeft=int((sessionLength-lapse)/60)
-    #print (sessionLength, lapse, lastActiveLick, minsLeft)
+    if schedule=='pr':
+        minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
+    else:
+        minsLeft=int((sessionLength-lapse)/60)
     mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
     return time.time()
 
 while lapse < sessionLength:
-    if schedule=="pr":
-        lapse = time.time() - lastActiveLick 
-    else:
-        lapse = time.time() - sTime
-    time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
+    lapse = time.time() - sTime
+#   print ("lapse", lapse)
+    time.sleep(0.01) # set delay to adjust sensitivity of the sensor.
     i = tsensor.readPinTouched()
     if i == 1:
         act+=1
-        blinkTouchLED(0.03)
+        lastActiveLick=time.time()
+        blinkTouchLED(0.02)
         dlogger.logEvent("ACTIVE", lapse)
         if not pumptimedout:
             touchcounter += 1
@@ -245,7 +249,6 @@ while lapse < sessionLength:
                 elif schedule == "pr":
                     breakpoint+=1.0
                     nextratio=int(5*2.72**(breakpoint/5)-5)
-                    lastActiveLick=time.time()
             else:
                 updateTime=showdata()
     elif i == 2:
@@ -255,7 +258,18 @@ while lapse < sessionLength:
         updateTime=showdata()
     elif time.time() - updateTime > 60:
         updateTime=showdata()
+    # keep this here so that the PR data file will record lapse from sesion start 
+    if schedule=="pr":
+        lapse = time.time() - lastActiveLick 
+#        print ("prlaps", lapse)
+ 
+# signal the motion script to stop recording
+if schedule=='pr':
+    with open("/home/pi/prend", "w") as f:
+        f.write("yes")
 
-dlogger.logEvent("SessionEnd", lapse)
+dlogger.logEvent("SessionEnd", time.time()-sTime)
+
 mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
+
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
