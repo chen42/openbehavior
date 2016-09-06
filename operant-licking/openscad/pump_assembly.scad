@@ -15,11 +15,11 @@ include<bearings.scad>
 
 $fn = 96;
 
-translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+//translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount(); // i.e. pump base
 //translate([0,-65,23]) rotate([90,0,180]) end_motor();
 //color("green") translate([0,-100, 46]) motor_housing_cover();
-//translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();

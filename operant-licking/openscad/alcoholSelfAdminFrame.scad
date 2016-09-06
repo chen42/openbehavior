@@ -117,26 +117,25 @@ module top_groove(){ // for the top cover
 //}
 
 module lcd(){ // model:  HD44780 
-	translate([0,0, 13.1]) cube([71.5, 25, 8.4], center=true);
+	translate([0,0, 13.1]) cube([71.5, 24.5, 8.4], center=true);
 	//translate([0,0, 13.1-3.7]) cube([80.6, 36, 0.1], center=true); // base plate
 }
+
+module lcd_screw(){
+	difference(){
+	cylinder(r=3.4, h=3);
+	cylinder(r=1.4,, h=10);
+	}
+}
+
 
 module lcd_mounting(){
 	w=75;
 	l=31;
-	translate([w/2,   l/2,0])cylinder(r=3.4, h=3);
-	translate([w/2,  -l/2,0])cylinder(r=3.4, h=3);
-	translate([-w/2, -l/2,0])cylinder(r=3.4, h=3);
-	translate([-w/2,  l/2,0])cylinder(r=3.4, h=3);
-}
-
-module lcd_mounting_neg(){
-	w=75;
-	l=31;
-	translate([w/2,   l/2,0])cylinder(r=1.4, h=21);
-	translate([w/2,  -l/2,0])cylinder(r=1.4, h=21);
-	translate([-w/2, -l/2,0])cylinder(r=1.4, h=21);
-	translate([-w/2,  l/2,0])cylinder(r=1.4, h=21);
+	translate([w/2,   l/2,0])lcd_screw();
+	translate([w/2,  -l/2,0])lcd_screw();
+	translate([-w/2, -l/2,0])lcd_screw();
+	translate([-w/2,  l/2,0])lcd_screw();
 }
 
 module rfid_antenna_holder(){
@@ -147,17 +146,20 @@ module rfid_antenna_holder(){
 }
 
 module top_cover(){
-	lcdx=-30;
+	lcdx=-40;
 	lcdy=17;
 	lcdz1=54;
 	lcdz2=43;
+	ctlx=30;
+	ctly=41;
+	ctlz=20;
    union(){
 		translate([-105,22,48.5]) rfid_antenna_holder(); //box on side to hold antennae
 		difference(){  
 			translate([0,40,0]) rotate([90,0,270]) slant_box(); //outside
 			difference() {
 				translate([0,38,-2]) rotate([90,0,270]) scale([0.95, 1, 0.98]) slant_box(); //inside    
-				translate([-72,41,20]) rotate([90,0,0]) drill(); // for controlPanel
+				translate([ctlx,ctly,ctlz]) rotate([90,0,0]) drill(); // for controlPanel
 				translate([lcdx,lcdy,lcdz1]) lcd_mounting();
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
@@ -165,9 +167,9 @@ module top_cover(){
 		translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
 		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
-		translate([-72,42,20]) rotate([90,0,0]) controlPanel();
+		translate([ctlx,ctly,ctlz]) rotate([90,0,0]) controlPanel();
 		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd();
-		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd_mounting_neg();
+//#		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd_mounting_neg();
 		}
 	}
 }
