@@ -1,6 +1,17 @@
+RDM 6300 connections
+-------------------
 The antenna can be connected in either direction
 connect the Tx on the RPi (i.e. pin 8)  to Rx on the board (i.e. PIN 2) 
 connect the Rx on the RPi (i.e. pin 10) to Tx on the board (i.e. PIN 1)  
 connect the ground on the RPi (i.e. pin 6) to the ground on the board (i.e. Pin 4)
 connect the 5V on the RPi (i.e. pin 2) to the power in on the board (i.e. Pin 5)
+
+LCD connections
+--------------
+RS -> Pin 03 / GPIO 02
+EN -> Pin 05 / GPIO 03
+D7 -> Pin 07 / GPIO 04
+D6 -> Pin 11 / GPIO 17
+D5 -> Pin 13 / GPIO 27
+D4 -> Pin 15 / GPIO 22
 
