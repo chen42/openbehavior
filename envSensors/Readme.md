@@ -4,11 +4,10 @@ The sensor we use include the HTU21DF for humidity,  TSL2561 for light,  and BMP
 
 We tested the MPL3115A2  for barometer but the BMP180 is easier to use.  
 
-Because we ran all these sensor via I2C, an extra 5V powersupply is provide to the I2C bus. We use the  [Powergen Dual USB charger](http://www.amazon.com/gp/product/B0073FCPSK) for this purpose. 
+Because we ran all these sensor via I2C, an extra 5V power supply is provide to the I2C bus. We use the  [Powergen Dual USB charger](http://www.amazon.com/gp/product/B0073FCPSK) for this purpose. 
 
 The location of the device is identified in a file named locatinID located at /home/pi/. The ID stored in this file is used to name the data file. The location ID is also entered in the data file. This allows the same program to be deployed at multiple locations. The python logger program is ran once every 10 min via cron.
 
 We use this device to monitor the environment of animal housing rooms where the light cycle is reversed. The logger program  writes the lux level during the night to a file called lux.csv. The checklux.py program, also ran via a cron job, checks the lux level during the day and flashes an LED to alert the technician if lights are off during the night.    
 
-We use [syncthing](https://syncthing.net) to transfer the data to our desktop computer via a wifi network. 
 

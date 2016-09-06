@@ -1,6 +1,0 @@
-RS -> Pin 03 / GPIO 02
-EN -> Pin 05 / GPIO 03
-D7 -> Pin 07 / GPIO 04
-D6 -> Pin 11 / GPIO 17
-D5 -> Pin 13 / GPIO 27
-D4 -> Pin 15 / GPIO 22
