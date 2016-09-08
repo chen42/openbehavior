@@ -506,9 +506,9 @@ void Adafruit_TSL2561::getSensor(sensor_t *sensor)
   sensor->resolution  = 1.0;
 }
 '''
+if __name__ == "__main__":
+	LightSensor = Adafruit_TSL2561()
+	LightSensor.enableAutoGain(True)
+	while True:
+	    print LightSensor.calculateLux(), " Lux"
 
-#LightSensor = Adafruit_TSL2561()
-#LightSensor.enableAutoGain(True)
-#while True:
-#    print LightSensor.calculateLux(), " Lux"
-    
