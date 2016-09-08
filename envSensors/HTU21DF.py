@@ -77,3 +77,10 @@ def read_humidity():
 	temperature = read_temperature()
 	humidity = ((25 - temperature) * -0.15) + uncomp_humidity
 	return humidity
+
+if __name__ == "__main__":
+	while 1:
+		temp=read_temperature()
+		humd=read_humidity()
+		print (temp, humd)
+		time.sleep(2)
