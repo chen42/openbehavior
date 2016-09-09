@@ -26,11 +26,11 @@ Edimax USB WiFi module, not needed if use RPi 3B [Amazon] (https://www.amazon.co
 
 ### Add wires to the sensors
 
-Cut the jumb wire in half. Solder four wires to each sensor (and RTC). We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. ![](./images/envSensor1.jpg)
+Cut the jumper wire in half. Solder four wires to each sensor (and RTC). We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. ![](./images/envSensor1.jpg)
 
 
 ### Prepare the breadboard
-Drill four holds at the corners. Solder four rows of pin heads (five pins each) to the snappable breadboard. 
+Drill four holes at the corners. Solder four rows of pin heads (five pins each) to the snappable breadboard. 
 We use the two side rows for the GND and 5V. Use the middle two rows for SDA and SCL. 
 ![](./images/envSensor2.jpg).
 
