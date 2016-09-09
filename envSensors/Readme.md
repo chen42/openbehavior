@@ -32,22 +32,22 @@ Cut the jumb wire in half. We use black (or grey) for ground, red (or orange) fo
 ### Prepare the breadboard
 Drill four holds at the corners. Solder four rows of pin heads (five pins each) to the snappable breadboard. 
 Use the two side rows for the GND and 5V. Use the middle two rows for SDA and SCL. 
-[./images/envSensor2.jpg].
+![](./images/envSensor2.jpg).
 
 Make sure pins on the same head are all connected at the back. (You can solder a short segment of wire to two middle pin heads to connect them).  
-[./images/envSensor5.jpg].
+![](./images/envSensor5.jpg).
 
 ### Connect the wires
 
 Connect the sensors and the real-time clock to the pins.
-[./images/envSensor3.jpg]
+![](./images/envSensor3.jpg)
 
 Use one additional sets of four wires to connect the last set of pins to the GND, 5V, SCL, and SDA pins on the RPi.
 
 ### Final step
 
 Screw the parts to the 3D printed base.
-[./images/envSensor4.jpg]
+![](./images/envSensor4.jpg)
 
 ## Software
 
