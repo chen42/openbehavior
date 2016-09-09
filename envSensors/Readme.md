@@ -51,10 +51,15 @@ Screw the parts to the 3D printed base.
 
 ## Software
 
+Clone the repository
+```
+cd /home/pi/
+git clone https://github.com/chen42/openbehavior.git
+```
 
-Enable the realtime clock by following these [instruction](https://learn.adafruit.com/adding-a-real-time-clock-to-raspberry-pi/overview)
+Enable the realtime clock by following these [instructions](https://learn.adafruit.com/adding-a-real-time-clock-to-raspberry-pi/overview)
 
-Edit the /etc/rc.local file to include the following line  (needed by the RTC and HTU21D-F sensor library)
+Edit the /etc/rc.local file to include the following lines  (needed by the RTC and HTU21D-F sensor library)
 
 ```
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
@@ -62,7 +67,6 @@ pigpiod &
 ```
 
 Run the following command to edit cron 
-
 
 ```
 sudo crontab -e
