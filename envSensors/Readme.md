@@ -8,7 +8,7 @@ We use this device to monitor the environment of animal housing rooms where the 
 
 ## Parts list
 
-Raspberry Pi 2B or 3  [Element 14] 
+Raspberry Pi 2B or 3  [Element 14] (https://www.element14.com/community/community/raspberry-pi)
 
 TSL2561 Lux Sensor [Adafruit] (https://www.adafruit.com/products/439)
 
@@ -20,11 +20,13 @@ SB4 Snappable PC BreadBoard [Amazon] (https://www.amazon.com/gp/product/B00PX52C
 
 1P-1P female to Female Jump Wire [Amazon] (https://www.amazon.com/gp/product/B00R96X8JS)
 
+Edimax USB WiFi module, not needed if use RPi 3B [Amazon] (https://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/)
+
 ## Assembly 
 
 ### Add wires to the sensors
 
-Cut the jumb wire in half. We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. [./images/envSensor1.jpg]
+Cut the jumb wire in half. We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. ![](./images/envSensor1.jpg)
 
 
 ### Prepare the breadboard
