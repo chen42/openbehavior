@@ -15,11 +15,11 @@ include<bearings.scad>
 
 $fn = 96;
 
-//translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount(); // i.e. pump base
 //translate([0,-65,23]) rotate([90,0,180]) end_motor();
 //color("green") translate([0,-100, 46]) motor_housing_cover();
-translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+//translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
 module render_part(part_to_render) {
 	if (part_to_render == 1) end_motor();
@@ -300,7 +300,7 @@ module clamp_relief(
 			// guide rods have backing, so are off the end of the body
 			for (i = [-1, 1])
 				translate([i * cc_guides / 2, offset_guides, pad_ends])
-					color("blue") cylinder(r = (d_guide_rod / 2) - 0.15, h = thickness, center = true);
+					color("blue") cylinder(r = (d_guide_rod / 2) - 0.30, h = thickness, center = true);
 
 			// slots for clamping guide rods
 			for (i = [-1, 1])
