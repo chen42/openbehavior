@@ -26,12 +26,12 @@ Edimax USB WiFi module, not needed if use RPi 3B [Amazon] (https://www.amazon.co
 
 ### Add wires to the sensors
 
-Cut the jumb wire in half. We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. ![](./images/envSensor1.jpg)
+Cut the jumb wire in half. Solder four wires to each sensor (and RTC). We use black (or grey) for ground, red (or orange) for 5V, blue for SCL, and green for SDA. ![](./images/envSensor1.jpg)
 
 
 ### Prepare the breadboard
 Drill four holds at the corners. Solder four rows of pin heads (five pins each) to the snappable breadboard. 
-Use the two side rows for the GND and 5V. Use the middle two rows for SDA and SCL. 
+We use the two side rows for the GND and 5V. Use the middle two rows for SDA and SCL. 
 ![](./images/envSensor2.jpg).
 
 Make sure pins on the same head are all connected at the back. (You can solder a short segment of wire to two middle pin heads to connect them).  
@@ -52,26 +52,26 @@ Screw the parts to the 3D printed base.
 ## Software
 
 
-Enable the realtime clock [instruction](https://learn.adafruit.com/adding-a-real-time-clock-to-raspberry-pi/overview)
+Enable the realtime clock by following these [instruction](https://learn.adafruit.com/adding-a-real-time-clock-to-raspberry-pi/overview)
 
-edit the /etc/rc.local file to include the following line  (needed by the RTC and HTU21D-F sensor library)
+Edit the /etc/rc.local file to include the following line  (needed by the RTC and HTU21D-F sensor library)
 
 ```
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
 pigpiod &
 ```
 
-the the following command to edit cron 
+Run the following command to edit cron 
 
 
 ```
 sudo crontab -e
 ```
 
-Add the following line will run the sensor script once every 20 min.
+Add the following line will run the EnvSensor script once every 20 min.
 
 ``` 
-*/20 * * * python /home/pi/openbehavior/envSensors/env_logger.con.py 
+*/20 * * * python /home/pi/openbehavior/envSensors/env_logger.cron.py 
 ```
 
 
