@@ -58,4 +58,4 @@ Steel Rod 6mm Diameter [Amazon] (https://www.amazon.com/gp/product/B0050RMVLE)
 
 ### Assembly
 
-[Assembly] (./Assembly.md)
+Instructions are [here] (./Assembly.md)
