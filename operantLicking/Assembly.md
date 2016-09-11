@@ -52,8 +52,16 @@ Cut the connector off a 12 V AC-DC converter (2 Amp). Connect the wires to the i
 ![] (images/voltageConverter.jpg)
 
 ## Syringe pump
+
+3D printed parts of the syringe pump.
+![] (images/syringePumpPrintedParts.jpg)
+
 The step motor controller needs to have two wires added. 
 ![] (images/stepMotorBoardBack.jpg)
+
+Extend the length of step motor connection wires to about 30 inch. Add female connection pins to the end of each wire. 
+
+![] (images/stepMotorWires.jpg)
 
 A thin piece of copper is added to make it easier to fasten the threaded rod to the coupler .
 
@@ -62,12 +70,4 @@ A thin piece of copper is added to make it easier to fasten the threaded rod to 
 The step motor is connected to a threaded rod via a coupler (copper is  fully inserted and not visible). 
 
 ![] (images/stepMotorShaft.jpg)
-
-Extend the length of step motor connection wires to about 30 inch. Add female connection pins to the end of each wire. 
-
-![] (images/stepMotorWires.jpg)
-
-3D printed parts of the syringe pump.
-![] (images/syringePumpPrintedParts.jpg)
-
 
