@@ -1,7 +1,8 @@
 // frame for home cage alcohol self-administration. 
 // Hao Chen
 // UTHSC
- 
+// Creative Commoons Attribution NonCommercial  
+
 $fn=100;
 max_w=210;
 max_h=138;
@@ -378,6 +379,5 @@ rfid_door();
 //rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
-//top_groove();
 //the_thing();
 //step_motor_fastener();
