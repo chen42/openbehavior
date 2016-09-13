@@ -6,4 +6,4 @@ This device uses a RPi to record the licking events on two spouts. It then drive
 
 ## [Assembly instruction] (Assembly.md)
 
-Detailed description is availabe in this [preprint] (http://peerj.com/) 
+Detailed description is availabe in this [preprint] (https://peerj.com/manuscripts/13240/)
