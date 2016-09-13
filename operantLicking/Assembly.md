@@ -14,6 +14,9 @@ The two holes are used for attaching the board to the top cover of the 3D printe
 The switch board also provides gound and 5V power to several boards (RFID reader, real time clock, touch sensor).  
 ![] (images/switchBoardBack.jpg)
 
+The back side of the switch board with wires added. The blue and white wires are for the two switches. The yellow and green wires are for the LEDs.
+![] (SwitchBoardBack2.jpg)
+
 ## RFID Reader 
 
 Extend the length of the RFID antenna by soldering two segments of wires (approximately 12 inches) between the antenna loop  and the connector. 
@@ -67,7 +70,11 @@ A thin piece of copper is added to make it easier to fasten the threaded rod to 
 
 ![] (images/threadedRod.jpg)
 
-The step motor is connected to a threaded rod via a coupler (copper is  fully inserted and not visible). 
+The step motor is connected to a threaded rod via a coupler. 
 
 ![] (images/stepMotorShaft.jpg)
+
+The fully assembled syringe pump.
+
+![] (images/SyringePumpAssembled.jpg)
 
