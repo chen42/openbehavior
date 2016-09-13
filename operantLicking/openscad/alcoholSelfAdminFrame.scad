@@ -88,7 +88,7 @@ module mounting_RTC(){
 }
 
 module mounting_screws(){
-	translate([-93,-17, max_h/2-2]) mounting_pi();
+	translate([-92,-17, max_h/2-2]) mounting_pi();
 	translate([8,-16, max_h/2-2]) mounting_touch();
 	translate([20,33, max_h/2-2]) mounting_RTC();
 	translate([70,-20, max_h/2+2]) rotate([0,0,0])  step_motor_control();
@@ -123,8 +123,8 @@ module lcd(){ // model:  HD44780
 
 module lcd_screw(){
 	difference(){
-	cylinder(r=3.4, h=3);
-	cylinder(r=1.4,, h=10);
+	cylinder(r=3.4, h=5);
+	cylinder(r=1.6,, h=10);
 	}
 }
 
@@ -164,9 +164,9 @@ module top_cover(){
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
 		//translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
-		translate([max_w/2-10,-6,15]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
+		translate([max_w/2-10,-6,10]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
-		translate([-max_w/2+5,14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
+		translate([-max_w/2+5,-14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
 		translate([ctlx,ctly,ctlz]) rotate([90,0,0]) controlPanel();
 		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd();
 //#		translate([lcdx,lcdy,lcdz2]) rotate([0,0,0]) lcd_mounting_neg();
@@ -203,8 +203,8 @@ module hollow() {
 } //the screw holes
 
 module drillholes() {//all four screw holes for switches board
-	translate([4,4,0]) hollow();
-    translate([44,4,0]) hollow();
+	//translate([4,4,0]) hollow();
+    //translate([44,4,0]) hollow();
    	translate([4,26,0]) hollow();
    	translate([44,26,0]) hollow();
 }
@@ -301,10 +301,10 @@ module rfid_antenna_housing() //to hold RFID antennae
 module rfid_door() {// to close teh RFID antennae housing
 	difference(){
 		union(){
-			translate([0,-11,0]) cube([12,20,4], center=true) ;
+			translate([0,-11,0]) cube([12,20,2.5], center=true) ;
 			cube([46,3,2.5], center=true); // rfid antenna groove;
 		}
-		scale([1.2,1,0.9])translate([0,-13,2]) rotate([90,0,0]) cylinder (r=3, h=26, center=true);
+		scale([1.1,1,0.9])translate([0,-13,2.1]) rotate([90,0,0]) cylinder (r=3, h=26, center=true);
 		translate([0,-9,2]) rotate([90,0,0]) cylinder (r=2, h=26, center=true);
 	}
 }
@@ -372,10 +372,10 @@ module top_half(){
 }
 
 //rfid_antenna_housing();
-//rfid_door();
+rfid_door();
 //top_half();
 //lower_half();
-rotate([0,0,180]) translate([0,0,90]) top_cover();
+//rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //top_groove();
