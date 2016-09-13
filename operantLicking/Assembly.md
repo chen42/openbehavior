@@ -15,7 +15,7 @@ The switch board also provides gound and 5V power to several boards (RFID reader
 ![] (images/switchBoardBack.jpg)
 
 The back side of the switch board with wires added. The blue and white wires are for the two switches. The yellow and green wires are for the LEDs.
-![] (SwitchBoardBack2.jpg)
+![] (images/SwitchBoardBack2.jpg)
 
 ## RFID Reader 
 
@@ -56,7 +56,7 @@ Cut the connector off a 12 V AC-DC converter (2 Amp). Connect the wires to the i
 
 ## Syringe pump
 
-3D printed parts of the syringe pump.
+3D printed parts of the syringe pump. Both  linear ball bearings are installed. The stainless steel rod was cut into 5.5 inch segments. 
 ![] (images/syringePumpPrintedParts.jpg)
 
 The step motor controller needs to have two wires added. 
@@ -76,5 +76,5 @@ The step motor is connected to a threaded rod via a coupler.
 
 The fully assembled syringe pump.
 
-![] (images/SyringePumpAssembled.jpg)
-
+![] (images/syringPumbAssembled.jpg)
+  
