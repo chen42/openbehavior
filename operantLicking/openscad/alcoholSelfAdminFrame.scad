@@ -124,8 +124,8 @@ module lcd(){ // model:  HD44780
 
 module lcd_screw(){
 	difference(){
-	cylinder(r=3.4, h=5);
-	cylinder(r=1.6,, h=10);
+	cylinder(r=3.4, h=10);
+	cylinder(r=1.3,, h=10);
 	}
 }
 
@@ -149,7 +149,7 @@ module rfid_antenna_holder(){
 module top_cover(){
 	lcdx=-40;
 	lcdy=17;
-	lcdz1=54;
+	lcdz1=51;
 	lcdz2=43;
 	ctlx=30;
 	ctly=41;
@@ -165,7 +165,7 @@ module top_cover(){
 		}
 		translate([-130,0,4]) rotate([0,90,0]) cylinder(r=1.9, h=240); //screw hole for the top cover on the side;
 		//translate([max_w/2-10,0,16]) rotate([90,0,90]) round_corner_box(r0=1, wd=28,lg=2.5, ht=20); // sd card slot for old base
-		translate([max_w/2-10,-6,10]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
+		translate([max_w/2-10,-5,11]) rotate([90,0,90]) round_corner_box(r0=1, wd=14.5,lg=2.5, ht=20); // sd card slot for updated base
 		translate([5,max_d/2,6]) rotate([90,0,0]) round_corner_box(r0=1, wd=30,lg=10, ht=15); // new, longer wire exits 
 		translate([-max_w/2+5,-14,-1]) round_corner_box(r0=0.5, wd=5,lg=1, ht=10); // side exit for antennae
 		translate([ctlx,ctly,ctlz]) rotate([90,0,0]) controlPanel();
@@ -373,10 +373,10 @@ module top_half(){
 }
 
 //rfid_antenna_housing();
-rfid_door();
+//rfid_door();
 //top_half();
 //lower_half();
-//rotate([0,0,180]) translate([0,0,90]) top_cover();
+rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //the_thing();
