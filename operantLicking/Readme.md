@@ -7,3 +7,5 @@ This device uses a RPi to record the licking events on two spouts. It then drive
 ## [Assembly instruction] (Assembly.md)
 
 Detailed description is availabe in this [preprint] (https://peerj.com/manuscripts/13240/)
+
+A video of rat licking for sucrose under a VR10 schedule is available [here] (https://youtu.be/l3SEo6oAtPM)
