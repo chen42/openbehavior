@@ -132,7 +132,7 @@ lcd=initLCD()
 pump = pumpcontrol.Pump(gpio)
 
 # enable the switches to move the pump
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/pumpmove.py" + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operantLicking/python/pumpmove.py" + " &", shell=True)
 
 # Run the deviceinfo script
 mesg("Hurry up, Wifi!")
@@ -202,7 +202,7 @@ with open ("/home/pi/sessionid", "r+") as f:
 
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
 # print ("staring motion sensor")
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operantLicking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
@@ -240,7 +240,7 @@ while lapse < sessionLength:
                 pumptimedout = True
                 pumpTimer = Timer(timeout, resetPumpTimeout)
                 pumpTimer.start()
-                subprocess.call('python /home/pi/openbehavior/operant-licking/python/blinkenlights.py &', shell=True)
+                subprocess.call('python /home/pi/openbehavior/operantLicking/python/blinkenlights.py &', shell=True)
                 pump.move(0.08) # This is 60ul
                 if schedule == "fr":
                     nextratio=ratio
