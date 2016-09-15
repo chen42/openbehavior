@@ -6,9 +6,8 @@ The frame is printed in two parts and put together using Krazy glue. Because of 
 ![] (images/frame0.jpg)
 
 
-## new images 2016-09-15  
 Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout in place.
-![] (image/thumbscrew.jpg)
+![] (images/thumbscrew.jpg)
 
 
 
@@ -89,14 +88,14 @@ The fully assembled syringe pump.
 ## Final assembly
 
 All wires are connected.
-![] (image/wires.jpg)
+![] (images/wires.jpg)
 
 The fully assembled device. The RFID antenna is placed on its holder on the right side.
-![] (image/assembled.jpg)
+![] (images/assembled.jpg)
 
 A syringe is loaded in the pump. A rubber band is used to hold the syringe in place.  The pump can be placed on top of a rat cage.  
-![] (image/syrngeLoaded.jpg)
+![] (images/syrngeLoaded.jpg)
 
 The entire assembled device can be placed in the rat cage. 
-![] (image/inRatCage.jpg)
+![] (images/inRatCage.jpg)
 
