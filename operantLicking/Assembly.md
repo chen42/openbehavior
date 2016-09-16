@@ -2,12 +2,16 @@
 
 ## 3D printed frame
 The frame is printed in two parts and put together using Krazy glue. Because of its size, the results are much better if you print it on a heated platform. You can also printed it as a single piece, but you need to enable 'supports' and clean them up afterwards. 
-
 ![] (images/frame0.jpg)
 
-
-Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout in place.
+Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout (not shown) in place.
 ![] (images/thumbscrew.jpg)
+
+Solder one 100 ohm resister to a 5 mm LED (clear).  
+![] (images/cuelight.jpg)
+
+Insert the LED into the cue light slot. Fix it in place using the small piece.
+![] (images/cutlight2.jpg)
 
 
 
@@ -44,11 +48,25 @@ Insert the RFID board.
 
 ![] (images/RFID_board2.jpg)
 
+Push two pins out of the header and use the remaining to fasten the RFID board in place.
+![] (images/rfid2.jpg)
+
+
+
+# Motion Sensor
+Bend the three pins on the motion sensor at 90 degrees individually. Use two screws to hold the sensor on the frame.
+![] (images/motion_sensor.jpg)
+
 ## LCD
 The LCD needs a 10 K ohm  potentiometer. Bend the wires as shown. 
 ![] (images/LCD1.jpg)
 Solder it to the LDC. The middle wire of the potentiometer is connected to the 3rd pin of the LCD.  The other two wires are connected to pins 1 and 2. 
 ![] (images/LCD2.jpg)
+
+Connect the LCD to the RPi. Note you can use seven 'connected' pins because the other end of the pins are next to each other on the RPi. You can adjust the potentiometer to obtain optimal contrast.   
+
+![] (images/LCD_connections.jpg)
+
 
 ## Power
 
@@ -81,11 +99,13 @@ The step motor is connected to a threaded rod via a coupler.
 ![] (images/stepMotorShaft.jpg)
 
 The fully assembled syringe pump.
-
 ![] (images/syringPumbAssembled.jpg)
 
 
 ## Final assembly
+
+Print out a [RPi pin number label] (../RPI.PinLables.pdf). Cut the middle grey area and put it around the pins on the RPi to help you identify the pins. Connect the parts following  the [ wiring table]  (wiring_tables.ods)
+![] (images/Rpi_pins.jpg)
 
 All wires are connected.
 ![] (images/wires.jpg)
@@ -98,4 +118,5 @@ A syringe is loaded in the pump. A rubber band is used to hold the syringe in pl
 
 The entire assembled device can be placed in the rat cage. 
 ![] (images/inRatCage.jpg)
+
 
