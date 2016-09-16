@@ -7,7 +7,7 @@ The frame is printed in two parts and put together using Krazy glue. Because of 
 Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout (not shown) in place.
 ![] (images/thumbscrew.jpg)
 
-Solder one 100 ohm resister to a 5 mm LED (clear).  
+Solder one 100 ohm resister to a 5 mm LED (clear). Cover it with a short segment of heat shrink tubing.  
 ![] (images/cuelight.jpg)
 
 Insert the LED into the cue light slot. Fix it in place using the small piece.
@@ -48,13 +48,11 @@ Insert the RFID board.
 
 ![] (images/RFID_board2.jpg)
 
-Push two pins out of the header and use the remaining to fasten the RFID board in place.
+Push three pins out of the header and use the remaining to fasten the RFID board in place. Connect the RFID antenna.
 ![] (images/rfid2.jpg)
 
-
-
 # Motion Sensor
-Bend the three pins on the motion sensor at 90 degrees individually. Use two screws to hold the sensor on the frame.
+Bend the three pins on the motion sensor one by one to 90 degrees. Use two screws to hold the sensor on the frame.
 ![] (images/motion_sensor.jpg)
 
 ## LCD
@@ -63,7 +61,7 @@ The LCD needs a 10 K ohm  potentiometer. Bend the wires as shown.
 Solder it to the LDC. The middle wire of the potentiometer is connected to the 3rd pin of the LCD.  The other two wires are connected to pins 1 and 2. 
 ![] (images/LCD2.jpg)
 
-Connect the LCD to the RPi. Note you can use seven 'connected' pins because the other end of the pins are next to each other on the RPi. You can adjust the potentiometer to obtain optimal contrast.   
+Connect the LCD to the RPi. Note you can use seven ribbon pins because the other end of the pins are next to each other on the RPi. You can adjust the potentiometer to obtain optimal contrast.   
 
 ![] (images/LCD_connections.jpg)
 
@@ -110,13 +108,14 @@ Print out a [RPi pin number label] (../RPI.PinLables.pdf). Cut the middle grey a
 All wires are connected.
 ![] (images/wires.jpg)
 
-The fully assembled device. The RFID antenna is placed on its holder on the right side.
+The fully assembled device. The RFID antenna is placed on its holder on the right side. Note that the spout on the left side is connected to the touch sensor,  the one on the right side is disconnected (to show that it can be easily removed for cleaning purpose).  
+
 ![] (images/assembled.jpg)
 
-A syringe is loaded in the pump. A rubber band is used to hold the syringe in place.  The pump can be placed on top of a rat cage.  
+A syringe is loaded in the pump. A rubber band is used to hold the syringe in place.  The pump can be placed on top of a rat cage.  The rest of the device can be place inside the cage. Both spouts are connected. A PE tubing directs the liquid in the syringe to the active spout. 
+
 ![] (images/syrngeLoaded.jpg)
 
-The entire assembled device can be placed in the rat cage. 
+The entire assembled device can be placed in the rat cage, with a filtered cover on the top. 
 ![] (images/inRatCage.jpg)
-
 
