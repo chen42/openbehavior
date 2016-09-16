@@ -34,6 +34,25 @@ import random
 import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
 
+# BEGIN CONSTANT DEFINITIONS
+TIR = int(16) # Pin 36
+SW1 = int(26) # Pin 37
+SW2 = int(20) # Pin 38
+TOUCHLED = int(12) #pin 32
+MOTIONLED= int(6) #pin 31
+SERIALDEV = "/dev/serial0"
+# END CONSTANT DEFINITIONS
+
+# BEGIN GLOBAL VARIABLES
+touchcounter = 0
+pumptimedout = False
+act=0 # number of licks on the active spout
+ina=0 # number of licks on the inactive spout
+rew=0 # number of reward
+lapse=0  # time since program start
+updateTime=0 # time since last LCD update
+# ENG GLOBAL VARIABLES
+
 def initLCD():
     # Raspberry Pi pin configuration:
     lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
@@ -95,24 +114,6 @@ def ReadRFID(path_to_sensor) :
                 print ("RFID  detected: "+ ID)
                 return (ID)
 
-# BEGIN CONSTANT DEFINITIONS
-TIR = int(16) # Pin 36
-SW1 = int(26) # Pin 37
-SW2 = int(20) # Pin 38
-TOUCHLED = int(12) #pin 32
-MOTIONLED= int(6) #pin 31
-# END CONSTANT DEFINITIONS
-
-# BEGIN GLOBAL VARIABLES
-touchcounter = 0
-pumptimedout = False
-act=0 # number of licks on the active spout
-ina=0 # number of licks on the inactive spout
-rew=0 # number of reward
-lapse=0  # time since program start
-updateTime=0 # time since last LCD update
-# ENG GLOBAL VARIABLES
-
 # Initialize GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BCM)
@@ -152,7 +153,7 @@ deviceId=dId.read().strip()
 # wait for RFID scanner to get RatID
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 mesg("Pls scan RFID VR10\n"+datetime)
-RatID=ReadRFID("/dev/ttyAMA0")
+RatID=ReadRFID(SERIALDEV)
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
@@ -164,7 +165,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     ratio=""
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
+    RatID=ReadRFID(SERIALDEV)
     #signal motion sensor to keep recording until this is changed
     with open ("/home/pi/prend", "w") as f:
         f.write("no")
@@ -176,7 +177,7 @@ elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     nextratio=ratio
     mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
+    RatID=ReadRFID(SERIALDEV)
 else: # vr
     schedule="vr"
     ratio=10
