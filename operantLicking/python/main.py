@@ -132,7 +132,7 @@ lcd=initLCD()
 pump = pumpcontrol.Pump(gpio)
 
 # enable the switches to move the pump
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/pumpmove.py" + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operantLicking/python/pumpmove.py" + " &", shell=True)
 
 # Run the deviceinfo script
 mesg("Hurry up, Wifi!")
@@ -152,7 +152,7 @@ deviceId=dId.read().strip()
 # wait for RFID scanner to get RatID
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 mesg("Pls scan RFID VR10\n"+datetime)
-RatID=ReadRFID("/dev/ttyAMA0")
+RatID=ReadRFID("/dev/ttyS0")
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
@@ -164,7 +164,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     ratio=""
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
+    RatID=ReadRFID("/dev/ttyS0")
     #signal motion sensor to keep recording until this is changed
     with open ("/home/pi/prend", "w") as f:
         f.write("no")
@@ -176,7 +176,7 @@ elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     nextratio=ratio
     mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
+    RatID=ReadRFID("/dev/ttyS0")
 else: # vr
     schedule="vr"
     ratio=10
@@ -202,7 +202,7 @@ with open ("/home/pi/sessionid", "r+") as f:
 
 # start motion sensor Note: motion sensor needs to be started before session ID is incremented
 # print ("staring motion sensor")
-subprocess.call("sudo python /home/pi/openbehavior/operant-licking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
+subprocess.call("sudo python /home/pi/openbehavior/operantLicking/python/motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + RatID +  " -Schedule " + schedule + " &", shell=True)
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger()
@@ -240,7 +240,7 @@ while lapse < sessionLength:
                 pumptimedout = True
                 pumpTimer = Timer(timeout, resetPumpTimeout)
                 pumpTimer.start()
-                subprocess.call('python /home/pi/openbehavior/operant-licking/python/blinkenlights.py &', shell=True)
+                subprocess.call('python /home/pi/openbehavior/operantLicking/python/blinkenlights.py &', shell=True)
                 pump.move(0.08) # This is 60ul
                 if schedule == "fr":
                     nextratio=ratio
