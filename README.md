@@ -5,7 +5,7 @@ This project aims to establish a computing platform for rodent behavior research
 These projects are in various stages of development. The following are the most mature projects.
 
 ## Operant Licking
-This project develops a home cage device for operant licking (fixed ratio, various ratio, or progressive ratio schedules). A manuscript describing this project, including data on sucrose vs water intake has been submitted. Preprint is [available] (https://peerj.com/manuscripts/13240/)
+This project develops a home cage device for operant licking (fixed ratio, various ratio, or progressive ratio schedules). A manuscript describing this project, including data on sucrose vs water intake has been submitted. Preprint is [available] (https://peerj.com/preprints/2435.pdf)
 
 ## RFID 
 
