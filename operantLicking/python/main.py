@@ -23,6 +23,7 @@ import getopt
 import time
 from threading import Timer
 import subprocess32 as subprocess
+import commands
 import RPi.GPIO as gpio
 import Adafruit_MPR121.MPR121 as MPR121
 import pumpcontrol
@@ -33,6 +34,21 @@ import os
 import random
 import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
+
+# Gets version of raspberry pi as an integer
+# Returns -1 on failure
+def getRaspberryPiVersion():
+	x = commands.getstatusoutput('cat /proc/cpuinfo | grep Revision | cut -f 2 | tr -d ": " | head -n 1')
+	if x[1] in set(['0002','0003','0004','0005','0006','0007','0008','0009','000d','000e','000f','0010','0013','0011','0012']):
+		return 1
+	elif x[1] in set(['a01041','a21041']):
+		return 2
+	elif x[1] in set(['900092']):
+		return 0
+	elif x[1] in set(['a02082','a22082']):
+		return 3
+	else:
+		return -1
 
 def initLCD():
     # Raspberry Pi pin configuration:
