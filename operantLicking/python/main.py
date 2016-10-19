@@ -109,6 +109,7 @@ pumptimedout = False
 act=0 # number of licks on the active spout
 ina=0 # number of licks on the inactive spout
 rew=0 # number of reward
+wat=0 # number of licks on water spout
 lapse=0  # time since program start
 updateTime=0 # time since last LCD update
 # ENG GLOBAL VARIABLES
@@ -254,6 +255,11 @@ while lapse < sessionLength:
     elif i == 2:
         ina+=1
         dlogger.logEvent("INACTIVE", lapse)
+        blinkTouchLED(0.05)
+        updateTime=showdata()
+    elif i == 0:
+        wat+=1
+        dlogger.logEvent("WATER", lapse)
         blinkTouchLED(0.05)
         updateTime=showdata()
     elif time.time() - updateTime > 60:
