@@ -165,10 +165,18 @@ gpio.output(MOTIONLED, gpio.HIGH)
 dId=open("/home/pi/deviceid")
 deviceId=dId.read().strip()
 
+# Decide serial line to use
+serialpath=None
+rpiver=getRaspberryPiVersion()
+if rpiver == 3:
+	serialpath = "/dev/ttyS0"
+else:
+	serialpath = "/dev/ttyAMA0"
+
 # wait for RFID scanner to get RatID
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 mesg("Pls scan RFID VR10\n"+datetime)
-RatID=ReadRFID("/dev/ttyS0")
+RatID=ReadRFID(serialpath)
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
@@ -180,7 +188,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     ratio=""
     mesg("Run PR Schedule.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyS0")
+    RatID=ReadRFID(serialpath)
     #signal motion sensor to keep recording until this is changed
     with open ("/home/pi/prend", "w") as f:
         f.write("no")
@@ -192,7 +200,7 @@ elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     nextratio=ratio
     mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
-    RatID=ReadRFID("/dev/ttyS0")
+    RatID=ReadRFID(serialpath)
 else: # vr
     schedule="vr"
     ratio=10
