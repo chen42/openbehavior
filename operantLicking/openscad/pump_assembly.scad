@@ -17,57 +17,12 @@ $fn = 96;
 
 translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount(); // i.e. pump base
-//translate([0,-65,23]) rotate([90,0,180]) end_motor();
+translate([0,-65,23]) rotate([90,0,180]) end_motor();
 //color("green") translate([0,-100, 46]) motor_housing_cover();
-//translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
-module render_part(part_to_render) {
-	if (part_to_render == 1) end_motor();
+!  rotate([90,0,180])end_motor();
 
-    if (part_to_render == 2) carriage_with_syringe_slot();
-
-    if (part_to_render == 3) end_idler_mod(); // with rubber band hooks.
-
-    if (part_to_render == 3.5) end_idler_mod_mount(); // reminds of the BASIC language 
-
-	if (part_to_render == 4) carriage();
-        
-    if (part_to_render == 5) rubber_band_hook();
-        
-    if (part_to_render == 6) rubber_band_post();
-        
-    if (part_to_render == 7) syringe_slot();
- 
-    if (part_to_render == 8) cage_mount();
-
-	if (part_to_render == 9) carriage_syringe_pump(); // not in use
-
-	if (part_to_render == 10) clamp_syringe_pump(); // not in use
-
-	if (part_to_render == 11) { // no in use
-		for (i = [-1, 1])
-			translate([i * (d_guide_rod + 2.5), 0, 0])
-				syringe_hook();
-	}
-
-	if (part_to_render == 12) {syringe_plunger_retainer();} // no in use
-
-	if (part_to_render == 13) syringe_bungie(); // not in use
-       
-	if (part_to_render == 14) end_idler(); // not in use
-}
-
-// [x, y, z] = [l, w, t]
-
-/*
-
-No moving motor!
-Simple loading
-Simple cleaning
-Protect motor
-Secure plunger
-
-*/
 
 d_nozzle = 0.75;
 
@@ -115,6 +70,7 @@ d_plunger_retainer = d_plunger_max + 12;
 module end_motor() {
     difference() {
         union() {
+			translate([ 0,-2,-32]) motor_housing();
             difference() {
                 union() {
                     rod_clamps(t_motor_end, pad_guide_ends);
@@ -137,16 +93,31 @@ module end_motor() {
                             motor = motor);
         
                 // keyhole opening for motor mount screws
-                // for (i = [-1, 1])
-                //	translate([i * motor[3] / 2, -motor[3] / 2, 0])
-                //		cylinder(r = 2.5, h = 5, center = true);
+//                 for (i = [-1, 1])
+ //               	translate([i * motor[3] / 2, -motor[3] / 2, 0])
+  //              		cylinder(r = 2.5, h = 5, center = true);
             }
             translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
         }
-        translate([0,0,-t_motor_mount/2]) rotate([180, 0, 0]) mounting_screw_bottom(h=20);
-        translate([0,-10,-6]) rotate([90,0,0]) cylinder(r=1.5,h=20); // mounting screw
+//   #     translate([0,0,-t_motor_mount/2]) rotate([180, 0, 0]) mounting_screw_bottom(h=20);
+//#        translate([0,-10,-6]) rotate([90,0,0]) cylinder(r=1.5,h=20); // mounting screw
     }
 }
+
+
+
+module motor_housing(){
+	difference(){
+		rotate([0,0,0]) rounded_box(l1=46, l2=34, r_corner=3, height=40); 
+		translate([0,0,0]) cube([34, 28,50], center=true);
+//		translate([0,5,-16]) cube([36, 40, 4], center=true); // back cover for the motor, width=36
+		translate([-50, 0, 00]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8); // hole for dissipate motor heat
+		translate([0, 40, 00]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 
+
+	}
+}
+
+
 
 module end_idler() {
 	difference() {
@@ -310,23 +281,23 @@ module clamp_relief(
 							translate([0, j * w_ends, 0])
 								cylinder(r = 0.5, h = thickness + 2, center = true);
 
-// holes for clamp screws
-//			translate([0, w_ends / 4 + offset_guides, 0]) {
-//				for (i = [-1, 1])
-//					for (j = [1]) {
-//						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
-//							rotate([0, 90, 0])
-//							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
-//
-//						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
-//							rotate([0, 90, 0])
-//								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
-//
-//						translate([0, 0, j * (thickness - pad_ends) / 4])
-//							rotate([0, 90, 0])
-//								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
-//}
-//}
+// holes for clamp screws hao needs to work on this
+			translate([0, w_ends / 4 + offset_guides, 0]) {
+				for (i = [-1, 1])
+					for (j = [1]) {
+						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
+							rotate([0, 90, 0])
+							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
+
+						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
+							rotate([0, 90, 0])
+								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
+
+						translate([0, 0, j * (thickness - pad_ends) / 4])
+							rotate([0, 90, 0])
+								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
+}
+}
 
 }
 
@@ -552,8 +523,7 @@ module cage_mount() {
 	difference(){
 		spaceX=68;
 		union() {
-			translate([0,-100, 30])	rotate([0,0,180])		motor_housing();
-			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
+//			translate([0,-20,3.99]) rounded_box (l1=82, l2=210, r_corner=4, height=13);
 		}
 		union(){
 			translate([0,-spaceX+3,7.5]) cube([63.4,25.5, 6], center=true); // motor end
@@ -564,8 +534,6 @@ module cage_mount() {
 			translate([r/2-5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side curve for printing on the side 
 			translate([-r/2+5,-20,-3]) scale([0.1,1,1]) cylinder(r=r,40); // side cureve 
 			translate([0, -98,-3]) cube([40,20,50],center=true); // hole for dissipate motor heat
-			translate([-50, -100, 30]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8); // hole for dissipate motor heat
-			translate([0, -100, 30]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 
 			translate([0,3,-3]) scale([0.4,1,1]) cylinder(r=r/2,40); // center base hole for reducing printing time 
 		}
 		
@@ -576,14 +544,6 @@ module cage_mount() {
 module mounting_screw_bottom(h=5){
 	cylinder(r=1.7, h);
 	translate([0,0,-3]) cylinder(r1=6, r2=1.7, 3);
-}
-
-module motor_housing(){
-	difference(){
-		rounded_box(l1=64, l2=40, r_corner=3, height=40); 
-		translate([0,-10,0]) cube([54, 50,50], center=true);
-		translate([0,-2.5,16]) cube([60, 40, 4], center=true); // top cover for the motor
-	}
 }
 
 module motor_housing_cover(){
