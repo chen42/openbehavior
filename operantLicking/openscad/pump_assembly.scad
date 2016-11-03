@@ -21,8 +21,10 @@ translate([0,-65,23]) rotate([90,0,180]) end_motor();
 //color("green") translate([0,-100, 46]) motor_housing_cover();
 translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
-!  rotate([90,0,180])end_motor();
-
+//!  rotate([90,0,180]) end_motor();
+!   union(){end_motor();
+	#translate([0,-20,-20]) rounded_box(l1=80, l2=8, r_corner=2, height=64); 
+	}
 
 d_nozzle = 0.75;
 
@@ -70,7 +72,7 @@ d_plunger_retainer = d_plunger_max + 12;
 module end_motor() {
     difference() {
         union() {
-			translate([ 0,-2,-32]) motor_housing();
+			translate([ 0,0,-32]) motor_housing();
             difference() {
                 union() {
                     rod_clamps(t_motor_end, pad_guide_ends);
@@ -108,8 +110,8 @@ module end_motor() {
 
 module motor_housing(){
 	difference(){
-		rotate([0,0,0]) rounded_box(l1=46, l2=34, r_corner=3, height=40); 
-		translate([0,0,0]) cube([34, 28,50], center=true);
+		rotate([0,0,0]) rounded_box(l1=46, l2=38, r_corner=3, height=40); 
+		translate([0,0,0]) cube([34, 30,50], center=true);
 //		translate([0,5,-16]) cube([36, 40, 4], center=true); // back cover for the motor, width=36
 		translate([-50, 0, 00]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8); // hole for dissipate motor heat
 		translate([0, 40, 00]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 
@@ -295,7 +297,7 @@ module clamp_relief(
 
 						translate([0, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_nut / 2, h = cc_guides - (l_ends - cc_guides) / 2, center = true);
+								cylinder(r = d_clamp_screw_nut / 2+.5, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
 }
 }
 
