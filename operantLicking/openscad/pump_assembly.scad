@@ -14,17 +14,16 @@ include<steppers.scad>
 include<bearings.scad>
 
 $fn = 96;
-
-translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+!translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 //cage_mount(); // i.e. pump base
 translate([0,-65,23]) rotate([90,0,180]) end_motor();
 //color("green") translate([0,-100, 46]) motor_housing_cover();
 translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
-//!  rotate([90,0,180]) end_motor();
-!   union(){end_motor();
-	#translate([0,-20,-20]) rounded_box(l1=80, l2=8, r_corner=2, height=64); 
-	}
+module basePlate(h=64){
+	rounded_box(l1=80, l2=8, r_corner=2, height=h); 
+}
+
 
 d_nozzle = 0.75;
 
@@ -69,7 +68,10 @@ t_hook = 5; // thickness of the hook for securing syringe to actuator
 d_plunger_max = 32; // this sets the spacing for screws on the plunger retainer and carriage
 d_plunger_retainer = d_plunger_max + 12;
 
+
+
 module end_motor() {
+
     difference() {
         union() {
 			translate([ 0,0,-32]) motor_housing();
@@ -104,6 +106,8 @@ module end_motor() {
 //   #     translate([0,0,-t_motor_mount/2]) rotate([180, 0, 0]) mounting_screw_bottom(h=20);
 //#        translate([0,-10,-6]) rotate([90,0,0]) cylinder(r=1.5,h=20); // mounting screw
     }
+
+	translate([0,-20,-20]) basePlate();
 }
 
 
@@ -120,10 +124,11 @@ module motor_housing(){
 }
 
 
-
 module end_idler() {
+	
+		translate([0,-20,3.5]) basePlate(h=32);
 	difference() {
-		union() {
+/***		union() {
 			rod_clamps(t_idler_end, pad_guide_ends);
 
 			// idler bearing housing
@@ -137,19 +142,38 @@ module end_idler() {
 
 		}
 
+***/
+ union() {
+            difference() {
+                union() {
+                    rod_clamps(t_motor_end, pad_guide_ends);
+        
+                    // motor plate
+                    difference () {
+                        translate([0, 0, (t_motor_mount - t_motor_end) / 2])
+                            cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
+        
+                        clamp_relief(t_motor_end, pad_guide_ends); 
+                    }
+                }
+       }
+	   }
+
+
+
+
 		// outboard idler bearing
-		translate([0, 0, -t_idler_end / 2])
-			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2+1, center = true);
+//		translate([0, 0, -t_idler_end / 2])
+	//		cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2+1, center = true);
 
 		// inboard idler bearing
-		translate([0, 0, t_idler_end / 2])
+		translate([0, 0, -5 ])
 			cylinder(r = idler[0] / 2 + 0.01, h = idler[2] * 2, center = true);
 
 		// lead screw
-		translate([0, 0, idler[2] + 0.2])
+		translate([0, 0, idler[2] - 10])
 			cylinder(r = d_lead_screw / 2, h = t_idler_end, center = true);
 
-		*end_mount_holes(t_idler_end + 1, d_M3_screw);
 	}	
 }
 
@@ -566,6 +590,7 @@ module vent(dia=6, height=10) {
 }
 
 module end_idler_mod() {
+		translate([0,-20,6]) basePlate(h=32);
         difference() {
             union() {
                 end_idler();
@@ -575,8 +600,8 @@ module end_idler_mod() {
             translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end+2, r = 8.6);
 	 		translate([0,-10,0]) rotate([90,0,0]) mounting_screw_bottom(h=10);
         }
-        translate([-22, t_idler_end+2, -10]) rubber_band_hook();
-        translate([24.3, t_idler_end-2, 4]) rubber_band_post();
+#        translate([-22, t_idler_end+2, -12.5]) rubber_band_hook();
+        translate([24, t_idler_end-2, 1.5]) rubber_band_post();
 }
 
 module rubber_band_hook() {
