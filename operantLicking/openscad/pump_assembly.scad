@@ -14,13 +14,13 @@ include<steppers.scad>
 include<bearings.scad>
 
 $fn = 96;
-!translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
-//cage_mount(); // i.e. pump base
-translate([0,-65,23]) rotate([90,0,180]) end_motor();
-//color("green") translate([0,-100, 46]) motor_housing_cover();
+translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+!translate([0,-65,23]) rotate([90,0,180]) end_motor();
 translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
-module basePlate(h=64){
+//color("green") translate([0,-100, 46]) motor_housing_cover();
+
+module basePlate(h=65){
 	rounded_box(l1=80, l2=8, r_corner=2, height=h); 
 }
 
@@ -71,23 +71,18 @@ d_plunger_retainer = d_plunger_max + 12;
 
 
 module end_motor() {
-
-    difference() {
-        union() {
-			translate([ 0,0,-32]) motor_housing();
             difference() {
                 union() {
+					translate([0,0,-32.5]) motor_housing();
+					translate([0,-20,-20]) basePlate();
                     rod_clamps(t_motor_end, pad_guide_ends);
-        
                     // motor plate
                     difference () {
                         translate([0, 0, (t_motor_mount - t_motor_end) / 2])
-                            cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
-        
+						   cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
                         clamp_relief(t_motor_end, pad_guide_ends); 
                     }
                 }
-        
                 // motor mount holes
                 translate([0, 0, -t_motor_end / 2])
                     rotate([0, 0, 45])
@@ -95,19 +90,13 @@ module end_motor() {
                             height = t_motor_end,
                             l_slot = 1,
                             motor = motor);
-        
-                // keyhole opening for motor mount screws
-//                 for (i = [-1, 1])
- //               	translate([i * motor[3] / 2, -motor[3] / 2, 0])
-  //              		cylinder(r = 2.5, h = 5, center = true);
-            }
-            translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
-        }
-//   #     translate([0,0,-t_motor_mount/2]) rotate([180, 0, 0]) mounting_screw_bottom(h=20);
-//#        translate([0,-10,-6]) rotate([90,0,0]) cylinder(r=1.5,h=20); // mounting screw
-    }
+				translate([-50, 0, -30]) rotate([0,90,0]) cylinder(r=15, h=100, $fn=8); // hole for dissipate motor heat
+				translate([0, 40, -30]) rotate([90,0,0]) cylinder(r=15, h=100, $fn=8); // hole for motor wires 
 
-	translate([0,-20,-20]) basePlate();
+            }
+            //#translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
+
+        
 }
 
 
@@ -115,10 +104,8 @@ module end_motor() {
 module motor_housing(){
 	difference(){
 		rotate([0,0,0]) rounded_box(l1=46, l2=38, r_corner=3, height=40); 
-		translate([0,0,0]) cube([34, 30,50], center=true);
+		translate([0,0,0]) cube([34, 34,50], center=true);
 //		translate([0,5,-16]) cube([36, 40, 4], center=true); // back cover for the motor, width=36
-		translate([-50, 0, 00]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8); // hole for dissipate motor heat
-		translate([0, 40, 00]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 
 
 	}
 }
@@ -291,13 +278,11 @@ module clamp_body(thickness) {
 }
 
 
-module clamp_relief(
-	thickness,
-	pad_ends) {
+module clamp_relief( thickness, pad_ends) {
 			// guide rods have backing, so are off the end of the body
 			for (i = [-1, 1])
 				translate([i * cc_guides / 2, offset_guides, pad_ends])
-					color("blue") cylinder(r = (d_guide_rod / 2) - 0.30, h = thickness, center = true);
+					color("blue") cylinder(r = (d_guide_rod / 2) + 0.20, h = thickness, center = true);
 
 			// slots for clamping guide rods
 			for (i = [-1, 1])
@@ -307,7 +292,7 @@ module clamp_relief(
 							translate([0, j * w_ends, 0])
 								cylinder(r = 0.5, h = thickness + 2, center = true);
 
-// holes for clamp screws hao needs to work on this
+			// holes for clamp screws 
 			translate([0, w_ends / 4 + offset_guides, 0]) {
 				for (i = [-1, 1])
 					for (j = [1]) {
@@ -317,23 +302,19 @@ module clamp_relief(
 
 						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_cap / 2, h = 8, center = true);
-
+								cylinder(r = d_clamp_screw_cap / 2+0.5, h = 8, center = true);
 						translate([0, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_nut / 2+.5, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
+								cylinder(r = d_clamp_screw_nut / 2+1.2, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
 }
 }
 
 }
 
 
-module rod_clamps(
-	thickness,
-	pad_ends) {
+module rod_clamps(thickness, pad_ends) {
 	difference() {
 		clamp_body(thickness);
-
 		clamp_relief(thickness, pad_ends);
 	}
 }
