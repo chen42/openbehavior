@@ -37,7 +37,7 @@ od_antibacklash_spring = 7;
 l_antibacklash_spring = 10;
 
 offset_guides = 3.5; // offset from centerline of motor shaft towards top (+y)
-d_guide_rod = 6.8; // 6mm guide rods
+d_guide_rod = 6; // 6mm guide rods
 guide_bearing = bearing_lm6uu;
 pad_guide_bearing_radius = 3;
 
@@ -90,8 +90,8 @@ module end_motor() {
                             height = t_motor_end,
                             l_slot = 1,
                             motor = motor);
-				translate([-50, 0, -30]) rotate([0,90,0]) cylinder(r=15, h=100, $fn=8); // hole for dissipate motor heat
-				translate([0, 40, -30]) rotate([90,0,0]) cylinder(r=15, h=100, $fn=8); // hole for motor wires 
+				translate([-50, 0, -30]) rotate([0,90,0]) cylinder(r=12, h=100, $fn=8); // hole for dissipate motor heat
+				translate([0, 40, -32]) rotate([90,0,0]) cylinder(r=12, h=100, $fn=8); // hole for motor wires 
 
             }
             //#translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
@@ -298,14 +298,14 @@ module clamp_relief( thickness, pad_ends) {
 					for (j = [1]) {
 						translate([i * cc_guides / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-							cylinder(r = d_clamp_screw / 2, h = (l_ends - cc_guides) * 2, center = true);
+							cylinder(r = d_clamp_screw / 2+0.4, h = (l_ends - cc_guides) * 2, center = true);
 
 						translate([i * l_ends / 2, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_cap / 2+0.5, h = 8, center = true);
+								cylinder(r = d_clamp_screw_cap / 2+1, h = 8, center = true);
 						translate([0, 0, j * (thickness - pad_ends) / 4])
 							rotate([0, 90, 0])
-								cylinder(r = d_clamp_screw_nut / 2+1.2, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
+								cylinder(r = d_clamp_screw_nut / 2+2, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
 }
 }
 
