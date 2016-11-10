@@ -1,10 +1,9 @@
 $fn=100;
 rotate([180,0,180]) translate([0,0,-55]) color("blue") cover();
 innerR=15;
-! difference(){
+difference(){
 	cylinder(r=18, h=110, center=true);
 	cylinder(r=innerR, h=111, center=true);
-//	translate([0,5,60])cube([40, 30,20, ] ,center=true);
 	ventHole();
 	translate([0,0,25]) ventHole();
 	translate([0,0,-25]) ventHole();
@@ -60,5 +59,25 @@ module nosecone() {
 }
 
 
-	
+!cover2();	
+module cover2(){
+	difference(){
+		union(){
+			difference(){
+				cylinder(r=18.5, h=2, center=true);
+				translate([0,-15,0])cube([40,20,2], center=true);
+			}
+			h2=7; translate([0,0,h2/2-1])	cylinder(r=15, h=h2, center=true);
+
+		}
+		translate([0,10,0]) rotate([0,0,90]) cylinder(r=4, h=25, center=true);
+		translate([0,14,0]) cube([8,10,17], center=true ); // verticl cut 
+		rotate([90,0,0]) translate([0,3,6]) cylinder(r=1.4,h=10); //screw
+		rotate([0,90,0]) translate([-6,-6,0]) cylinder(r=4,h=50, center=true); // horizontal groove
+		translate([0,4,4])cube([40,25,4], center=true);
+	}
+}
+
+
+
 
