@@ -15,8 +15,8 @@ include<bearings.scad>
 
 $fn = 96;
 translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
-!translate([0,-65,23]) rotate([90,0,180]) end_motor();
-translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+translate([0,-65,23]) rotate([90,0,180]) end_motor();
+!translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
 //color("green") translate([0,-100, 46]) motor_housing_cover();
 
@@ -24,9 +24,7 @@ module basePlate(h=65){
 	rounded_box(l1=80, l2=8, r_corner=2, height=h); 
 }
 
-
 d_nozzle = 0.75;
-
 motor = NEMA11;
 cc_guides = 50;
 
@@ -164,7 +162,7 @@ module end_idler() {
 	}	
 }
 
-//!carriage_body();
+carriage_body();
 module carriage_body() {
 	hull() {
 		for (i = [-1, 1])
@@ -180,13 +178,14 @@ module carriage_relief() {
 	for (i = [-1, 1])
 		translate([i * cc_guides / 2, offset_guides, 0]) {
 			// guide rods
-			cylinder(r = d_guide_rod / 2 + 0.5, h = t_carriage + 2, center = true);
+			cylinder(r = d_guide_rod / 2 + 1, h = t_carriage + 2, center = true);
 
 			// guide bearings
-			cylinder(r = (guide_bearing[0] / 2)-0.1, h = guide_bearing[2] + 0.4, center = true);
+			adj=.5;	 // this is added to loosen the fit and reduce friction
+			cylinder(r = (guide_bearing[0] / 2)+adj, h = guide_bearing[2] + 0.4, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2.5), -(guide_bearing[0] / 2 - 2.5), , 0])
-				cylinder(r = (guide_bearing[0] / 2 +0.2), h = guide_bearing[2] + 0.4, center = true);
+				cylinder(r = (guide_bearing[0] / 2 ), h = guide_bearing[2] + 0.4, center = true);
 	}
 
 	// nut trap for fixed nut
@@ -194,7 +193,7 @@ module carriage_relief() {
 		for (i = [0, -1])
 			translate([0, i * t_carriage, -t_carriage / 2 + 2])
 				rotate([0, 0, 30])
-					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut+.3, $fn = 6); //.3 added by Hao
+					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut, $fn = 6); //.3 added by Hao
 
 	// lead nuts and anti-backlash spring
 	hull()
@@ -208,7 +207,7 @@ module carriage_relief() {
 			cylinder(r = d_lead_nut / 2, h = l_antibacklash_spring + h_lead_nut, $fn = 6);
 
 	// lead screw
-	cylinder(r = d_lead_screw /2 + 0.5, h = t_carriage + 2, center = true);
+	cylinder(r = d_lead_screw /2 + 1, h = t_carriage + 2, center = true);
 }
 
 module carriage_support() {
@@ -575,13 +574,12 @@ module end_idler_mod() {
         difference() {
             union() {
                 end_idler();
-                translate([-(t_idler_end/2)-1,(t_idler_end/2)-2,-(t_idler_end / 2)]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
+                translate([-(t_idler_end/2)-1,(t_idler_end/2)-1.7,-(t_idler_end / 2)-2.5]) cube([t_idler_end+2,(t_idler_end/2),t_idler_end]);
                 translate([-22,-19.1,-10]) cube([45,10,20]);
             }
-            translate([0,18,-(t_idler_end / 2)]) cylinder(h = t_idler_end+2, r = 8.6);
-	 		translate([0,-10,0]) rotate([90,0,0]) mounting_screw_bottom(h=10);
+            translate([0,19,-(t_idler_end / 2)-3]) cylinder(h = t_idler_end+2, r = 8.6); //syringe
         }
-#        translate([-22, t_idler_end+2, -12.5]) rubber_band_hook();
+        translate([-22, t_idler_end+2, -12.5]) rubber_band_hook();
         translate([24, t_idler_end-2, 1.5]) rubber_band_post();
 }
 
@@ -604,7 +602,7 @@ module rubber_band_post() {
 module syringe_slot() {
     difference() {
         difference() {
-            cylinder(r = 14.0, h = 8.0);
+            cylinder(r = 13.0, h = 8.0);
             translate([0, 0, 2.5]) union () {
                 cylinder(r = 13.0, h = 3.0);
                 translate([-13.0, 0, 0]) cube([26.0, 26.0, 3.0]);
@@ -620,13 +618,12 @@ module syringe_slot() {
 module carriage_with_syringe_slot() {
 	t_holder = 6; // thickness of the cylindrical portion of the pusher
 
-	union() {
 		difference() {
 			union() {
 				carriage_body();
 
 				// pusher for the plunger
-				translate([0, (idler[0] + d_syringe) / 2, (t_holder - t_carriage) / 2])
+		translate([0, (idler[0] + d_syringe) / 2, (t_holder - t_carriage) / 2 +5.5])
 					rounded_box(
 						l1 = cc_guides - d_guide_rod,
 						l2 = d_syringe,
@@ -640,15 +637,16 @@ module carriage_with_syringe_slot() {
 
 			// lead screw, bearings, etc.
 			carriage_relief();
-           
+          // recess for syringe plunger 
+        	translate([0, 18.0, -13.0]) cylinder(r = 13.0, h = 8.0);
 		}
 
 		// support structure to facilitate printing
-		*carriage_support();
+		//carriage_support();
         
         // slotted recess to hold syringe in place
-        translate([0, 18.0, -18.0]) syringe_slot();
-	}
+       translate([0, 18.0, -12.5]) syringe_slot();
+	
     
 }
 
