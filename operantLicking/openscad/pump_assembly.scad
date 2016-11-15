@@ -182,10 +182,10 @@ module carriage_relief() {
 
 			// guide bearings
 			adj=.5;	 // this is added to loosen the fit and reduce friction
-			cylinder(r = (guide_bearing[0] / 2)+adj, h = guide_bearing[2] + 0.4, center = true);
+			cylinder(r = (guide_bearing[0] / 2)+adj, h = guide_bearing[2] + 0.8, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2.5), -(guide_bearing[0] / 2 - 2.5), , 0])
-				cylinder(r = (guide_bearing[0] / 2 ), h = guide_bearing[2] + 0.4, center = true);
+				cylinder(r = (guide_bearing[0] / 2 )+ adj, h = guide_bearing[2] + 0.8, center = true);
 	}
 
 	// nut trap for fixed nut
