@@ -182,7 +182,7 @@ module carriage_relief() {
 
 			// guide bearings
 			adj=.5;	 // this is added to loosen the fit and reduce friction
-			cylinder(r = (guide_bearing[0] / 2)+adj, h = guide_bearing[2] + 0.8, center = true);
+			cylinder(r = (guide_bearing[0] / 2)+adj, h = guide_bearing[2] + 0.4, center = true);
 
 			translate([i * (guide_bearing[0] / 2 - 2.5), -(guide_bearing[0] / 2 - 2.5), , 0])
 				cylinder(r = (guide_bearing[0] / 2 )+ adj, h = guide_bearing[2] + 0.8, center = true);
@@ -195,12 +195,13 @@ module carriage_relief() {
 				rotate([0, 0, 30])
 					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut, $fn = 6); //.3 added by Hao
 
-	// lead nuts and anti-backlash spring
+	// 2d nut trap for fixed nut
 	hull()
 		for (i = [0, 1])
-			translate([0, i * -20, -t_carriage / 2 + h_lead_nut + 4])
+			translate([0, i * -20, -t_carriage / 2 + h_lead_nut + 14])
 				rotate([0, 0, 30])
-					cylinder(r = d_lead_nut / 2, h = l_antibacklash_spring + h_lead_nut / 2, $fn = 6);
+//#					cylinder(r = d_lead_nut / 2, h = l_antibacklash_spring + h_lead_nut / 2, $fn = 6);
+					cylinder(r = d_lead_nut / 2+.3, h = h_lead_nut, $fn = 6);
 
 	translate([0, 0, -t_carriage / 2 + h_lead_nut + 4])
 		rotate([0, 0, 30])
