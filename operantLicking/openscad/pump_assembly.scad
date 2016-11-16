@@ -162,14 +162,14 @@ module end_idler() {
 	}	
 }
 
-carriage_body();
+//carriage_body();
 module carriage_body() {
 	hull() {
 		for (i = [-1, 1])
 			translate([i * cc_guides / 2, offset_guides, 0])
 				cylinder(r = guide_bearing[0] / 2 + pad_guide_bearing_radius, h = t_carriage, center = true);
 
-		cylinder(r = od_antibacklash_spring / 2 + pad_guide_radius, h = t_carriage, center = true);
+//		cylinder(r = od_antibacklash_spring / 2 + pad_guide_radius, h = t_carriage, center = true);
 	}
 }
 
