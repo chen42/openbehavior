@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	lcd=initLCD()
         time.sleep(1)
 	os.system("bash /home/pi/openbehavior/wifi-network/deviceinfo.sh")
-        os.system("sudo ifconfig wlan0 down")
+        os.system("sleep 3; sudo ifconfig wlan0 down")
 	os.system("python /home/pi/openbehavior/extinction/cuelights.py &")
 	today= time.strftime("%Y-%m-%d", time.localtime())
 	startTime= time.strftime("%H:%M:%S", time.localtime())
