@@ -22,12 +22,14 @@ done
 
 echo "Sync time with the internet"
 sudo htpdate  -t -s www.ntp.org www.uthsc.edu www.freebsd.org > /home/pi/htpdateout 	
-if grep -q "Setting.*seconds" /home/pi/htpdateout ; then 
-	cat /home/pi/htpdateout
-	echo "update hw clock"
-	sudo hwclock -w
-else 
-	sudo hwclock -s
+if grep -v -q ExtBox /home/pi/deviceid ; then 
+	if grep -q "Setting.*seconds" /home/pi/htpdateout ; then 
+		cat /home/pi/htpdateout
+		echo "update hw clock"
+		sudo hwclock -w
+	else 
+		sudo hwclock -s
+	fi
 fi
 
 date >>/home/pi/Pies/DeviceInfo/`cat /home/pi/deviceid`.info
