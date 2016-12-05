@@ -32,6 +32,8 @@ getRaspberryPiVersion
 
 if ["$?" == "3"] ; then
 		# Update the boot config
+		echo "dtoverlay=pi3-disable-bt" >>/boot/config
+
 else
 fi
 
