@@ -33,7 +33,7 @@ Extend the length of the RFID antenna by soldering two segments of wires (approx
 
 ![] (images/RFID_antenna.jpg)
 
-Insert the antenna loop into the 3D printed frame (black) and close the gap in the frame with the handle (red).
+Place the antenna loop next to the 3D printed handle, tape the wire to the handle. Then insert the antenna loop into the 3D printed frame (below). 
 
 ![] (images/RFID_antenna2.jpg)
 
@@ -78,10 +78,15 @@ Cut the connector off a 12 V AC-DC converter (2 Amp). Connect the wires to the i
 
 ## Syringe pump
 
-3D printed parts of the syringe pump. Both  linear ball bearings are installed. The stainless steel rod was cut into 5.5 inch segments. 
-![] (images/syringePumpPrintedParts.jpg)
+Insert a ball bearing into the 3D printed syringe end. 
+![] (images/syringeEnd.jpg)
+
+Insert two linear bearings into the 3D printed syringe carrier. The syringe carrier must be printed precisely so that the linear bearing fit tightly alone its long axis but still has a little room to move in the other two dimensions. 
+
+![] (images/syringeCarrier.jpg)
 
 The step motor controller needs to have two wires added. 
+
 ![] (images/stepMotorBoardBack.jpg)
 
 Extend the length of step motor connection wires to about 30 inches. Add female connection pins to the end of each wire. 
@@ -96,7 +101,8 @@ The stepper motor is connected to a threaded rod via a coupler.
 
 ![] (images/stepMotorShaft.jpg)
 
-The fully assembled syringe pump.
+The fully assembled syringe pump.  (The stainless steel rods were cut into 5.5 inch segments.)
+
 ![] (images/syringPumbAssembled.jpg)
 
 
