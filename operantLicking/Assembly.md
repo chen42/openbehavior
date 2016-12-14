@@ -79,13 +79,13 @@ Cut the connector off a 12 V AC-DC converter (2 Amp). Connect the wires to the i
 ## Syringe pump
 
 Insert a ball bearing into the 3D printed syringe end. 
-![] (images/syringeEnd.jpg)
+![] (images/syringEnd.jpg)
 
 Insert two linear bearings into the 3D printed syringe carrier. The syringe carrier must be printed precisely so that the linear bearing fit tightly alone its long axis but still has a little room to move in the other two dimensions. 
 
-![] (images/syringeCarrier.jpg)
+![] (images/syringCarrier.jpg)
 
-The step motor controller needs to have two wires added. 
+The step motor controller needs to have two wires added. One connects ENABLE and GROUND, the other connects VDD and REST. 
 
 ![] (images/stepMotorBoardBack.jpg)
 
@@ -114,7 +114,7 @@ Print out a [RPi pin number label] (../RPI.PinLables.pdf). Cut the middle grey a
 All wires are connected.
 ![] (images/wires.jpg)
 
-The fully assembled device. The RFID antenna is placed on its holder on the right side. Note that the spout on the left side is connected to the touch sensor,  the one on the right side is disconnected (to show that it can be easily removed for cleaning purposes).  
+The fully assembled device. The RFID antenna can be  placed on its holder on the right side.  The spouts can be disconnected for cleaning purpose.   
 
 ![] (images/assembled.jpg)
 
@@ -122,6 +122,6 @@ A syringe is loaded in the pump. A rubber band is used to hold the syringe in pl
 
 ![] (images/syrngeLoaded.jpg)
 
-The entire assembled device can be placed in the rat cage, with a filtered cover on the top. 
+The entire assembled device can be placed in the rat cage. A filtered cover  can be placed on the top (not shown). 
 ![] (images/inRatCage.jpg)
 
