@@ -4,16 +4,16 @@
 The frame is printed in two parts and put together using superglue. Because of its size, the results are much better if you print it on a heated platform. You can also print it as a single piece, but you need to enable 'supports' and remove them afterwards. 
 ![] (images/frame0.jpg)
 
-Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout (not shown) in place.
-![] (images/thumbscrew.jpg)
+
+Use sand paper to clean a small area of a spout. Then older a segment of solid core hookup wire to a spout with the help of one drop of stainless steel Flux (see parts list).  
+![] (images/spout.jpg)
 
 Solder one 100 ohm resister to a 5 mm LED (clear). Cover it with a short segment of heat shrink tubing.  
 ![] (images/cuelight.jpg)
 
-Insert the LED into the cue light slot. Fix it in place using the small piece.
-![] (images/cutlight2.jpg)
-
-
+Insert the LED into the cue light slot. Fix it in place using the small piece.  
+Add a hex nut to the small opening on the spout holder. Use a thumbscrew to hold the spout (not shown) in place.
+![] (images/cuelight2.jpg)
 
 ## Switch Board
 The switches are used to provide bidirectional manual control of the syringe. 
@@ -24,7 +24,7 @@ The two holes are used for attaching the board to the top cover of the 3D printe
 The switch board also provides ground and 5V power to several boards (RFID reader, real time clock, touch sensor).  
 ![] (images/switchBoardBack.jpg)
 
-The back side of the switch board with wires added. The blue and white wires are for the two switches. The yellow and green wires are for the LEDs.
+The back side of the switch board with wires added. The blue and white wires are for the two switches. The yellow and green wires are for the LEDs. Solid core hook-up wired were used here but soldered header pins also work, as shown in the assembled model.  
 ![] (images/SwitchBoardBack2.jpg)
 
 ## RFID Reader 
@@ -114,7 +114,16 @@ Print out a [RPi pin number label] (../RPI.PinLables.pdf). Cut the middle grey a
 All wires are connected.
 ![] (images/wires.jpg)
 
-The fully assembled device. The RFID antenna can be  placed on its holder on the right side.  The spouts can be disconnected for cleaning purpose.   
+The fully assembled device. The RFID antenna can be placed on its holder on the right side.  The spouts can be disconnected for cleaning purpose. The LCD shows the following info:
+
+*B07S14*: Box 7, session 14
+
+*26A1*: the last four characters of the RFID
+
+*54Le*: 54 minutes left
+
+*a1i1r0vr10*: Active lick = 1, inactive lick = 1, reward = 0, Variable ratio 10 
+
 
 ![] (images/assembled.jpg)
 

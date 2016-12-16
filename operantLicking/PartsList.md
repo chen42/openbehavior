@@ -23,7 +23,7 @@ Motion sensor (Model: HC-SR501)
 
 RFID reader (Model: RDM 6300) [Amazon] (https://www.amazon.com/gp/product/B00KBN01VY/).
 
-RFID glass tags (EM4100 encoding) [aliexpress] (https://www.aliexpress.com/item/RFID-glass-4x20-application-logistics-patrol-asset-identification-management-security-frequency-125KHZ/931328784.html).
+RFID glass tags and injection syringe (EM4100 encoding) [AliExpress] (https://www.aliexpress.com/item/RFID-glass-4x20-application-logistics-patrol-asset-identification-management-security-frequency-125KHZ/931328784.html).
 
 LCD 16 x 2 characters (Model HD44780)  
 
@@ -36,6 +36,10 @@ LCD 16 x 2 characters (Model HD44780)
 100 om resister Qty: 3.
 
 Omal (TM) 2 x 40 pcs 20 cm 1P-1P female to female bread jump wire (or other brands).
+
+Stainless steel flux, such as  [Amazon] (https://www.amazon.com/gp/product/B001HWE9A2) 
+
+Solid core Hook-up Wire 22 AWG  [Sparkfun] (https://www.sparkfun.com/products/11367)
 
 ### Syringe Pump
 
