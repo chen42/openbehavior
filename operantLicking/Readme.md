@@ -10,4 +10,4 @@ This device uses a RPi to record the licking events on two spouts. It then drive
 
 Detailed description is published in this [PeerJ Article](https://peerj.com/articles/2981/)
 
-A video of rat licking for sucrose under a VR10 schedule is available [here] (https://youtu.be/l3SEo6oAtPM)
+A video of rat licking for sucrose under a VR10 schedule is available [here](https://youtu.be/l3SEo6oAtPM)
