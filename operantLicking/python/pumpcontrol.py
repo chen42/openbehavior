@@ -41,7 +41,8 @@ MS1   = int(11)  # pin 23
 
 # BEGIN constant definitions
 DEFAULT_POSITION = float(0.0)
-DEFAULT_PITCH = float(0.8)
+#DEFAULT_PITCH = float(0.8)
+DEFAULT_PITCH = float(1.0)
 DEFAULT_STEPS = float(3200.0)
 DEFAULT_STEPS_PER_MM = DEFAULT_STEPS / DEFAULT_PITCH
 DEFAULT_ML_PER_S = float(0.7)

@@ -30,8 +30,12 @@ function getRaspberryPiVersion {
 
 getRaspberryPiVersion
 
-if ["$?" == "3"] ; then
-		# Update the boot config
+if [ "$?" == "3" ] ; then
+	# Update the boot config
+	echo "bluetooth disabled; please reboot."
+	echo "dtoverlay=pi3-disable-bt" >>/boot/config.txt
+	systemctl disable hciuart
 else
+	echo "Not RPi 3, nothing is done."
 fi
 

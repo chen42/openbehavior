@@ -373,10 +373,10 @@ module top_half(){
 }
 
 //rfid_antenna_housing();
-//rfid_door();
+rfid_door();
 //top_half();
 //lower_half();
-rotate([0,0,180]) translate([0,0,90]) top_cover();
+//rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
 //spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //the_thing();
