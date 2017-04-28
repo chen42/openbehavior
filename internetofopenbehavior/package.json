@@ -1,0 +1,33 @@
+{
+  "name": "openbehavior",
+  "version": "0.0.1",
+  "description": "A cylon.js + RabbitMQ reimplementation of the OpenBehavior codebase",
+  "main": "main.js",
+  "dependencies": {
+    "amqp": "^0.2.6",
+    "cylon": "^1.3.0",
+    "cylon-raspi": "^0.20.1",
+    "serialport": "^4.0.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chen42/openbehavior.git"
+  },
+  "keywords": [
+    "openbehavior",
+    "science",
+    "rats",
+    "open",
+    "pharmacology"
+  ],
+  "author": "Ethan Willis, Matthew Longley, Hao Chen",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/chen42/openbehavior/issues"
+  },
+  "homepage": "https://github.com/chen42/openbehavior#readme"
+}
