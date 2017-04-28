@@ -36,19 +36,31 @@
 	"schedules": [
 		{
 			"name": "pr",
-			"default": false
+			"default": false,
+			"breakpoint": 2.0,
+			"timeout": 20,
+			"session_length": 600
 		},
 		{
 			"name": "fr",
-			"default": false
+			"default": false,
+			"timeout": 5,
+			"session_length": 3600,
+			"ratio": 2
 		},
 		{
 			"name": "ext",
-			"default": false
+			"default": false,
+			"timeout": 0,
+			"session_length": 3600,
+			"ratio": 0
 		},
 		{
 			"name": "vr",
-			"default": true
+			"default": true,
+			"timeout": 20,
+			"session_length": 3600,
+			"ratio": 10
 		}
 	]
 }
