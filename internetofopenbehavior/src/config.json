@@ -1,0 +1,54 @@
+{
+	"hardware": {
+		"sensors": {
+			
+		},
+		"devices": {
+
+		}
+	},
+	"rats": [
+		{
+			"id": "1E003E3B0C17",
+			"schedule": "pr"
+		},
+		{
+			"id": "2E90EDD235B4",
+			"schedule": "pr"
+		},
+		{
+			"id": "2E90EDD079FA",
+			"schedule": "fr"
+		},
+		{
+			"id": "2E90EDD071F2",
+			"schedule": "fr"
+		},
+		{
+			"id": "2E90EDD20283",
+			"schedule": "ext"
+		},
+		{
+			"id": "2E90EDD226A7",
+			"schedule": "ext"
+		}
+	],
+	"schedules": [
+		{
+			"name": "pr",
+			"default": false
+		},
+		{
+			"name": "fr",
+			"default": false
+		},
+		{
+			"name": "ext",
+			"default": false
+		},
+		{
+			"name": "vr",
+			"default": true
+		}
+	]
+}
