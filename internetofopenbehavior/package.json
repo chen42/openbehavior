@@ -7,6 +7,7 @@
     "amqp": "^0.2.6",
     "cylon": "^1.3.0",
     "cylon-raspi": "^0.20.1",
+    "schema-object": "^4.0.11",
     "serialport": "^4.0.7"
   },
   "devDependencies": {},
