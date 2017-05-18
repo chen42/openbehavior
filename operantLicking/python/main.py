@@ -172,7 +172,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
 elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     schedule="fr"
     ratio = 2
-    timeout =  10 
+    timeout =  20 
     sessionLength=60*60*1 # one hour assay
     nextratio=ratio
     mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
