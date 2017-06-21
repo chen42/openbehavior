@@ -278,6 +278,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 				cylinder(r=2.75, h=18); //hole for cue LED 
 				cylinder(r1=5, r2=2.75, h=5); //hole for cue LED 
 			}
+			translate([-70,-51,-20]) cylinder(r=5, h=18); //hole for collection tube 
 			translate([-sh_x,-sh_y,sh_z]) rotate([90,0,0]) cylinder(r=10, h=50); //holes for obverving the rat 
 			translate([-sh_x,-sh_y-10,sh_z]) rotate([35,0,0]) cylinder(r=4.6, h=55); // location of the spout 
 			translate([-sh_x,-sh_y-42, sh_z+31]) rotate([-55, 0,0]) cube([8.4, 18, 4.1], center=true);// hex screw for spout 
@@ -285,6 +286,7 @@ module spout_holder(sh_x=70, sh_y=40, sh_z=20){
 			translate([-sh_x,-sh_y-10,sh_z-pg/2-7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
 			translate([-sh_x,-sh_y-10,sh_z+pg/2+7]) rotate([-90,0,0]) cylinder(r=1.9, h=25); //negative for attachment screw, top
 			translate([-54,-50,55])	cylinder(r=1.5,h=10,center=true); // screw for led cue light wire fastner
+
 		}
 	}
 }
@@ -373,11 +375,11 @@ module top_half(){
 }
 
 //rfid_antenna_housing();
-rfid_door();
+//rfid_door();
 //top_half();
 //lower_half();
 //rotate([0,0,180]) translate([0,0,90]) top_cover();
 //translate([-54,-50,55])rotate([180,0,90])color("blue")cue_light_wires();
-//spout_holder(sh_x=70, sh_y=40, sh_z=20);
+spout_holder(sh_x=70, sh_y=40, sh_z=20);
 //the_thing();
 //step_motor_fastener();
