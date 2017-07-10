@@ -48,18 +48,18 @@ module cover(){
 }
 
 
-translate([0,0,-50]) color("red") nosecone();
+!translate([0,0,-50]) color("red") nosecone();
 module nosecone() {
 	difference (){
 		cylinder(r=innerR-0.5, h=38);
-		translate([0,0,-.1])cylinder(r2=innerR-1, r1=2, h=39);
+		translate([0,0,-.1])cylinder(r2=innerR-1, r1=5, h=39);
 		rotate([90,0,-90]) translate([0,3,4]) cylinder(r=1.8,h=18); //screw
 		translate([0,-7,26])cube([8,16,25], center=true ); // top cut head end
 		}
 }
 
 
-!cover2();	
+//cover2();	
 module cover2(){
 	difference(){
 		union(){
