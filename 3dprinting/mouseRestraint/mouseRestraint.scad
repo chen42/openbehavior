@@ -1,5 +1,5 @@
 $fn=100;
-rotate([180,0,180]) translate([0,0,-55]) color("blue") cover();
+!rotate([180,0,180]) translate([0,0,-55]) color("blue") cover();
 innerR=15;
 difference(){
 	cylinder(r=18, h=110, center=true);
@@ -42,24 +42,24 @@ module cover(){
 		}
 		translate([0,-1,0]) rotate([0,0,90]) cylinder(r=3.2, h=25, center=true);
 		translate([0,14,0]) cube([6.4,30,17], center=true ); // verticl cut 
-		rotate([90,0,0]) translate([0,5,0]) cylinder(r=1.8,h=20); //screw
+		rotate([90,0,0]) translate([0,5,0]) cylinder(r=2.1,h=20); //screw small =1.8, large=2.1
 		//translate([0,-9,0]) cube ([6,3,9], center=true) ; //hex nut
 	}
 }
 
 
-!translate([0,0,-50]) color("red") nosecone();
+//translate([0,0,-50]) color("red") nosecone();
 module nosecone() {
 	difference (){
 		cylinder(r=innerR-0.5, h=38);
 		translate([0,0,-.1])cylinder(r2=innerR-1, r1=5, h=39);
-		rotate([90,0,-90]) translate([0,3,4]) cylinder(r=1.8,h=18); //screw
+		rotate([90,0,-90]) translate([0,3,4]) cylinder(r=2.1,h=18); //screw
 		translate([0,-7,26])cube([8,16,25], center=true ); // top cut head end
 		}
 }
 
 
-//cover2();	
+//!cover2(); // models the original cover	
 module cover2(){
 	difference(){
 		union(){
