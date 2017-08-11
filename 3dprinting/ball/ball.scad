@@ -1,5 +1,5 @@
-$fn=13;
 $fn=40;
+$fn=13;
 module bar(){
 	difference(){
 	cylinder(r1=14, r2=8, h=106, center=true);
@@ -7,12 +7,14 @@ module bar(){
 	}
 }
 
-bar();
-rotate([90,0,0]) bar();
-rotate([0,90,0]) bar();
 difference (){
 	radius=50;
-	sphere(r=radius);
-	sphere(r=radius-48);
+	union(){
+		sphere(r=radius);
+		bar();
+		rotate([90,0,0]) bar();
+		rotate([0,90,0]) bar();
+	}
+	sphere(r=radius-2);
 }
 
