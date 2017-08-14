@@ -6,7 +6,7 @@ module inside_ear(){
 	difference(){
 		sphere(r=4.5);
 		sphere(r=3.5);
-		cylinder(h=100,r=1, center=true);
+		cylinder(h=100,r=1.3, center=true);
 		translate([0,0,-5]) cube([9,9,9], center=true);
 	} 
 }
@@ -24,5 +24,5 @@ module back_of_ear(){
 } 
 
 
-back_of_ear();
-//inside_ear();
+//back_of_ear();
+inside_ear();
