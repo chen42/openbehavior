@@ -105,7 +105,7 @@ MOTIONLED= int(6) #pin 31
 # END CONSTANT DEFINITIONS
 
 # BEGIN GLOBAL VARIABLES
-InterLickInterval=1 # second
+interLickInterval=1 # second
 logged={}
 touchcounter = 0
 pumptimedout = False
@@ -113,7 +113,7 @@ act=0 # number of licks on the active spout
 ina=0 # number of licks on the inactive spout
 rew=0 # number of reward
 wat=0 # number of licks on water spout
-lapse=0  # time since program start
+lapsed=0  # time since program start
 updateTime=0 # time since last LCD update
 # ENG GLOBAL VARIABLES
 
@@ -224,39 +224,39 @@ dlogger.createDataFile(RatID, schedule+str(ratio)+'TO'+str(timeout))
 # Get start time
 sTime = time.time()
 lastActiveLick=sTime
+lastInactiveLick=sTime
 
 def showdata():
     if schedule=='pr':
         minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
     else:
-        minsLeft=int((sessionLength-lapse)/60)
+        minsLeft=int((sessionLength-lapsed)/60)
     mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
     return time.time()
 
-while lapse < sessionLength:
-    lapse = time.time() - sTime
-#   print ("lapse", lapse)
+while lapsed < sessionLength:
     time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
+    lapsed = time.time() - sTime
     i = tsensor.readPinTouched()
     if i == 1:
         thisActiveLick=time.time() 
         # only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
         if thisActiveLick-lastActiveLick < interLickInterval: # rat licks in rapid sucsession
-            act+=1
-            dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
-            blinkTouchLED(0.02)
-            if (logged[lastActiveLick] !=1): 
+            if (lastActiveLick not in logged): 
                 act+=1
                 dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
+            act+=1
+            dlogger.logEvent("ACTIVE", lapsed)
+            blinkTouchLED(0.02)
             if not pumptimedout:
                 touchcounter += 1
-                if (logged[lastActiveLick] !=1):
+                if (lastActiveLick not in logged):
                     touchcounter += 1
                 if touchcounter == nextratio:
                     rew+=1
                     updateTime=showdata()
-                    dlogger.logEvent("REWARD", lapse, nextratio)
+                    dlogger.logEvent("REWARD", lapsed, nextratio)
                     touchcounter = 0
                     pumptimedout = True
                     pumpTimer = Timer(timeout, resetPumpTimeout)
@@ -272,25 +272,35 @@ while lapse < sessionLength:
                         nextratio=int(5*2.72**(breakpoint/5)-5)
                 else:
                     updateTime=showdata()
-            logged[lastActiveLick]=1
+#           logged[lastActiveLick]=1
             logged[thisActiveLick]=1
         lastActiveLick=thisActiveLick
     elif i == 2:
-        ina+=1
-        dlogger.logEvent("INACTIVE", lapse)
+        thisInactiveLick=time.time() 
+        # only count licks that are within interlick interval to exclude noise
+        # need to deal with not skipping the first lick in a series
+        if thisInactiveLick-lastInactiveLick < interLickInterval: # rat licks in rapid sucsession
+            if (lastInactiveLick not in logged): 
+                ina+=1
+                dlogger.logEvent("INACTIVE", lastInactiveLick-sTime)
+            ina+=1
+            dlogger.logEvent("INACTIVE", lapsed)
+            blinkTouchLED(0.02)
+            logged[thisInactiveLick]=1
+        lastInactiveLick=thisInactiveLick
         blinkTouchLED(0.05)
         updateTime=showdata()
-    elif i == 0:
-        wat+=1
-        dlogger.logEvent("WATER", lapse)
-        blinkTouchLED(0.05)
-        updateTime=showdata()
+#    elif i == 0:
+#        wat+=1
+#        dlogger.logEvent("WATER", lapsed)
+#        blinkTouchLED(0.05)
+#        updateTime=showdata()
     elif time.time() - updateTime > 60:
         updateTime=showdata()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
-        lapse = time.time() - lastActiveLick 
-#        print ("prlaps", lapse)
+        lapsed = time.time() - lastActiveLick 
+#        print ("prlaps", lapsed)
  
 # signal the motion script to stop recording
 if schedule=='pr':
