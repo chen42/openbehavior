@@ -34,6 +34,7 @@ import random
 import Adafruit_CharLCD as LCD
 # END IMPORT PRELUDE
 
+
 def initLCD():
     # Raspberry Pi pin configuration:
     lcd_rs        = 18  # RPi PIN 12 // LCD pin 4 
@@ -104,6 +105,8 @@ MOTIONLED= int(6) #pin 31
 # END CONSTANT DEFINITIONS
 
 # BEGIN GLOBAL VARIABLES
+InterLickInterval=1 # second
+logged={}
 touchcounter = 0
 pumptimedout = False
 act=0 # number of licks on the active spout
@@ -233,34 +236,45 @@ def showdata():
 while lapse < sessionLength:
     lapse = time.time() - sTime
 #   print ("lapse", lapse)
-    time.sleep(0.01) # set delay to adjust sensitivity of the sensor.
+    time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
     i = tsensor.readPinTouched()
     if i == 1:
-        act+=1
-        lastActiveLick=time.time()
-        blinkTouchLED(0.02)
-        dlogger.logEvent("ACTIVE", lapse)
-        if not pumptimedout:
-            touchcounter += 1
-            if touchcounter == nextratio:
-                rew+=1
-                updateTime=showdata()
-                dlogger.logEvent("REWARD", lapse, nextratio)
-                touchcounter = 0
-                pumptimedout = True
-                pumpTimer = Timer(timeout, resetPumpTimeout)
-                pumpTimer.start()
-                subprocess.call('python /home/pi/openbehavior/operantLicking/python/blinkenlights.py &', shell=True)
-                pump.move(0.08) # This is 60ul
-                if schedule == "fr":
-                    nextratio=ratio
-                elif schedule == "vr":
-                    nextratio=random.randint(1,ratio*2)
-                elif schedule == "pr":
-                    breakpoint+=1.0
-                    nextratio=int(5*2.72**(breakpoint/5)-5)
-            else:
-                updateTime=showdata()
+        thisActiveLick=time.time() 
+        # only count licks that are within interlick interval to exclude noise
+        # need to deal with not skipping the first lick in a series
+        if thisActiveLick-lastActiveLick < interLickInterval: # rat licks in rapid sucsession
+            act+=1
+            dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
+            blinkTouchLED(0.02)
+            if (logged[lastActiveLick] !=1): 
+                act+=1
+                dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
+            if not pumptimedout:
+                touchcounter += 1
+                if (logged[lastActiveLick] !=1):
+                    touchcounter += 1
+                if touchcounter == nextratio:
+                    rew+=1
+                    updateTime=showdata()
+                    dlogger.logEvent("REWARD", lapse, nextratio)
+                    touchcounter = 0
+                    pumptimedout = True
+                    pumpTimer = Timer(timeout, resetPumpTimeout)
+                    pumpTimer.start()
+                    subprocess.call('python /home/pi/openbehavior/operantLicking/python/blinkenlights.py &', shell=True)
+                    pump.move(0.08) # This is 60ul
+                    if schedule == "fr":
+                        nextratio=ratio
+                    elif schedule == "vr":
+                        nextratio=random.randint(1,ratio*2)
+                    elif schedule == "pr":
+                        breakpoint+=1.0
+                        nextratio=int(5*2.72**(breakpoint/5)-5)
+                else:
+                    updateTime=showdata()
+            logged[lastActiveLick]=1
+            logged[thisActiveLick]=1
+        lastActiveLick=thisActiveLick
     elif i == 2:
         ina+=1
         dlogger.logEvent("INACTIVE", lapse)
