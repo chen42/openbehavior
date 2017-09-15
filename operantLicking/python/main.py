@@ -240,9 +240,11 @@ while lapsed < sessionLength:
     i = tsensor.readPinTouched()
     if i == 1:
         thisActiveLick=time.time() 
+        print ("act=" + str(act) +  " rew= "+str(rew)+" nextratio=" + str(nextratio)+" counter="+str(touchcounter))
         # only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
         if thisActiveLick-lastActiveLick < interLickInterval: # rat licks in rapid sucsession
+            print ("this one counts, timeout?", str(pumptimedout))
             if (lastActiveLick not in logged): 
                 act+=1
                 dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
@@ -253,7 +255,7 @@ while lapsed < sessionLength:
                 touchcounter += 1
                 if (lastActiveLick not in logged):
                     touchcounter += 1
-                if touchcounter == nextratio:
+                if touchcounter >= nextratio:
                     rew+=1
                     updateTime=showdata()
                     dlogger.logEvent("REWARD", lapsed, nextratio)
