@@ -185,7 +185,7 @@ elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7":
     schedule="ext"
     timeout=0
     ratio=1000000
-    nextratio=-1
+    nextratio=1000000
     sessionLength=60*60*1
     mesg("Run Ext"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
@@ -244,7 +244,7 @@ while lapsed < sessionLength:
         # only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
         if thisActiveLick-lastActiveLick < interLickInterval: # rat licks in rapid sucsession
-            print ("this one counts, timeout?", str(pumptimedout))
+            #print ("this one counts, timeout?", str(pumptimedout))
             if (lastActiveLick not in logged): 
                 act+=1
                 dlogger.logEvent("ACTIVE", lastActiveLick-sTime)
