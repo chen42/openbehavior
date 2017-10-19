@@ -184,7 +184,7 @@ elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
 elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7":
     schedule="ext"
     timeout=0
-    ratio=0
+    ratio=1000000
     nextratio=-1
     sessionLength=60*60*1
     mesg("Run Ext"+str(ratio)+" Prog.\nPls Scan Rat")
