@@ -190,6 +190,16 @@ elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7":
     mesg("Run Ext"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
+elif RatID=="2E90EDD071F2":
+    schedule="vr"
+    ratio = 10
+    timeout =  20 
+    sessionLength=60*60*22 # one hour assay
+    nextratio=ratio
+    mesg("Run VR"+str(ratio)+"22h\nPls Scan Rat")
+    time.sleep(3)
+    RatID=ReadRFID("/dev/ttyAMA0")
+
 else: # vr
     schedule="vr"
     ratio=10
