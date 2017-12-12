@@ -162,7 +162,7 @@ RatID=ReadRFID("/dev/ttyAMA0")
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
     schedule="pr"
     breakpoint=2.0
-    timeout = 20 
+    timeout = 20
     nextratio=int(5*2.72**(breakpoint/5)-5)
     sessionLength=10*60 # session ends after 10 min inactivity
     ratio=""
@@ -175,7 +175,7 @@ if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
 elif RatID=="2E90EDD079FA" or RatID=="2E90EDD071F2":
     schedule="fr"
     ratio = 2
-    timeout =  20 
+    timeout =  20
     sessionLength=60*60*1 # one hour assay
     nextratio=ratio
     mesg("Run FR"+str(ratio)+" Prog.\nPls Scan Rat")
@@ -190,10 +190,10 @@ elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7":
     mesg("Run Ext"+str(ratio)+" Prog.\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID=="2E90EDD071F2":
+elif RatID=="2E90EDD21796":
     schedule="vr"
     ratio = 10
-    timeout =  20 
+    timeout =  20
     sessionLength=60*60*22 # one hour assay
     nextratio=ratio
     mesg("Run VR"+str(ratio)+"22h\nPls Scan Rat")
