@@ -199,7 +199,16 @@ elif RatID=="2E90EDD21796":
     mesg("Run VR"+str(ratio)+"22h\nPls Scan Rat")
     time.sleep(3)
     RatID=ReadRFID("/dev/ttyAMA0")
-
+elif RatID=="0400F16C5DC4":
+    vreinstate=1
+    schedule="vr"
+    ratio = 5 
+    timeout = 1 
+    sessionLength=60*60*22 # one hour assay
+    nextratio=ratio
+    mesg("Run VREINST\n"+"Pls Scan Rat")
+    time.sleep(3)
+    RatID=ReadRFID("/dev/ttyAMA0")
 else: # vr
     schedule="vr"
     ratio=10
@@ -243,6 +252,10 @@ def showdata():
         minsLeft=int((sessionLength-lapsed)/60)
     mesg("B" + deviceId[-2:]+  "S"+str(sessionID) + " " + RatID[-4:] + " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
     return time.time()
+
+
+if (vreinstate):
+    subprocess.call('python /home/pi/openbehavior/operantLicking/python/blinkenlights.py -times 10 &', shell=True)
 
 while lapsed < sessionLength:
     time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
