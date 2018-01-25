@@ -115,6 +115,7 @@ rew=0 # number of reward
 wat=0 # number of licks on water spout
 lapsed=0  # time since program start
 updateTime=0 # time since last LCD update
+vreinstate=0
 # ENG GLOBAL VARIABLES
 
 # Initialize GPIO
@@ -194,7 +195,7 @@ elif RatID=="2E90EDD21796":
     schedule="vr"
     ratio = 10
     timeout =  20
-    sessionLength=60*60*22 # one hour assay
+    sessionLength=60*60*22 # twenty two hour assay
     nextratio=ratio
     mesg("Run VR"+str(ratio)+"22h\nPls Scan Rat")
     time.sleep(3)
@@ -204,7 +205,7 @@ elif RatID=="0400F16C5DC4":
     schedule="vr"
     ratio = 5 
     timeout = 1 
-    sessionLength=60*60*22 # one hour assay
+    sessionLength=60*60*1 # one hour assay
     nextratio=ratio
     mesg("Run VREINST\n"+"Pls Scan Rat")
     time.sleep(3)
