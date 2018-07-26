@@ -99,11 +99,13 @@ def buzz():
 
 Buzzer = 11
 Tail=12
-templo=49.50
-temphi=50.50
 setupGPIO()
 
-print ("Program started, target temp range: ("+str(templo)+" - "+str(temphi)+")\n")
+targettemp=input("what is that target temp in C?")
+templo=int(targettemp)-0.50
+temphi=int(targettemp)+0.50
+
+print ("\n\nProgram started, target temp range: ("+str(templo)+" - "+str(temphi)+")\n")
 print ("data are saved in " + datafile+"\n")
 ratid=rfid()
 
@@ -129,13 +131,14 @@ while True:
 		temp2=read_temp()
 		temp=round((temp1+temp2)/2, 3)
 		line=ratid+"\t" + td + "\t"+ str(elapsed) + "\t"+ str(temp) + "\n" 
-		with open(datafile, "a") as f:
-			f.write(line)
-			f.close()
-		
+	
 		print (line)
-		next=raw_input("Type Y for new rat, anythine else to continue with current rat, CTRL-C to stop\n")
+		next=raw_input("Type \"y\" for new rat, \"d\" to delet this trial, anythine else to continue with current rat, CTRL-C to stop\n")
+		if (next !="d"):
+			with open(datafile, "a") as f:
+				f.write(line)
+				f.close()
 		if (next=="y"):
 			ratid=rfid()
 
-
+	
