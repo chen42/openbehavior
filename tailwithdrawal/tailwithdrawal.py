@@ -7,6 +7,7 @@ import serial
 import sys
 import datetime
 import operator
+import subprocess
 
 
  
@@ -92,7 +93,8 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-targettemp=input("what is that target temp in C?")
+#targettemp=input("what is that target temp in C?")
+targettemp=48
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
@@ -122,12 +124,23 @@ while True:
 		line=ratid+"\t" + td + "\t"+ str(elapsed) + "\t"+ str(temp) + "\n" 
 	
 		print (line)
-		next=raw_input("Type \"y\" for new rat, \"d\" to delet this trial, anythine else to continue with current rat, CTRL-C to stop\n")
+		next=raw_input("Type \"n\" for new rat,\n\"d\" to delet this trial,\nanythine else to continue with current rat, CTRL-C to stop\n")
 		if (next !="d"):
 			with open(datafile, "a") as f:
 				f.write(line)
 				f.close()
-		if (next=="y"):
+		if (next=="n"):
 			ratid=rfid()
+		if (next=="r"): 
+			print "Please enter at least four characters\n"
+			ratid=raw_input()
+			cmd= "grep -i "+ ratid + " /home/pi/Pies/tailwithdrawal/tailwithdrawal2018-*csv|cut -f 1 |cut -f 2 -d \":\"|grep -v Bin|sort |uniq"
+			p=subprocess.Popen(cmd, stdout=subprocess.PIPE,  shell=True)
+			(output, err) = p.communicate()
+			if (len(output) >  4) :
+				ratid=output.rstrip()
+				p.wait()
+				print ("converted your input into " + ratid + "\n")
+			
 
-	
+				
