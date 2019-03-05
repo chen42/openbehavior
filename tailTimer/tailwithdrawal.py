@@ -7,6 +7,7 @@ import serial
 import sys
 import datetime
 import operator
+import subprocess
 
 
  
@@ -23,9 +24,8 @@ device=idfile.read()
 device=device.strip()
 today=datetime.date.today()
 td=str(today)
-year=datetime.date.today().year
-month=datetime.date.today().month
 datafile="/home/pi/Pies/tailwithdrawal/tailwithdrawal"+td+".csv"
+
 # flags
 startflag = "\x02"
 endflag = "\x03"
@@ -66,10 +66,6 @@ def rfid():
 def setupGPIO():
 	GPIO.setmode(GPIO.BOARD)	# Numbers GPIOs by physical location
 	GPIO.setup(Tail, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#	GPIO.setup(Buzzer, GPIO.OUT)	# Set pins' mode is output
-#	global Buzz			# Assign a global variable to replace GPIO.PWM 
-#	Buzz = GPIO.PWM(Buzzer, 1)	# 1 is initial frequency.
-
 
 
 def read_temp_raw():
@@ -89,16 +85,32 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         return temp_c
 
+def inputrfid():
+	print "Please enter at least four characters\n"
+	ratid=raw_input()
+	cmd= "grep -i "+ ratid + " /home/pi/Pies/tailwithdrawal/tailwithdrawal2018-*csv|cut -f 1 |cut -f 2 -d \":\"|grep -v Bin|sort |uniq"
+	p=subprocess.Popen(cmd, stdout=subprocess.PIPE,  shell=True)
+	(output, err) = p.communicate()
+	if (len(output) >  4) :
+		ratid=output.rstrip()
+		p.wait()
+		print ("converted your input into " + ratid + "\n")
+	return (rfid)
+
 Tail=12
 setupGPIO()
 
-targettemp=input("what is that target temp in C?")
+user=raw_input("please provide your name\n")
+#targettemp=raw_input("what is that target temp in C?")
+targettemp=48
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
 print ("\n\nProgram started, target temp range: ("+str(templo)+" - "+str(temphi)+")\n")
 print ("data are saved in " + datafile+"\n")
 ratid=rfid()
+#ratid=inputrfid()
+
 
 while True:
 	time.sleep(0.01)
@@ -119,15 +131,19 @@ while True:
 		elapsed=round(elapsed, 3)
 		temp2=read_temp()
 		temp=round((temp1+temp2)/2, 3)
-		line=ratid+"\t" + td + "\t"+ str(elapsed) + "\t"+ str(temp) + "\n" 
-	
+		now0=datetime.datetime.now()
+		now=now0.strftime("%Y-%m-%d\t%H:%M")
+		line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n" 
 		print (line)
-		next=raw_input("Type \"y\" for new rat, \"d\" to delet this trial, anythine else to continue with current rat, CTRL-C to stop\n")
+		time.sleep(5)
+		next=raw_input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"e\" to end the run, \nanythine else to continue with current rat, CTRL-C to stop\n")
 		if (next !="d"):
 			with open(datafile, "a") as f:
 				f.write(line)
 				f.close()
-		if (next=="y"):
+		if (next=="n"):
 			ratid=rfid()
-
-	
+		if (next=="r"): 
+			ratid=inputrfid()
+		if (next=="e"): 
+			sys.exit()
