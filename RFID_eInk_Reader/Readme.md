@@ -11,7 +11,7 @@
 * Library https://github.com/waveshare/e-Paper/tree/master/2.7inch_e-paper_code/RaspberryPi/
 * Steps not described in the user manual
 	* enable SPI interface in the PI ```sudo raspi-config```
-* For the python demo code, make sure the font is present in your system. 
+* For the python demo code from waveshare, make sure the font is present in your system. 
 * To run the python code automatically after boot, do the following
   * change the boot into command line and enable auto login with user pi by running ```sudo raspi-config```  
   * add the python program to the end of the .bashrc file for user pi
