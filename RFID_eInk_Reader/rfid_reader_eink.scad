@@ -29,18 +29,28 @@ module sidewall(){ // include the top cover mounting holes
 
 module topCoverMounting() {
 	mx=31;
-	my=-30.5;
-	my2=50.5;
+	my=-31.5;
+	my2=54.5;
 	color("blue") translate([mx,my,0])  cylinder(r=1.9,h=40);
 	color("blue") translate([-mx,my,0]) cylinder(r=1.9,h=40);
 	color("blue") translate([-mx,my2,0])cylinder(r=1.9,h=40);
 	color("blue") translate([mx,my2,0]) cylinder(r=1.9,h=40);
 } 
 
+module epaper(){
+	translate([-7-11,-4-22,0]) cube([42, 62, 30]);
+}
+
+module header(){
+	translate([-30,-26,25.5]) cube([10,60,2]);
+	}
+
 module topCover(){
 	difference(){
-		color("green")translate([0,10,28]) cube([70, 90, 3], center=true);
+		color("green")translate([0,11.5,27]) cube([70, 93, 3], center=true);
 		topCoverMounting();
+		epaper();
+		header();
 	}
 }
 
@@ -69,7 +79,7 @@ module case(){
 	}
 
 }
-case();
-//topCover();
+//case();
+topCover();
 
 
