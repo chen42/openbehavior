@@ -28,7 +28,8 @@ while True:
     cnt=cnt+1
     rfid=input("Waiting for RFID")
     rfid=hex(int(rfid)).upper()
-    line=line +  rfid[2:6] + "." + rfid[6:] "\n"
+    l=len(rfid)
+    line=line +  rfid[2:l-4] + "." + rfid[-4:] +  "\n"
     show(line)
     time.sleep(.5)
 
