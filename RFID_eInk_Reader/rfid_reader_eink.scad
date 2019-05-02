@@ -38,7 +38,7 @@ module topCoverMounting() {
 } 
 
 module epaper(){
-	translate([-7-11,-4-22,0]) cube([42, 62, 30]);
+	translate([-18,-24,0]) cube([40, 60, 30]);
 }
 
 module header(){
