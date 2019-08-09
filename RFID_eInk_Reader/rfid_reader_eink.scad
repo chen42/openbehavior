@@ -21,7 +21,7 @@ module baseboard(){
 	color("grey")cube([70, 93, 3], center=true); // base board
 } 
 module sidewall(){ // include the top cover mounting holes
-	color("blue") cube([2,93,25], center=true);
+	color("blue") cube([2,93,27], center=true);
 	translate([3, 43,10]) difference( ) { cylinder(r=3.5, h=5, center=true); cylinder(r=1.6, h=43);}
 	translate([3,-43,10]) difference( ) { cylinder(r=3.5, h=5, center=true); cylinder(r=1.6, h=43);}
 }
@@ -68,18 +68,29 @@ module case(){
 				translate([30,-30, 4]) cube([10, 15, 9]); // power plug 
 			}
 			difference(){ // short end
-				translate([0,-34,13]) cube([70,2,25], center=true);// backwall
+				translate([0,-34,13]) cube([70,2,27], center=true);// backwall
 				translate([0,-34,4]) cube([20,10, 6], center=true); // sdcard slot  
+               translate([-18,-34,6]) rotate([90,0,0]) cylinder(r=3,h=5, center=true); // view port for LEDs
+
 			}
 			difference(){ // USB end
-				translate([0,57,13]) cube([70,2,25], center=true);// backwall
+				translate([0,57,13]) cube([70,2,27], center=true);// backwall
 				translate([-10,56,18]) cube([35,20,25], center=true); // USB  
 			}
-	
 	}
-
 }
-//case();
-topCover();
 
+module rfidholder(){
+	difference() {
+		cube ([74, 80, 17],center=true); //outside
+		cube ([66, 130,40],center=true); // middle
+		translate([0,0,-2])cube ([70, 100,13],center=true); //inner most
+	}
+}
+
+
+case();
+
+//topCover();
+//translate([0,10,34])rfidholder();
 
