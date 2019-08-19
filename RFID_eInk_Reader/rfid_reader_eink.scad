@@ -70,7 +70,7 @@ module case(){
 			difference(){ // short end
 				translate([0,-34,13]) cube([70,2,27], center=true);// backwall
 				translate([0,-34,4]) cube([20,10, 6], center=true); // sdcard slot  
-               translate([-18,-34,6]) rotate([90,0,0]) cylinder(r=3,h=5, center=true); // view port for LEDs
+               translate([18,-34,6]) rotate([90,0,0]) cylinder(r=3,h=5, center=true); // view port for LEDs
 
 			}
 			difference(){ // USB end
@@ -82,9 +82,9 @@ module case(){
 
 module rfidholder(){
 	difference() {
-		cube ([74, 80, 17],center=true); //outside
-		cube ([66, 130,40],center=true); // middle
-		translate([0,0,-2])cube ([70, 100,13],center=true); //inner most
+		cube ([70, 80, 17],center=true); //outside
+		cube ([58, 130,40],center=true); // middle
+		translate([0,0,-2])cube ([61, 100,12.5],center=true); //inner most
 	}
 }
 
@@ -92,5 +92,5 @@ module rfidholder(){
 case();
 
 //topCover();
-//translate([0,10,34])rfidholder();
+//translate([0,11.5,37])rfidholder();
 
