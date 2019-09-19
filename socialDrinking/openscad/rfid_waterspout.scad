@@ -46,7 +46,7 @@ module rfid_board_hook(){
 module cboard_cover(){
 	difference(){
 		union(){
-			translate([15,43,0])cube([30,15,63],center=true);
+			translate([15,43,0])cube([30,12,63],center=true);
 			translate([15,37,0])cube([30,4,70],center=true);
 		}
 		translate([15,40,0])cube([26,10,58],center=true);
@@ -84,6 +84,8 @@ module cboard_screw(dia=1.5){
 	distance=32;
 	translate([0,0,distance])rotate([90,0,0]) cylinder(r=dia, h=350,center=true);
 	translate([0,0,-distance])rotate([90,0,0]) cylinder(r=dia, h=350,center=true);
+	translate([0,19,-distance])rotate([90,0,0]) cylinder(r=dia+3, h=30,center=true); // screw head
+	translate([0,19,distance])rotate([90,0,0]) cylinder(r=dia+3, h=30,center=true); // screw head
 }
 
 module frontpanel(){
@@ -101,6 +103,6 @@ module frontpanel(){
 
 //translate([-35,0,0])rotate([0,90,0])frontpanel();
 //translate([-30,0,0])rotate([0,90,0])antenna_cover();
-spoutholder();
-//color("blue")cboard_cover();
+//spoutholder();
+color("blue")cboard_cover();
 
