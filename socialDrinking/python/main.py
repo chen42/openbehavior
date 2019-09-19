@@ -1,22 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-# Copyright 2019 University of Tennessee Health Sciences Center
-# Author: Hao Chen <hchen@uthsc.edu>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or(at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# BEGIN IMPORT PRELUDE
 import pigpio
 from PigpioStepperMotor import StepperMotor
 import sys
@@ -129,6 +112,9 @@ tsensor = touchsensor.TouchSensor()
 
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+date=time.strftime("%Y-%m-%d, time.localtime())
+
+RatID=input("please scan a command RFID")
 
 # the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID=="1E003E3B0C17" or RatID=="2E90EDD235B4":
@@ -236,6 +222,7 @@ while lapsed < sessionLength:
     lapsed = time.time() - sTime
     i = tsensor.readPinTouched()
     if i == 1:
+        with open (
         thisActiveLick=time.time() 
         print ("act=" + str(act) +  " rew= "+str(rew)+" nextratio=" + str(nextratio)+" counter="+str(touchcounter))
         # only count licks that are within interlick interval to exclude noise
@@ -271,7 +258,6 @@ while lapsed < sessionLength:
                         nextratio=int(5*2.72**(breakpoint/5)-5)
                 else:
                     updateTime=showdata()
-#           logged[lastActiveLick]=1
             logged[thisActiveLick]=1
         lastActiveLick=thisActiveLick
     elif i == 2:
@@ -289,18 +275,12 @@ while lapsed < sessionLength:
         lastInactiveLick=thisInactiveLick
         blinkTouchLED(0.05)
         updateTime=showdata()
-#    elif i == 0:
-#        wat+=1
-#        dlogger.logEvent("WATER", lapsed)
-#        blinkTouchLED(0.05)
-#        updateTime=showdata()
     elif time.time() - updateTime > 60:
         updateTime=showdata()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick 
 #        print ("prlaps", lapsed)
- 
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:
@@ -310,4 +290,4 @@ dlogger.logEvent("SessionEnd", time.time()-sTime)
 
 print("Box" + deviceId[-2:]+  "Session"+str(sessionID) + " " + RatID[-4:] + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
 
-subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
+#subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
