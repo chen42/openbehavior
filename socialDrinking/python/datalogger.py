@@ -25,7 +25,7 @@ class LickLogger:
 
     def createDataFile(self, schedule):
         self.datafile = DATAFILE_PRFX + str(self.devID) + '_S' + self.sessID +  "_" +  str(self.ratID) + '.csv'
-        print (self.datafile)
+        print ("Data file location:\n", self.datafile)
         # open data file
         with open(self.datafile,"a") as f:
             f.write("RatID\tdate\tstart_time\tboxid\tEventType\t"+schedule+"\tseconds\n")
@@ -34,6 +34,7 @@ class LickLogger:
     def logEvent(self, rat, eventType, timeLapsed, ratio=0):
         # Create output string
         outputstr = rat + "\t" + time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + self.devID + "_S" + self.sessID+ "\t" + eventType + "\t" + str(ratio) + "\t"+ str(timeLapsed) + "\n"
+        print (outputstr)
         with open (self.datafile, "a") as datafile:
             datafile.write(outputstr)
 
