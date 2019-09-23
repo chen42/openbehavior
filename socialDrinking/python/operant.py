@@ -8,12 +8,13 @@ import time
 from threading import Timer
 import RPi.GPIO as gpio
 import datalogger
+import subprocess
 import os
 import random
 import board # MPR121
 import busio # MPR121
 import adafruit_mpr121
-from ids import IDS
+import ids 
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-schedule',  type=str, default="vr")
@@ -32,9 +33,9 @@ rat1ID=args.rat1ID
 rat2ID=args.rat2ID
 nextratio=ratio
 
-print("Running " + schedule+str(ratio)+ "TO" + str(timeout) +  " schedule for " + str(sessionLength/60) + " min.\nRats: " + rat1ID  + " and " + rat2ID)  
+minInterLickInterval=2 # minimal ILI
 
-ROOT="."
+#ROOT="."
 
 '''
 # connection to adafruit TB6612
@@ -78,17 +79,9 @@ def pumpforward(x=80): #x=80 is 60ul
         stby.write(27,1)
         motor.doClockwiseStep()
 
-def printUsage():
-    print(sys.argv[0] + ' -t <timeout> -f <fixed ratio>')
-
 def resetPumpTimeout():
     global pumptimedout
     pumptimedout = False
-
-#def blinkTouchLED(duration):
-#    gpio.output(TOUCHLED, gpio.HIGH)
-#    time.sleep(duration)
-#    gpio.output(TOUCHLED, gpio.LOW)
 
 # BEGIN CONSTANT DEFINITIONS
 TIR = int(16) # Pin 36
@@ -121,37 +114,17 @@ gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
 
-# Run the deviceinfo script
-#mesg("Hurry up, Wifi!")
-#os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
 
-
-ids=IDS() ## read in session id, ratid, boxid, etc.
+ids=ids.IDS() ## read in session id, boxid, etc.
  
-#turn lights off to indicate RFID recieved
-#gpio.output(TOUCHLED, gpio.LOW)
-#gpio.output(MOTIONLED, gpio.LOW)
+#RatIDs=rat1ID+"_"+rat2ID
 
-# session id 
-#with open ("/home/pi/sessionid", "r+") as f:
-#    storedSessionID=f.read().strip()
-#    sessionID=int(storedSessionID)+1  
-#    f.seek(0)
-#    f.write(str(sessionID))
-#    f.close()
-
-# start motion sensor Note: motion sensor needs to be started before session ID is incremented
-# print ("staring motion sensor")
-#subprocess.call("sudo python /home/pi/openbehavior/operantLicking/python/#motion.py " +  " -SessionLength " + str(sessionLength) + " -RatID " + #RatID +  " -Schedule " + schedule + " &", shell=True)
-
-RatID=rat1+"_"+rat2
 # Initialize data logger 
-dlogger = datalogger.LickLogger()
-dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout))
+dlogger = datalogger.LickLogger(ids.devID, ids.sesID)
+dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 
 # Get start time
 sTime = time.time()
@@ -176,16 +149,20 @@ while lapsed < sessionLength:
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
     if act1 == 1:
-        #thisActiveLick=time.time() 
+        f=open("/home/pi/_active", "r")
+        rat=f.read().strip()
+        f.close()
+        thisActiveLick=time.time() 
         #print ("act=" + str(act) +  " rew= "+str(rew)+" nextratio=" + str(nextratio)+" counter="+str(touchcounter))
         #only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
-        #if thisActiveLick-lastActiveLick < interLickInterval: # rat licks in rapid sucsession
-        #if thisActiveLick-lastActiveLick < 1: # rat licks in rapid sucsession
-            #print ("this one counts, timeout?", str(pumptimedout))
+        if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
         #if (lastActiveLick not in logged): 
-        act+=1
-        dlogger.logEvent(str(time.time()), "ACTIVE", lapsed, nextratio)
+            act+=1
+            dlogger.logEvent(rat, time.time(), "ACTIVE", lapsed, nextratio)
+            lastActiveLick=thisActiveLick
+        else: 
+            print ("lick within interlickinterval, skip")
         #blinkTouchLED(0.2)
         #act+=1
         #dlogger.logEvent("ACTIVE", lapsed)
@@ -196,12 +173,12 @@ while lapsed < sessionLength:
             if touchcounter >= nextratio:
                 rew+=1
         #       updateTime=showdata()
-                dlogger.logEvent(str(time.time()), "REWARD", time.time()-sTime, nextratio)
+                dlogger.logEvent(rat, time.time(), "REWARD", time.time()-sTime, nextratio)
                 touchcounter = 0
                 pumptimedout = True
                 pumpTimer = Timer(timeout, resetPumpTimeout)
                 pumpTimer.start()
-                subprocess.call('python ' + ROOT + '/blinkenlights.py -times 1&', shell=True)
+                subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
                 pumpforward() # This is 60ul
                 if schedule == "fr":
                     nextratio=ratio
@@ -222,8 +199,11 @@ while lapsed < sessionLength:
             ##if (lastInactiveLick not in logged): 
             #    ina+=1
             #    dlogger.logEvent(str(time.time()),"INACTIVE", lastInactiveLick-sTime)
+        f=open("/home/pi/_inactive", "r")
+        rat=f.read().strip()
+        f.close()
         ina+=1
-        dlogger.logEvent(str(time.time()), "INACTIVE", lapsed)
+        dlogger.logEvent(rat, time.time(), "INACTIVE", lapsed)
         #blinkTouchLED(0.02)
         #logged[thisInactiveLick]=1
         #lastInactiveLick=thisInactiveLick
@@ -240,7 +220,7 @@ while lapsed < sessionLength:
 #    with open("/home/pi/prend", "w") as f:
 #        f.write("yes")
 
-dlogger.logEvent("", "SessionEnd", time.time()-sTime)
+dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 print("Box" + ids.devID+  "Session"+ids.sesID + " " + ids.ratID + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
 

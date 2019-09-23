@@ -8,7 +8,15 @@ DEVID_FILE = ROOT+'/deviceid'
 RATID_FILE = ROOT+'/ratids'
 SESSIONID_FILE = ROOT+'/sessionid'
 DATA_DIR = ROOT+'/SocialDrinking'
-DATA_PREFIX = "Oxy_"
+DATA_PREFIX = "/Oxy_"
+
+with open (ROOT+"/_active", "w") as act:
+    act.write("noRatYet")
+    act.close()
+
+with open (ROOT+"/_inactive", "w") as inact:
+    inact.write("noRatYet")
+    inact.close()
 
 if not os.path.exists(DEVID_FILE): 
     print ("please edit " + DEVID_FILE + " to assign device ID")
@@ -37,4 +45,3 @@ class IDS:
             sessID.write(str(newSesID))
             sessID.close()
 
-ids=IDS()
