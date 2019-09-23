@@ -33,9 +33,8 @@ rat1ID=args.rat1ID
 rat2ID=args.rat2ID
 nextratio=ratio
 
-minInterLickInterval=2 # minimal ILI
+minInterLickInterval=0.15 # minimal ILI (about 6-7 licks per second)
 
-#ROOT="."
 
 '''
 # connection to adafruit TB6612
@@ -130,91 +129,80 @@ dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 sTime = time.time()
 lastActiveLick=sTime
 lastInactiveLick=sTime
+lastInactiveLick=sTime
 
-def showdata():
+def showData():
     if schedule=='pr':
         minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
     else:
         minsLeft=int((sessionLength-lapsed)/60)
-    print("B" + ids.devID+  "S"+ids.sesID + " " + ids.ratID+ " " + str(minsLeft) + "Left\n"+ "a" + str(act)+"i"+str(ina) + "r" +  str(rew) + schedule + str(nextratio))
+    print(ids.devID+  " Session_"+str(ids.sesID) + " "+ str(schedule) + str(nextratio) + " [" + str(minsLeft) + " min Left]\n"+ "Active: " + str(act)+" Inactive: "+str(ina) + " Reward: " +  str(rew) + "\n")
     return time.time()
+
 
 
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
 while lapsed < sessionLength:
-    time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
+    #time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
+    #show data if idle more than 1 min 
+    if time.time()-updateTime > 60:
+        updateTime=showData()
     if act1 == 1:
         f=open("/home/pi/_active", "r")
         rat=f.read().strip()
         f.close()
         thisActiveLick=time.time() 
-        #print ("act=" + str(act) +  " rew= "+str(rew)+" nextratio=" + str(nextratio)+" counter="+str(touchcounter))
-        #only count licks that are within interlick interval to exclude noise
-        # need to deal with not skipping the first lick in a series
         if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
-        #if (lastActiveLick not in logged): 
             act+=1
             dlogger.logEvent(rat, time.time(), "ACTIVE", lapsed, nextratio)
             lastActiveLick=thisActiveLick
-        else: 
-            print ("lick within interlickinterval, skip")
-        #blinkTouchLED(0.2)
-        #act+=1
-        #dlogger.logEvent("ACTIVE", lapsed)
-        if not pumptimedout:
-            touchcounter += 1 # for issuing rewards
-        #    if (lastActiveLick not in logged):
-        #        touchcounter += 1
-            if touchcounter >= nextratio:
-                rew+=1
-        #       updateTime=showdata()
-                dlogger.logEvent(rat, time.time(), "REWARD", time.time()-sTime, nextratio)
-                touchcounter = 0
-                pumptimedout = True
-                pumpTimer = Timer(timeout, resetPumpTimeout)
-                pumpTimer.start()
-                subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
-                pumpforward() # This is 60ul
-                if schedule == "fr":
-                    nextratio=ratio
-                elif schedule == "vr":
-                    nextratio=random.randint(1,ratio*2)
-                elif schedule == "pr":
-                    breakpoint+=1.0
-                    nextratio=int(5*2.72**(breakpoint/5)-5)
-            #else:
-            #    updateTime=showdata()
+            updateTime=showData()
+            #blinkCueLED(0.2)
+            if not pumptimedout:
+                touchcounter += 1 # for issuing rewards
+                if touchcounter >= nextratio:
+                    rew+=1
+                    dlogger.logEvent(rat, time.time(), "REWARD", time.time()-sTime, nextratio)
+                    touchcounter = 0
+                    pumptimedout = True
+                    pumpTimer = Timer(timeout, resetPumpTimeout)
+                    pumpTimer.start()
+                    subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                    pumpforward() # This is 60ul
+                    updateTime=showData()
+                    if schedule == "fr":
+                        nextratio=ratio
+                    elif schedule == "vr":
+                        nextratio=random.randint(1,ratio*2)
+                    elif schedule == "pr":
+                        breakpoint+=1.0
+                        nextratio=int(5*2.72**(breakpoint/5)-5)
         #logged[thisActiveLick]=1
         #lastActiveLick=thisActiveLick
     elif ina0 == 1:
-        #thisInactiveLick=time.time() 
+        thisInactiveLick=time.time() 
         # only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
         #if thisInactiveLick-lastInactiveLick < interLickInterval: # rat licks in rapid sucsession
             ##if (lastInactiveLick not in logged): 
             #    ina+=1
             #    dlogger.logEvent(str(time.time()),"INACTIVE", lastInactiveLick-sTime)
-        f=open("/home/pi/_inactive", "r")
-        rat=f.read().strip()
-        f.close()
-        ina+=1
-        dlogger.logEvent(rat, time.time(), "INACTIVE", lapsed)
-        #blinkTouchLED(0.02)
-        #logged[thisInactiveLick]=1
-        #lastInactiveLick=thisInactiveLick
-        #blinkTouchLED(0.05)
-        #updateTime=showdata()
-    #elif time.time() - updateTime > 60:
-    #    updateTime=showdata()
+        if thisInactiveLick-lastInactiveLick > minInterLickInterval: 
+            f=open("/home/pi/_inactive", "r")
+            rat=f.read().strip()
+            f.close()
+            ina+=1
+            dlogger.logEvent(rat, time.time(), "INACTIVE", lapsed)
+            lastInactiveLick=thisInactiveLick
+            updateTime=showData()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick 
-#        print ("prlaps", lapsed)
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:

@@ -21,7 +21,7 @@ class LickLogger:
     def logEvent(self, rat, eventSec, eventType, timeLapsed, ratio=0):
         # Create output string
         outputstr = rat + "\t" + str(eventSec) + "\t"+ time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime()) + "\t" + self.devID + "_S" + str(self.sessID) + "\t" + eventType + "\t" + str(ratio) + "\t"+ str(timeLapsed) + "\n"
-        print (outputstr)
+        #print (outputstr)
         with open (self.datafile, "a") as datafile:
             datafile.write(outputstr)
 

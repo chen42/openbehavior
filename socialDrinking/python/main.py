@@ -5,12 +5,11 @@ import time
 import subprocess
 import os
 from ids import *
-#from ids import IDS
 
 
 # Run the deviceinfo script
-#mesg("Hurry up, Wifi!")
-#os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
+# pring("Hurry up, Wifi!")
+# os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
 
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -89,7 +88,7 @@ while lapsed < sessionLength:
         break
     print ("RFID is "+rfid)
     if (len(rfid)==10):
-        record=rfid+"\t"+str(time.time()+"\n")
+        record=rfid+"\t"+str(time.time())+"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
@@ -99,7 +98,7 @@ while lapsed < sessionLength:
             inactive.close()
 
     if (len(rfid)==8):
-        record=rfid+"\t"+str(time.time()+"\n")
+        record=rfid+"\t"+str(time.time())+"\n"
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
             active.close()
