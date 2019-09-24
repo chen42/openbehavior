@@ -1,44 +1,55 @@
 #!/usr/bin/python
 
-# Copyright 2016 University of Tennessee Health Sciences Center
-# Author: Matthew Longley <mlongle1@uthsc.edu>
-# Author: Hao Chen <hchen@uthsc.edu>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or(at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
+# pip3 install pigpio
+# git clone https://github.com/stripcode/pigpio-stepper-motor
 
-# BEGIN IMPORT PRELUDE
-import RPi.GPIO as gpio
-import pumpcontrol
+'''
+# connection to adafruit TB6612
+# motor: SY28STH32-0674A
+Vcmotor --> 12V 5A power supply
+VM --> floating
+Vcc --> 3V3 Pin 17
+GND --> GND Pin 06
+PwmA --> 3V3 Pin 01
+AIN2 --> Pin 15 - BCM 22
+AIN1 --> Pin 11 - BCM 17
+STBY --> Pin 13 - BCM 27
+BIN1 --> Pin 16 - BCM 23
+BIN2 --> Pin 18 - BCM 24
+PwmB --> Pin 32 - BCM
+MotorA --> Red (A+) and Green (A-) wires
+MotorB --> Blue (B+) and Black (B-) wires
+GND of Power supply --> Pin 39 (gnd) Raspberry Pi
+'''
 
-# BEGIN CONSTANT DEFINITIONS
-SW1 = int(26) #pin 37
-SW2 = int(20) #pin 38
-# END CONSTANT DEFINITIONS
+import pigpio, time
+from PigpioStepperMotor import StepperMotor
+import argparse 
 
-# Initialize GPIO
-gpio.setwarnings(False)
-gpio.setmode(gpio.BCM)
 
-# Setup switch pins
-gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
-gpio.setup(SW2, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+#move 180 is 60ul using 10ml syringe
 
-# Initialize pump
-pump = pumpcontrol.Pump(gpio)
+parser=argparse.ArgumentParser()
+parser.add_argument('move', type=int)
+args=parser.parse_args()
+move=args.move
 
-while True:
-	if gpio.input(SW1):
-		pump.move(-0.3)
-	elif gpio.input(SW2):
-		pump.move(0.3)
+
+
+pi = pigpio.pi()
+motor = StepperMotor(pi, 17, 23, 22, 24)
+pwma = pigpio.pi()
+pwma.write(18,1)
+pwmb = pigpio.pi()
+pwmb.write(12,1)
+stby = pigpio.pi()
+stby.write(27,0)
+if move>0:
+    for i in range(move):
+        stby.write(27,1)
+        motor.doClockwiseStep()
+else:
+    for i in range(-1*move):
+        stby.write(27,1)
+        motor.doCounterclockwiseStep()
