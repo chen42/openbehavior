@@ -16,26 +16,6 @@ import busio # MPR121
 import adafruit_mpr121
 import ids 
 
-parser=argparse.ArgumentParser()
-parser.add_argument('-schedule',  type=str, default="vr")
-parser.add_argument('-ratio',  type=int, default=10)
-parser.add_argument('-sessionLength',  type=int, default=3600)
-parser.add_argument('-timeout',  type=int, default=20)
-parser.add_argument('-rat1ID',  type=str, default="rat1")
-parser.add_argument('-rat2ID',  type=str, default="rat2")
-args=parser.parse_args()
-
-schedule=args.schedule
-ratio=args.ratio
-sessionLength=args.sessionLength
-timeout=args.timeout
-rat1ID=args.rat1ID
-rat2ID=args.rat2ID
-nextratio=ratio
-
-minInterLickInterval=0.15 # minimal ILI (about 6-7 licks per second)
-
-
 '''
 # connection to adafruit TB6612
 # motor: SY28STH32-0674A
@@ -53,12 +33,48 @@ PwmB --> Pin 32 - BCM
 MotorA --> Red (A+) and Green (A-) wires
 MotorB --> Blue (B+) and Black (B-) wires
 GND of Power supply --> Pin 39 (gnd) Raspberry Pi
+
+# touch sensor  mpr121
+SDA
+SCL
+5V
+GND
+
+# Cue LED
+GND
+
 '''
-# Create I2C bus.
-i2c = busio.I2C(board.SCL, board.SDA)
-# Create MPR121 object.
-mpr121 = adafruit_mpr121.MPR121(i2c)
- 
+
+
+parser=argparse.ArgumentParser()
+parser.add_argument('-schedule',  type=str, default="vr")
+parser.add_argument('-ratio',  type=int, default=10)
+parser.add_argument('-sessionLength',  type=int, default=3600)
+parser.add_argument('-timeout',  type=int, default=20)
+parser.add_argument('-rat1ID',  type=str, default="rat1")
+parser.add_argument('-rat2ID',  type=str, default="rat2")
+args=parser.parse_args()
+
+# exp setting
+schedule=args.schedule
+ratio=args.ratio
+sessionLength=args.sessionLength
+timeout=args.timeout
+rat1ID=args.rat1ID
+rat2ID=args.rat2ID
+
+# GLOBAL VARIABLES
+touchcounter={rat1ID:0, rat2ID:0}
+nextratio={rat1ID:ratio, rat2ID:ratio}
+rew={rat1ID:0, rat2ID:0}
+act={rat1ID:0, rat2ID:0}
+ina={rat1ID:0, rat2ID:0}
+pumptimedout={rat1ID:False, rat2ID:False}
+lapsed=0  # time since program start
+updateTime=0 # time since last data print out 
+vreinstate=0
+minInterLickInterval=0.15 # minimal ILI (about 6-7 licks per second)
+
 # motor code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
 # pip3 install pigpio
 # git clone https://github.com/stripcode/pigpio-stepper-motor
@@ -73,39 +89,21 @@ pwmb.write(12,1)
 stby = pigpio.pi()
 stby.write(27,0)
 
-def pumpforward(x=80): #x=80 is 60ul
-    for i in range(x):
-        stby.write(27,1)
-        motor.doClockwiseStep()
+# Create I2C bus.
+i2c = busio.I2C(board.SCL, board.SDA)
+# Create MPR121 object.
+mpr121 = adafruit_mpr121.MPR121(i2c)
+ 
+# Initialize GPIO
+gpio.setwarnings(False)
+gpio.setmode(gpio.BCM)
 
-def resetPumpTimeout():
-    global pumptimedout
-    pumptimedout = False
-
-# BEGIN CONSTANT DEFINITIONS
+# GPIO usage 
 TIR = int(16) # Pin 36
 SW1 = int(26) # Pin 37
 SW2 = int(20) # Pin 38
 TOUCHLED = int(12) #pin 32
 MOTIONLED= int(6) #pin 31
-# END CONSTANT DEFINITIONS
-
-# BEGIN GLOBAL VARIABLES
-interLickInterval=1 # second
-logged={}
-touchcounter = 0
-pumptimedout = False
-act=0 # number of licks on the active spout
-ina=0 # number of licks on the inactive spout
-rew=0 # number of reward
-lapsed=0  # time since program start
-updateTime=0 # time since last LCD update
-vreinstate=0
-# ENG GLOBAL VARIABLES
-
-# Initialize GPIO
-gpio.setwarnings(False)
-gpio.setmode(gpio.BCM)
 
 # Setup switch pins
 gpio.setup(SW1, gpio.IN, pull_up_down=gpio.PUD_DOWN)
@@ -117,9 +115,8 @@ gpio.setup(TOUCHLED, gpio.OUT)
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
 
-ids=ids.IDS() ## read in session id, boxid, etc.
- 
-#RatIDs=rat1ID+"_"+rat2ID
+# deal with session and box ID, and data file location
+ids=ids.IDS() 
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger(ids.devID, ids.sesID)
@@ -131,15 +128,24 @@ lastActiveLick=sTime
 lastInactiveLick=sTime
 lastInactiveLick=sTime
 
-def showData():
+def pumpforward(x=80): #x=80 is 60ul
+    for i in range(x):
+        stby.write(27,1)
+        motor.doClockwiseStep()
+
+def resetPumpTimeout(rat):
+    rat1pumptimedout[rat] = False
+
+def showData(phase):
     if schedule=='pr':
         minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
     else:
         minsLeft=int((sessionLength-lapsed)/60)
-    print(ids.devID+  " Session_"+str(ids.sesID) + " "+ str(schedule) + str(nextratio) + " [" + str(minsLeft) + " min Left]\n"+ "Active: " + str(act)+" Inactive: "+str(ina) + " Reward: " +  str(rew) + "\n")
+    if phase=="final":
+        print(ids.devID+  " Session_"+str(ids.sesID))
+    print (str(schedule) + str(nextratio) + " [" + str(minsLeft) + " min Left]\n"+ rat1ID+": Active=" + str(act[rat1ID])+" Inactive="+str(ina[rat1ID]) + " Reward=" +  str(rew[rat1ID]) + "\n")
+    print (rat2ID+": Active=" + str(act[rat2ID])+" Inactive="+str(ina[rat2ID]) + " Reward=" +  str(rew[rat1ID]) + "\n")
     return time.time()
-
-
 
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
@@ -149,39 +155,36 @@ while lapsed < sessionLength:
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
-    #show data if idle more than 1 min 
-    if time.time()-updateTime > 60:
-        updateTime=showData()
     if act1 == 1:
         f=open("/home/pi/_active", "r")
         rat=f.read().strip()
         f.close()
         thisActiveLick=time.time() 
         if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
-            act+=1
+            act[rat]+=1
             dlogger.logEvent(rat, time.time(), "ACTIVE", lapsed, nextratio)
             lastActiveLick=thisActiveLick
             updateTime=showData()
             #blinkCueLED(0.2)
-            if not pumptimedout:
-                touchcounter += 1 # for issuing rewards
-                if touchcounter >= nextratio:
-                    rew+=1
+            if not pumptimedout[rat]:
+                touchcounter[rat] += 1 # for issuing rewards
+                if touchcounter[rat] >= nextratio[rat]:
+                    rew[rat]+=1
                     dlogger.logEvent(rat, time.time(), "REWARD", time.time()-sTime, nextratio)
-                    touchcounter = 0
-                    pumptimedout = True
-                    pumpTimer = Timer(timeout, resetPumpTimeout)
+                    touchcounter[rat] = 0
+                    pumptimedout[rat] = True
+                    pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
                     pumpTimer.start()
                     subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
                     pumpforward() # This is 60ul
                     updateTime=showData()
                     if schedule == "fr":
-                        nextratio=ratio
+                        nextratio[rat]=ratio
                     elif schedule == "vr":
-                        nextratio=random.randint(1,ratio*2)
+                        nextratio[ratio]=random.randint(1,ratio*2)
                     elif schedule == "pr":
                         breakpoint+=1.0
-                        nextratio=int(5*2.72**(breakpoint/5)-5)
+                        nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
         #logged[thisActiveLick]=1
         #lastActiveLick=thisActiveLick
     elif ina0 == 1:
@@ -196,13 +199,19 @@ while lapsed < sessionLength:
             f=open("/home/pi/_inactive", "r")
             rat=f.read().strip()
             f.close()
-            ina+=1
+            ina[rat]+=1
             dlogger.logEvent(rat, time.time(), "INACTIVE", lapsed)
             lastInactiveLick=thisInactiveLick
             updateTime=showData()
+
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick 
+
+    #show data if idle more than 1 min 
+    if time.time()-updateTime > 60:
+        updateTime=showData()
+
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:
@@ -210,6 +219,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
-print("Box" + ids.devID+  "Session"+ids.sesID + " " + ids.ratID + " Done!\n" + "a" + str(act)+"i"+str(ina) + "r" +  str(rew)) 
+print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+showData()
 
 #subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)

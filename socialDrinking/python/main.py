@@ -14,7 +14,6 @@ from ids import *
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
-sTime=time.time()
 
 RatID=input("please scan a command RFID\n")
 
@@ -73,12 +72,11 @@ rat1=input("please scan rat1\n")
 rat2=input("please scan rat2\n")
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
-
-#ids=IDS() ## read in session id, ratid, boxid, etc.
+sTime=time.time()
+lapsed=0
 
 subprocess.call("python ./operant.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
- 
-lapsed=0
+
 while lapsed < sessionLength:
     #hms=time.strftime("%H:%M:%S", time.localtime())
     lapsed=time.time()-sTime
