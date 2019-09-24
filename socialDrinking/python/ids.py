@@ -2,6 +2,7 @@
 
 
 import os
+import time
 
 ROOT='/home/pi'
 DEVID_FILE = ROOT+'/deviceid'
@@ -11,11 +12,11 @@ DATA_DIR = ROOT+'/SocialDrinking'
 DATA_PREFIX = "/Oxy_"
 
 with open (ROOT+"/_active", "w") as act:
-    act.write("noRatYet")
+    act.write("noRatYet\t"+str(time.time()))
     act.close()
 
 with open (ROOT+"/_inactive", "w") as inact:
-    inact.write("noRatYet")
+    inact.write("00noRatYet\t"+str(time.time()))
     inact.close()
 
 if not os.path.exists(DEVID_FILE): 

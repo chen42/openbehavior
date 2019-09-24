@@ -62,14 +62,15 @@ sessionLength=args.sessionLength
 timeout=args.timeout
 rat1ID=args.rat1ID
 rat2ID=args.rat2ID
+rat0ID="noRatYet"
 
 # GLOBAL VARIABLES
-touchcounter={rat1ID:0, rat2ID:0}
-nextratio={rat1ID:ratio, rat2ID:ratio}
-rew={rat1ID:0, rat2ID:0}
-act={rat1ID:0, rat2ID:0}
-ina={rat1ID:0, rat2ID:0}
-pumptimedout={rat1ID:False, rat2ID:False}
+touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
+nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
+rew={rat0ID:0, rat1ID:0, rat2ID:0}
+act={rat0ID:0, rat1ID:0, rat2ID:0}
+ina={rat0ID:0, rat1ID:0, rat2ID:0}
+pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
 lapsed=0  # time since program start
 updateTime=0 # time since last data print out 
 vreinstate=0
@@ -134,17 +135,18 @@ def pumpforward(x=80): #x=80 is 60ul
         motor.doClockwiseStep()
 
 def resetPumpTimeout(rat):
-    rat1pumptimedout[rat] = False
+    pumptimedout[rat] = False
 
-def showData(phase):
+def showData(phase="progress"):
     if schedule=='pr':
         minsLeft=int((sessionLength-(time.time()-lastActiveLick))/60)
     else:
         minsLeft=int((sessionLength-lapsed)/60)
     if phase=="final":
         print(ids.devID+  " Session_"+str(ids.sesID))
-    print (str(schedule) + str(nextratio) + " [" + str(minsLeft) + " min Left]\n"+ rat1ID+": Active=" + str(act[rat1ID])+" Inactive="+str(ina[rat1ID]) + " Reward=" +  str(rew[rat1ID]) + "\n")
-    print (rat2ID+": Active=" + str(act[rat2ID])+" Inactive="+str(ina[rat2ID]) + " Reward=" +  str(rew[rat1ID]) + "\n")
+    print ("[" + str(minsLeft) + " min Left]")
+    print (rat1ID+": Active=" + str(act[rat1ID])+" Inactive="+str(ina[rat1ID]) + " Reward=" +  str(rew[rat1ID]) + " Timeout: "+ str(pumptimedout[rat1ID]))
+    print (rat2ID+": Active=" + str(act[rat2ID])+" Inactive="+str(ina[rat2ID]) + " Reward=" +  str(rew[rat2ID]) + " Timeout: "+ str(pumptimedout[rat2ID]) + "\n")
     return time.time()
 
 #if (vreinstate):
@@ -157,7 +159,7 @@ while lapsed < sessionLength:
     lapsed = time.time() - sTime
     if act1 == 1:
         f=open("/home/pi/_active", "r")
-        rat=f.read().strip()
+        (rat, scantime)=f.read().strip().split("\t")
         f.close()
         thisActiveLick=time.time() 
         if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
@@ -170,10 +172,12 @@ while lapsed < sessionLength:
                 touchcounter[rat] += 1 # for issuing rewards
                 if touchcounter[rat] >= nextratio[rat]:
                     rew[rat]+=1
-                    dlogger.logEvent(rat, time.time(), "REWARD", time.time()-sTime, nextratio)
+                    print("reward"+rat+"-"+str(rew[rat]))
+                    dlogger.logEvent(rat, time.time()-float(scantime), "REWARD", time.time()-sTime, nextratio)
                     touchcounter[rat] = 0
                     pumptimedout[rat] = True
                     pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
+                    print ("timeout on " + rat)
                     pumpTimer.start()
                     subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
                     pumpforward() # This is 60ul
@@ -185,22 +189,16 @@ while lapsed < sessionLength:
                     elif schedule == "pr":
                         breakpoint+=1.0
                         nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
-        #logged[thisActiveLick]=1
-        #lastActiveLick=thisActiveLick
     elif ina0 == 1:
         thisInactiveLick=time.time() 
-        # only count licks that are within interlick interval to exclude noise
         # need to deal with not skipping the first lick in a series
-        #if thisInactiveLick-lastInactiveLick < interLickInterval: # rat licks in rapid sucsession
-            ##if (lastInactiveLick not in logged): 
-            #    ina+=1
-            #    dlogger.logEvent(str(time.time()),"INACTIVE", lastInactiveLick-sTime)
         if thisInactiveLick-lastInactiveLick > minInterLickInterval: 
             f=open("/home/pi/_inactive", "r")
-            rat=f.read().strip()
+            (rat, scantime)=f.read().strip().split("\t")
+            rat=rat[2:]
             f.close()
             ina[rat]+=1
-            dlogger.logEvent(rat, time.time(), "INACTIVE", lapsed)
+            dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
             lastInactiveLick=thisInactiveLick
             updateTime=showData()
 
@@ -220,6 +218,6 @@ while lapsed < sessionLength:
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 print(ids.devID+  "Session"+ids.sesID + " Done!\n")
-showData()
+showData("final")
 
 #subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)

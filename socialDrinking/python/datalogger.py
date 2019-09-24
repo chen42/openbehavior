@@ -12,7 +12,7 @@ class LickLogger:
 
     def createDataFile(self, schedule, ratIDs):
         self.datafile = DATA_DIR + DATA_PREFIX + str(self.devID) + '_S' + str(self.sessID) +  "_" +  str(ratIDs) + '.csv'
-        print ("Data file location:\n", self.datafile)
+        print ("\nData file location:\n", self.datafile)
         # open data file
         with open(self.datafile,"a") as f:
             f.write("RatID\tRfidSec\teventSec\tdate\tstart_time\tboxid\tEventType\t"+schedule+"\tlapsedSec\n")
