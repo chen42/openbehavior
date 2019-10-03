@@ -15,9 +15,9 @@ include<steppers.scad>
 include<bearings.scad>
 
 $fn = 96;
-translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
+//translate([0,69,23]) rotate([90,0,0])  end_idler_mod(); // with rubberband
 translate([0,-65,23]) rotate([90,0,180]) end_motor();
-translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
+//translate([0,0,25]) rotate([90,0,0]) carriage_with_syringe_slot();
 
 
 
@@ -67,25 +67,26 @@ module end_motor() {
             difference() {
                 union() {
 					translate([0,0,-32.5]) motor_housing();
-					translate([0,-20,-20]) basePlate();
+					translate([0,-20,-27.5]) basePlate(h=80);
                     rod_clamps(t_motor_end, pad_guide_ends);
                     // motor plate
                     difference () {
-                        translate([0, 0, (t_motor_mount - t_motor_end) / 2])
-						   cube([l_ends - (l_ends - cc_guides) - 1, w_ends, t_motor_mount], center = true);
-                        clamp_relief(t_motor_end, pad_guide_ends); 
+                        translate([0, 0, (t_motor_mount - t_motor_end) / 2+3])
+						   cube([l_ends - (l_ends - cc_guides) - 1, w_ends+3, t_motor_mount-5], center = true);
+                        translate([0,0,-0.5])clamp_relief(t_motor_end, pad_guide_ends); 
                     }
                 }
                 // motor mount holes
-                translate([0, 0, -t_motor_end / 2])
+                translate([0, 0, -t_motor_end / 2 +2])
                     rotate([0, 0, 45])
                         NEMA_X_mount(
                             height = t_motor_end,
                             l_slot = 1,
                             motor = motor);
-				translate([-50, 0, -30]) rotate([0,90,0]) cylinder(r=12, h=100, $fn=8); // hole for dissipate motor heat
-				translate([0, 40, -32]) rotate([90,0,0]) cylinder(r=12, h=100, $fn=8); // hole for motor wires 
-
+				translate([-50, 0, -25]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8); // hole for dissipate motor heat
+                translate([-50, 0, -50]) rotate([0,90,0]) cylinder(r=10, h=100, $fn=8);
+				translate([0, 40, -25]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 	
+                translate([0, 40, -50]) rotate([90,0,0]) cylinder(r=10, h=100, $fn=8); // hole for motor wires 
             }
             //#translate([-22,-19.1,-12.5]) cube([45,5.5,25]);
 
@@ -96,8 +97,8 @@ module end_motor() {
 
 module motor_housing(){
 	difference(){
-		rotate([0,0,0]) rounded_box(l1=46, l2=38, r_corner=3, height=40); 
-		translate([0,0,0]) cube([34, 34,50], center=true);
+		translate([0,0,-5])rotate([0,0,0]) rounded_box(l1=46, l2=38, r_corner=3, height=60); 
+		translate([0,0,-10]) cube([34, 34,65], center=true);
 
 	}
 }
@@ -263,7 +264,7 @@ module clamp_relief( thickness, pad_ends) {
 						cylinder(r = d_clamp_screw_cap / 2+1, h = 8, center = true);
 				translate([0, 0, j * (thickness - pad_ends) / 4])
 					rotate([0, 90, 0])
-						cylinder(r = d_clamp_screw_nut / 2+2, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
+						cylinder(r = d_clamp_screw_nut / 2+1.8, h = cc_guides - (l_ends - cc_guides) / 2, center = true, $fn=6);
 			}
 		}
 
