@@ -77,6 +77,8 @@ module spoutholder(){
    			translate([0,-10,-60]) cylinder(r=5, h=40); //hole for collection tube //yes
 		}
 		translate([15,35,0])cboard_screw();
+		translate([0,0,30])cylinder(r=2.8,h=20,center=true);//cue light
+		translate([-8,0,30])cylinder(r=2.8,h=20,center=true);//cue light
 	}
 }
 
@@ -103,6 +105,6 @@ module frontpanel(){
 
 //translate([-35,0,0])rotate([0,90,0])frontpanel();
 //translate([-30,0,0])rotate([0,90,0])antenna_cover();
-//spoutholder();
-color("blue")cboard_cover();
+spoutholder();
+//color("blue")cboard_cover();
 
