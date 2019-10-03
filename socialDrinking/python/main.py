@@ -69,9 +69,11 @@ else: # vr
 
 
 rat1=input("please scan rat1\n")
+time.sleep(6)
 rat2=input("please scan rat2\n")
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
+time.sleep(2)
 sTime=time.time()
 lapsed=0
 
@@ -84,14 +86,13 @@ while lapsed < sessionLength:
         rfid=input("rfid waiting")
     except EOFError:
         break
-    print ("RFID is "+rfid)
     if (len(rfid)==10):
         record=rfid+"\t"+str(time.time())+"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
         with open(ROOT + "/"+date+"_inactive", "a+") as inactive:
-            print ("inactive\t"+rfid)
+            print ("\n====inactive\t"+rfid + "====\n")
             inactive.write(record)
             inactive.close()
 
@@ -101,7 +102,7 @@ while lapsed < sessionLength:
             active.write(record)
             active.close()
         with open(ROOT+"/"+date+"_active", "a+") as active:
-            print ("active\t"+rfid)
+            print ("\n====active\t"+rfid + "====\n")
             active.write(record)
             active.close()
 

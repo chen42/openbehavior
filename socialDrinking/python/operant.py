@@ -129,7 +129,7 @@ lastActiveLick=sTime
 lastInactiveLick=sTime
 lastInactiveLick=sTime
 
-def pumpforward(x=80): #x=80 is 60ul
+def pumpforward(x=180): #x=80 is 60ul
     for i in range(x):
         stby.write(27,1)
         motor.doClockwiseStep()
@@ -159,8 +159,13 @@ while lapsed < sessionLength:
     lapsed = time.time() - sTime
     if act1 == 1:
         f=open("/home/pi/_active", "r")
-        (rat, scantime)=f.read().strip().split("\t")
-        f.close()
+        try:
+            (rat, scantime)=f.read().strip().split("\t")
+            f.close()
+        except:
+            f.close() 
+            rat="fileError"
+            scantime="NA"
         thisActiveLick=time.time() 
         if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
             act[rat]+=1
@@ -180,7 +185,7 @@ while lapsed < sessionLength:
                     print ("timeout on " + rat)
                     pumpTimer.start()
                     subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
-                    pumpforward() # This is 60ul
+                    pumpforward(180) # This is 60ul
                     updateTime=showData()
                     if schedule == "fr":
                         nextratio[rat]=ratio
@@ -193,14 +198,20 @@ while lapsed < sessionLength:
         thisInactiveLick=time.time() 
         # need to deal with not skipping the first lick in a series
         if thisInactiveLick-lastInactiveLick > minInterLickInterval: 
-            f=open("/home/pi/_inactive", "r")
-            (rat, scantime)=f.read().strip().split("\t")
-            rat=rat[2:]
-            f.close()
+            try:
+                f=open("/home/pi/_inactive", "r")
+                (rat, scantime)=f.read().strip().split("\t")
+                rat=rat[2:]
+                f.close()
+            except:
+                rat="rfid file error"
+                scantime="NA"
+
             ina[rat]+=1
             dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
             lastInactiveLick=thisInactiveLick
             updateTime=showData()
+
 
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
