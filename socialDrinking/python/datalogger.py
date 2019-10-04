@@ -2,11 +2,11 @@
 
 import time
 import string
-from ids import * 
+from ids import *
 
 class LickLogger:
     def __init__(self, devID, sesID):
-        self.devID = devID 
+        self.devID = devID
         self.sessID= sesID
         self.startTime=time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime())
 
@@ -15,7 +15,7 @@ class LickLogger:
         print ("\nData file location:\n", self.datafile)
         # open data file
         with open(self.datafile,"a") as f:
-            f.write("RatID\tRfidSec\teventSec\tdate\tstart_time\tboxid\tEventType\t"+schedule+"\tlapsedSec\n")
+            f.write("RatID\tRfidSec\tdate\tstart_time\tboxid\tEventType\t"+schedule+"\tlapsedSec\n")
             f.close()
 
     def logEvent(self, rat, eventSec, eventType, timeLapsed, ratio=0):

@@ -69,11 +69,11 @@ else: # vr
 
 
 rat1=input("please scan rat1\n")
-time.sleep(6)
+time.sleep(5)
 rat2=input("please scan rat2\n")
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
-time.sleep(2)
+time.sleep(1) # time to put the rat in the chamber
 sTime=time.time()
 lapsed=0
 
@@ -92,7 +92,9 @@ while lapsed < sessionLength:
             inactive.write(record)
             inactive.close()
         with open(ROOT + "/"+date+"_inactive", "a+") as inactive:
-            print ("\n====inactive\t"+rfid + "====\n")
+            print ("\n====inactive====\n")
+            print ("||\t"+rfid + "\n")
+            print ("\n================\n")
             inactive.write(record)
             inactive.close()
 
@@ -102,7 +104,9 @@ while lapsed < sessionLength:
             active.write(record)
             active.close()
         with open(ROOT+"/"+date+"_active", "a+") as active:
-            print ("\n====active\t"+rfid + "====\n")
+            print ("\n====active====\n")
+            print ("\n||\t"+rfid + "\n")
+            print ("\n==============\n")
             active.write(record)
             active.close()
 

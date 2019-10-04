@@ -117,7 +117,7 @@ datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
 
 # deal with session and box ID, and data file location
-ids=ids.IDS() 
+ids=ids.IDS()
 
 # Initialize data logger 
 dlogger = datalogger.LickLogger(ids.devID, ids.sesID)
@@ -158,18 +158,18 @@ while lapsed < sessionLength:
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
     if act1 == 1:
+        thisActiveLick=time.time()
         f=open("/home/pi/_active", "r")
         try:
             (rat, scantime)=f.read().strip().split("\t")
             f.close()
         except:
-            f.close() 
+            f.close()
             rat="fileError"
-            scantime="NA"
-        thisActiveLick=time.time() 
+            scantime=0
         if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
             act[rat]+=1
-            dlogger.logEvent(rat, time.time(), "ACTIVE", lapsed, nextratio)
+            dlogger.logEvent(rat, time.time()-float(scantime), "ACTIVE", lapsed, nextratio[rat])
             lastActiveLick=thisActiveLick
             updateTime=showData()
             #blinkCueLED(0.2)
@@ -178,7 +178,7 @@ while lapsed < sessionLength:
                 if touchcounter[rat] >= nextratio[rat]:
                     rew[rat]+=1
                     print("reward"+rat+"-"+str(rew[rat]))
-                    dlogger.logEvent(rat, time.time()-float(scantime), "REWARD", time.time()-sTime, nextratio)
+                    dlogger.logEvent(rat, time.time()-float(scantime), "REWARD", time.time()-sTime)
                     touchcounter[rat] = 0
                     pumptimedout[rat] = True
                     pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
@@ -195,7 +195,7 @@ while lapsed < sessionLength:
                         breakpoint+=1.0
                         nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
-        thisInactiveLick=time.time() 
+        thisInactiveLick=time.time()
         # need to deal with not skipping the first lick in a series
         if thisInactiveLick-lastInactiveLick > minInterLickInterval: 
             try:
@@ -205,13 +205,11 @@ while lapsed < sessionLength:
                 f.close()
             except:
                 rat="rfid file error"
-                scantime="NA"
-
+                scantime=0
             ina[rat]+=1
             dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
             lastInactiveLick=thisInactiveLick
             updateTime=showData()
-
 
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
