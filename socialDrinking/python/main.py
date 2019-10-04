@@ -92,9 +92,9 @@ while lapsed < sessionLength:
             inactive.write(record)
             inactive.close()
         with open(ROOT + "/"+date+"_inactive", "a+") as inactive:
-            print ("\n====inactive====\n")
-            print ("||\t"+rfid + "\n")
-            print ("\n================\n")
+            print ("\n====inactive====")
+            print ("|| "+rfid )
+            print ("================\n")
             inactive.write(record)
             inactive.close()
 
@@ -104,9 +104,9 @@ while lapsed < sessionLength:
             active.write(record)
             active.close()
         with open(ROOT+"/"+date+"_active", "a+") as active:
-            print ("\n====active====\n")
-            print ("\n||\t"+rfid + "\n")
-            print ("\n==============\n")
+            print ("\n====active====")
+            print ("|| "+rfid )
+            print ("==============\n")
             active.write(record)
             active.close()
 

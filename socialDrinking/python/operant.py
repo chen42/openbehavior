@@ -226,7 +226,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
-print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+print(ids.devID+  "Session"+str(ids.sesID)+ " Done!\n")
 showData("final")
 
 #subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
