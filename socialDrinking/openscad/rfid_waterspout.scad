@@ -18,7 +18,6 @@ module screwset(){
 
 dia=23; // of the antenna
 
-
 module antenna_cover(){
 	difference(){
 		union(){
@@ -97,14 +96,15 @@ module frontpanel(){
             translate([0,0,2.5])cube([82,69,3],center=true);
             translate([0,0,5])cylinder(r=dia-1,h=5,center=true);
         }
-  		translate([0,0,4])cylinder(r=dia-3,h=14,center=true);
+  		//translate([0,0,4])cylinder(r=dia-3,h=14,center=true);
+     	scale([.8,.95,1])translate([-6,0,4])cylinder(r=dia-3,h=14,center=true,$fn=100);
         translate([0,0,-20])rotate([0,90,0])screwset();
     }
 }
 
 
-//translate([-35,0,0])rotate([0,90,0])frontpanel();
+translate([-35,0,0])rotate([0,90,0])frontpanel();
 //translate([-30,0,0])rotate([0,90,0])antenna_cover();
-spoutholder();
+//spoutholder();
 //color("blue")cboard_cover();
 
