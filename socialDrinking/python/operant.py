@@ -14,7 +14,7 @@ import random
 import board # MPR121
 import busio # MPR121
 import adafruit_mpr121
-import ids 
+import ids
 
 '''
 # connection to adafruit TB6612
@@ -62,7 +62,7 @@ sessionLength=args.sessionLength
 timeout=args.timeout
 rat1ID=args.rat1ID
 rat2ID=args.rat2ID
-rat0ID="noRatYet"
+rat0ID="ratUnknown"
 
 # GLOBAL VARIABLES
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
@@ -70,11 +70,15 @@ nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
 rew={rat0ID:0, rat1ID:0, rat2ID:0}
 act={rat0ID:0, rat1ID:0, rat2ID:0}
 ina={rat0ID:0, rat1ID:0, rat2ID:0}
+lastActiveLick={rat1ID:0, rat2ID:0}
+lastInactiveLick={rat1ID:0, rat2ID:0}
 pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
 lapsed=0  # time since program start
 updateTime=0 # time since last data print out 
 vreinstate=0
-minInterLickInterval=0.15 # minimal ILI (about 6-7 licks per second)
+minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
+maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
+maxILI = 2 # max inter lick interval in seconds  
 
 # motor code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
 # pip3 install pigpio
@@ -94,7 +98,7 @@ stby.write(27,0)
 i2c = busio.I2C(board.SCL, board.SDA)
 # Create MPR121 object.
 mpr121 = adafruit_mpr121.MPR121(i2c)
- 
+
 # Initialize GPIO
 gpio.setwarnings(False)
 gpio.setmode(gpio.BCM)
@@ -162,15 +166,17 @@ while lapsed < sessionLength:
         f=open("/home/pi/_active", "r")
         try:
             (rat, scantime)=f.read().strip().split("\t")
+            if thisActiveLick-lastActivelick[rat]>20: ##  
+                rat="ratUnknown"
             f.close()
         except:
             f.close()
-            rat="fileError"
+            rat="ratUnknown"
             scantime=0
-        if thisActiveLick-lastActiveLick > minInterLickInterval: # rat licks in rapid sucsession
+        if thisActiveLick-lastActivelick[rat]>maxILI and thisActiveLick-scantime>maxISI: ##  
             act[rat]+=1
             dlogger.logEvent(rat, time.time()-float(scantime), "ACTIVE", lapsed, nextratio[rat])
-            lastActiveLick=thisActiveLick
+            lastActiveLick[rat]=thisActiveLick
             updateTime=showData()
             #blinkCueLED(0.2)
             if not pumptimedout[rat]:
@@ -197,26 +203,28 @@ while lapsed < sessionLength:
     elif ina0 == 1:
         thisInactiveLick=time.time()
         # need to deal with not skipping the first lick in a series
-        if thisInactiveLick-lastInactiveLick > minInterLickInterval: 
+        if thisInactiveLick-lastInactiveLick[rat] > minInterLickInterval: 
             try:
                 f=open("/home/pi/_inactive", "r")
                 (rat, scantime)=f.read().strip().split("\t")
                 rat=rat[2:]
                 f.close()
+                if thisInactiveLick-lastInactivelick[rat]>maxILI and thisInactiveLick-scantime>maxISI: ##  
+                    rat="ratUnknown"
             except:
-                rat="rfid file error"
+                rat="ratUnknown"
                 scantime=0
             ina[rat]+=1
             dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
-            lastInactiveLick=thisInactiveLick
+            lastInactiveLick[rat]=thisInactiveLick
             updateTime=showData()
 
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick 
 
-    #show data if idle more than 1 min 
-    if time.time()-updateTime > 60:
+    #show data if idle more than 5 min 
+    if time.time()-updateTime > 60*5:
         updateTime=showData()
 
 # signal the motion script to stop recording
@@ -226,7 +234,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
-print(ids.devID+  "Session"+str(ids.sesID)+ " Done!\n")
+print(ids.devID+  "Session"+ids.sesID + " Done!\n")
 showData("final")
 
 #subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
