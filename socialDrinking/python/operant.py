@@ -64,22 +64,6 @@ rat1ID=args.rat1ID
 rat2ID=args.rat2ID
 rat0ID="ratUnknown"
 
-# GLOBAL VARIABLES
-touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
-nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
-rew={rat0ID:0, rat1ID:0, rat2ID:0}
-act={rat0ID:0, rat1ID:0, rat2ID:0}
-ina={rat0ID:0, rat1ID:0, rat2ID:0}
-lastActiveLick={rat1ID:0, rat2ID:0}
-lastInactiveLick={rat1ID:0, rat2ID:0}
-pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
-lapsed=0  # time since program start
-updateTime=0 # time since last data print out 
-vreinstate=0
-minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
-maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
-maxILI = 2 # max inter lick interval in seconds  
-
 # motor code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
 # pip3 install pigpio
 # git clone https://github.com/stripcode/pigpio-stepper-motor
@@ -133,6 +117,24 @@ lastActiveLick=sTime
 lastInactiveLick=sTime
 lastInactiveLick=sTime
 
+# GLOBAL VARIABLES
+touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
+nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
+rew={rat0ID:0, rat1ID:0, rat2ID:0}
+act={rat0ID:0, rat1ID:0, rat2ID:0}
+ina={rat0ID:0, rat1ID:0, rat2ID:0}
+lastActiveLick={rat0ID:sTime, rat1ID:sTime, rat2ID:sTime}
+lastInactiveLick={rat0ID:sTime, rat1ID:sTime, rat2ID:sTime}
+pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
+lapsed=0  # time since program start
+updateTime=0 # time since last data print out 
+vreinstate=0
+minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
+maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
+maxILI = 2 # max inter lick interval in seconds  
+
+
+
 def pumpforward(x=180): #x=80 is 60ul
     for i in range(x):
         stby.write(27,1)
@@ -161,17 +163,18 @@ while lapsed < sessionLength:
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
+    rat="ratUnknown"
     if act1 == 1:
         thisActiveLick=time.time()
         f=open("/home/pi/_active", "r")
         try:
             (rat, scantime)=f.read().strip().split("\t")
-            if thisActiveLick-lastActivelick[rat]>20: ##  
-                rat="ratUnknown"
+#            if thisActiveLick-lastActivelick[rat]>20: ##  
+#                rat="ratUnknown"
             f.close()
         except:
             f.close()
-            rat="ratUnknown"
+            #rat="ratUnknown"
             scantime=0
         if thisActiveLick-lastActivelick[rat]>maxILI and thisActiveLick-scantime>maxISI: ##  
             act[rat]+=1
