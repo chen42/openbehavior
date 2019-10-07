@@ -159,73 +159,74 @@ def showData(phase="progress"):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
 while lapsed < sessionLength:
-    #time.sleep(0.05) # set delay to adjust sensitivity of the sensor.
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
-    rat="ratUnknown"
     if act1 == 1:
         thisActiveLick=time.time()
         f=open("/home/pi/_active", "r")
         try:
             (rat, scantime)=f.read().strip().split("\t")
-#            if thisActiveLick-lastActivelick[rat]>20: ##  
-#                rat="ratUnknown"
             f.close()
         except:
             f.close()
-            #rat="ratUnknown"
+            rat="ratUnknown"
             scantime=0
-        if thisActiveLick-lastActivelick[rat]>maxILI and thisActiveLick-scantime>maxISI: ##  
-            act[rat]+=1
-            dlogger.logEvent(rat, time.time()-float(scantime), "ACTIVE", lapsed, nextratio[rat])
-            lastActiveLick[rat]=thisActiveLick
-            updateTime=showData()
-            #blinkCueLED(0.2)
-            if not pumptimedout[rat]:
-                touchcounter[rat] += 1 # for issuing rewards
-                if touchcounter[rat] >= nextratio[rat]:
-                    rew[rat]+=1
-                    print("reward"+rat+"-"+str(rew[rat]))
-                    dlogger.logEvent(rat, time.time()-float(scantime), "REWARD", time.time()-sTime)
-                    touchcounter[rat] = 0
-                    pumptimedout[rat] = True
-                    pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
-                    print ("timeout on " + rat)
-                    pumpTimer.start()
-                    subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
-                    pumpforward(180) # This is 60ul
-                    updateTime=showData()
-                    if schedule == "fr":
-                        nextratio[rat]=ratio
-                    elif schedule == "vr":
-                        nextratio[ratio]=random.randint(1,ratio*2)
-                    elif schedule == "pr":
-                        breakpoint+=1.0
-                        nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
+        if not rat:
+            rat="ratUnknown"
+        if thisActiveLick-lastActivelick[rat]>maxILI and thisActiveLick-scantime>maxISI:
+            rat="ratUnknown"
+        act[rat]+=1
+        dlogger.logEvent(rat, time.time()-float(scantime), "ACTIVE", lapsed, nextratio[rat])
+        lastActiveLick[rat]=thisActiveLick
+        updateTime=showData()
+        #blinkCueLED(0.2)
+        if not pumptimedout[rat]:
+            touchcounter[rat] += 1 # for issuing rewards
+            if touchcounter[rat] >= nextratio[rat]:
+                rew[rat]+=1
+                print("reward"+rat+"-"+str(rew[rat]))
+                dlogger.logEvent(rat, time.time()-float(scantime), "REWARD", time.time()-sTime)
+                touchcounter[rat] = 0
+                pumptimedout[rat] = True
+                pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
+                print ("timeout on " + rat)
+                pumpTimer.start()
+                subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                pumpforward(180) # This is 60ul
+                updateTime=showData()
+                if schedule == "fr":
+                    nextratio[rat]=ratio
+                elif schedule == "vr":
+                    nextratio[ratio]=random.randint(1,ratio*2)
+                elif schedule == "pr":
+                    breakpoint+=1.0
+                    nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
         thisInactiveLick=time.time()
         # need to deal with not skipping the first lick in a series
-        if thisInactiveLick-lastInactiveLick[rat] > minInterLickInterval: 
+        if thisInactiveLick-lastInactiveLick[rat] > minInterLickInterval:
             try:
                 f=open("/home/pi/_inactive", "r")
                 (rat, scantime)=f.read().strip().split("\t")
                 rat=rat[2:]
                 f.close()
-                if thisInactiveLick-lastInactivelick[rat]>maxILI and thisInactiveLick-scantime>maxISI: ##  
-                    rat="ratUnknown"
+#                if thisInactiveLick-lastInactivelick[rat]>maxILI and thisInactiveLick-scantime>maxISI: ##  
+#                    rat="ratUnknown"
             except:
                 rat="ratUnknown"
                 scantime=0
-            ina[rat]+=1
-            dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
-            lastInactiveLick[rat]=thisInactiveLick
-            updateTime=showData()
-
+        if not rat:
+            rat="ratUnknown"
+        if thisInactiveLick-lastInactivelick[rat]>maxILI and thisInactiveLick-scantime>maxISI:
+            rat="ratUnknown"
+        ina[rat]+=1
+        dlogger.logEvent(rat, time.time()-float(scantime), "INACTIVE", lapsed)
+        lastInactiveLick[rat]=thisInactiveLick
+        updateTime=showData()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
-        lapsed = time.time() - lastActiveLick 
-
+        lapsed = time.time() - lastActiveLick
     #show data if idle more than 5 min 
     if time.time()-updateTime > 60*5:
         updateTime=showData()
