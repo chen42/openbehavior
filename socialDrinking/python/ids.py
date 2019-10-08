@@ -12,11 +12,11 @@ DATA_DIR = ROOT+'/SocialDrinking'
 DATA_PREFIX = "/Oxy_"
 
 with open (ROOT+"/_active", "w") as act:
-    act.write("noRatYet\t"+str(time.time()))
+    act.write("ratUnknown\t"+str(time.time()))
     act.close()
 
 with open (ROOT+"/_inactive", "w") as inact:
-    inact.write("00noRatYet\t"+str(time.time()))
+    inact.write("00ratUnknown\t"+str(time.time()))
     inact.close()
 
 if not os.path.exists(DEVID_FILE): 
