@@ -9,8 +9,6 @@ import datetime
 import operator
 import subprocess
 
-
- 
 ## temp probe DS18B20
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -30,43 +28,10 @@ datafile="/home/pi/Pies/tailwithdrawal/tailwithdrawal"+td+".csv"
 startflag = "\x02"
 endflag = "\x03"
 
-def rfid():
-	# UART data
-	idstring = ""
-	chardata = 0
-	# open the reader through UART
-	UART = serial.Serial("/dev/serial0", 9600)
-	UART.close()
-	UART.open()
-	# Instruct the user that the scanner is ready to read
-	print "Please scan RFID\n"
-	time.sleep(1)
-        # time of scan
-        firstsaw={}
-	# Main program loop
-	waitID=0
-	while (waitID==0):
-		time.sleep(0.25)
-		# zero out the variables
-		tag = 0
-		idstring = ""
-		# read in a character
-		chardata = UART.read()
-		# Is it the start flag?
-		if chardata == startflag:
-			# concatenate id together
-			for i in range(12):
-				chardata = UART.read()
-				idstring = idstring + str(chardata)
-                        print ("Detected " + idstring + "\n")
-			UART.flushInput()
-			waitID=1
-	return (idstring)
 
 def setupGPIO():
 	GPIO.setmode(GPIO.BOARD)	# Numbers GPIOs by physical location
 	GPIO.setup(Tail, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
 
 def read_temp_raw():
     f = open(device_file, 'r')
@@ -85,22 +50,10 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         return temp_c
 
-def inputrfid():
-	print "Please enter at least four characters\n"
-	ratid=raw_input()
-	cmd= "grep -i "+ ratid + " /home/pi/Pies/tailwithdrawal/tailwithdrawal2018-*csv|cut -f 1 |cut -f 2 -d \":\"|grep -v Bin|sort |uniq"
-	p=subprocess.Popen(cmd, stdout=subprocess.PIPE,  shell=True)
-	(output, err) = p.communicate()
-	if (len(output) >  4) :
-		ratid=output.rstrip()
-		p.wait()
-		print ("converted your input into " + ratid + "\n")
-	return (rfid)
-
 Tail=12
 setupGPIO()
 
-user=raw_input("please provide your name\n")
+user=raw_input("please type your name\n")
 #targettemp=raw_input("what is that target temp in C?")
 targettemp=48
 templo=int(targettemp)-0.50
@@ -108,9 +61,7 @@ temphi=int(targettemp)+0.50
 
 print ("\n\nProgram started, target temp range: ("+str(templo)+" - "+str(temphi)+")\n")
 print ("data are saved in " + datafile+"\n")
-ratid=rfid()
-#ratid=inputrfid()
-
+ratid=input("please scan rat")
 
 while True:
 	time.sleep(0.01)
@@ -142,8 +93,6 @@ while True:
 				f.write(line)
 				f.close()
 		if (next=="n"):
-			ratid=rfid()
-		if (next=="r"): 
-			ratid=inputrfid()
+			ratid=input("please scan rat")
 		if (next=="e"): 
 			sys.exit()
