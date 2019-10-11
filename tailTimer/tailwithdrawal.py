@@ -30,8 +30,8 @@ endflag = "\x03"
 
 
 def setupGPIO():
-	GPIO.setmode(GPIO.BOARD)	# Numbers GPIOs by physical location
-	GPIO.setup(Tail, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setmode(GPIO.BOARD)    # Numbers GPIOs by physical location
+    GPIO.setup(Tail, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def read_temp_raw():
     f = open(device_file, 'r')
@@ -53,46 +53,62 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-user=raw_input("please type your name\n")
-#targettemp=raw_input("what is that target temp in C?")
+user=input("Please enter your last name\n")
+if user =="00fb4fb3":
+    user="Chen"
+if user=="00a56fe6":
+    user="Udell"
+
 targettemp=48
+#targettemp=input("What is that target temp in C?")
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
-print ("\n\nProgram started, target temp range: ("+str(templo)+" - "+str(temphi)+")\n")
-print ("data are saved in " + datafile+"\n")
-ratid=input("please scan rat")
+print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
+print ("Data are saved in " + datafile+"\n")
+ratid=input("Please enter rat ID\n")
 
 while True:
-	time.sleep(0.01)
-	tail_out= GPIO.input(Tail)
-	if (tail_out==True):
-		temp1=read_temp()
-		print ("current temp:\t" + str(temp1))
-		if (temp1>temphi):
-			print ("\t\t\tTemperature too high\n")
-		elif (temp1<templo):
-			print ("\t\t\tTemperature too low\n")
-	else: 
-		sTime=time.time()
-		print "start timer\n"
-		while (tail_out==False):
-			tail_out= GPIO.input(Tail)
-		elapsed=time.time()-sTime +0.4 # calibrated at 2s and 10s  found this consistent system error		
-		elapsed=round(elapsed, 3)
-		temp2=read_temp()
-		temp=round((temp1+temp2)/2, 3)
-		now0=datetime.datetime.now()
-		now=now0.strftime("%Y-%m-%d\t%H:%M")
-		line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n" 
-		print (line)
-		time.sleep(5)
-		next=raw_input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"e\" to end the run, \nanythine else to continue with current rat, CTRL-C to stop\n")
-		if (next !="d"):
-			with open(datafile, "a") as f:
-				f.write(line)
-				f.close()
-		if (next=="n"):
-			ratid=input("please scan rat")
-		if (next=="e"): 
-			sys.exit()
+    time.sleep(0.01)
+    tail_out= GPIO.input(Tail)
+    if (tail_out==True):
+        temp1=read_temp()
+        print ("Current temp:\t" + str(temp1))
+        if (temp1>temphi):
+            print ("\t\t\tTemperature too high\n")
+        elif (temp1<templo):
+            print ("\t\t\tTemperature too low\n")
+    else: 
+        sTime=time.time()
+        print ("Timer started\n")
+        while (tail_out==False):
+            tail_out= GPIO.input(Tail)
+        elapsed=time.time()-sTime + 0.4 # calibrated at 2s and 10s  found this consistent system error        
+        elapsed=round(elapsed, 3)
+        temp2=read_temp()
+        temp=round((temp1+temp2)/2, 3)
+        now0=datetime.datetime.now()
+        now=now0.strftime("%Y-%m-%d\t%H:%M")
+        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n" 
+        print (line)
+        time.sleep(1)
+        next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"e\" to end the run, \nanythine else to continue with current rat, CTRL-C to stop\n")
+        if next=="00fbf27e":
+            next="n"
+        if next=="00fc191f":
+            next="d"
+        if next=="00fb8874":
+            next="e"
+        if (next !="d"):
+            print ("Data saved\n")
+            with open(datafile, "a") as f:
+                f.write(line)
+                f.close()
+            time.sleep(10)
+        if (next=="n"):
+            ratid=input("Please enter rat ID\n")
+        if (next=="e"): 
+            print ("Exit prgram\n")
+            sys.exit()
+        if (next=="d"):
+            print ("The above data point is deleted\nPlease take another measure\n")
