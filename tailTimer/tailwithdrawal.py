@@ -78,7 +78,7 @@ while True:
             print ("\t\t\tTemperature too high\n")
         elif (temp1<templo):
             print ("\t\t\tTemperature too low\n")
-    else: 
+    else:
         sTime=time.time()
         print ("Timer started\n")
         while (tail_out==False):
@@ -89,26 +89,35 @@ while True:
         temp=round((temp1+temp2)/2, 3)
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
-        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n" 
-        print (line)
+        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
+        lineshort=ratid+"\t" + str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
+        print (lineshort)
         time.sleep(1)
-        next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"e\" to end the run, \nanythine else to continue with current rat, CTRL-C to stop\n")
+        next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
+        ## RFID equivalants
         if next=="00fbf27e":
             next="n"
         if next=="00fc191f":
             next="d"
         if next=="00fb8874":
             next="e"
-        if (next !="d"):
-            print ("Data saved\n")
+        if next=="00fb3131":
+            next="a"
+        ## 
+        if (next =="d"):
+            print ("Data deleted\n")
+            next="a" # then test the same rat again
+        else:
             with open(datafile, "a") as f:
                 f.write(line)
                 f.close()
-            time.sleep(10)
+            print ("Data saved\n")
+        print ("Please wait 10 seconds\n")
+        time.sleep(10)
         if (next=="n"):
-            ratid=input("Please enter rat ID\n")
-        if (next=="e"): 
+            ratid=input("Please enter new rat ID\n")
+        elif (next=="e"):
             print ("Exit prgram\n")
             sys.exit()
-        if (next=="d"):
-            print ("The above data point is deleted\nPlease take another measure\n")
+        else:
+             print ("Please test the same rat again\n")
