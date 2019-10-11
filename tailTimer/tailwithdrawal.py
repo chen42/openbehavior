@@ -60,7 +60,7 @@ if user=="00a56fe6":
     user="Udell"
 
 targettemp=48
-#targettemp=input("What is that target temp in C?")
+targettemp=input("What is that target temp in C?")
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
@@ -73,11 +73,12 @@ while True:
     tail_out= GPIO.input(Tail)
     if (tail_out==True):
         temp1=read_temp()
-        print ("Current temp:\t" + str(temp1))
         if (temp1>temphi):
-            print ("\t\t\tTemperature too high\n")
+            print ("Temp: " + str(temp1) + " Too hot!!")
         elif (temp1<templo):
-            print ("\t\t\tTemperature too low\n")
+            print ("Temp: " + str(temp1) + " Too cold!!")
+        else:
+            print ("Temp: " + str(temp1) + " please test " + ratid)
     else:
         sTime=time.time()
         print ("Timer started\n")
