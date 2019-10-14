@@ -113,12 +113,12 @@ while True:
                 f.write(line)
                 f.close()
             print ("Data saved\n")
+        if (next=="e"):
+            print ("Exit prgram\n")
+            sys.exit()
         print ("Please wait 10 seconds\n")
         time.sleep(10)
         if (next=="n"):
             ratid=input("Please enter new rat ID\n")
-        elif (next=="e"):
-            print ("Exit prgram\n")
-            sys.exit()
         else:
-             print ("Please test the same rat again\n")
+            print ("Please test the same rat again\n")
