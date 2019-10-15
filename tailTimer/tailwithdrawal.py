@@ -60,7 +60,7 @@ setupGPIO()
 user=input("Please enter your last name\n")
 if user =="00fb4fb3":
     user="Chen"
-if user=="00a56fe6":
+if user=="00fbb0b2":
     user="Udell"
 
 targettemp=input("What is that target temp in C?")
@@ -97,9 +97,11 @@ while True:
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
         line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
-        latency[ratid]+=latency[ratid]+ str(elapsed) + "; "
-        print (latency[ratid])
-        time.sleep(1)
+        if (ratid in latency.keys()): 
+            latency[ratid] += str(elapsed) + ", "
+        else: 
+            latency[ratid] = str(elapsed) + ", "
+        print ("Rat is "+ ratid+", latency = "+ latency[ratid])
         next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
         ## RFID equivalants
         if next=="00fbf27e":
@@ -112,13 +114,15 @@ while True:
             next="a"
         ## 
         if (next =="d"):
-            print ("Data deleted\n")
+            print ("Data deleted as requested\n")
             next="a" # then test the same rat again
         else:
             if ratid[0:4]=="00fb":
-                print "RFID is not from rat, data not saved\n";
+                print ("RFID is not from rat, data not saved");
+                next="n"
             elif elapsed<1.5:
-                print "latency is less than 1.5 sec, data not saved\n";
+                print ("latency is less than 1.5 sec, data not saved");
+                next="a"
             else:
                 with open(datafile, "a") as f:
                     f.write(line)
