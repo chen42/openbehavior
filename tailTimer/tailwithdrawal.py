@@ -9,6 +9,9 @@ import datetime
 import operator
 import subprocess
 
+## disable saving data if keys are detected as RFID
+## check within rat variability before continue to next rat
+
 ## temp probe DS18B20
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -28,6 +31,7 @@ datafile="/home/pi/Pies/tailwithdrawal/tailwithdrawal"+td+".csv"
 startflag = "\x02"
 endflag = "\x03"
 
+latency={}
 
 def setupGPIO():
     GPIO.setmode(GPIO.BOARD)    # Numbers GPIOs by physical location
@@ -38,7 +42,7 @@ def read_temp_raw():
     lines = f.readlines()
     f.close()
     return lines
- 
+
 def read_temp():
     lines = read_temp_raw()
     while lines[0].strip()[-3:] != 'YES':
@@ -59,14 +63,16 @@ if user =="00fb4fb3":
 if user=="00a56fe6":
     user="Udell"
 
-targettemp=48
 targettemp=input("What is that target temp in C?")
+if targettemp=="00fb2a62":
+    targettemp=48
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
 print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
 print ("Data are saved in " + datafile+"\n")
-ratid=input("Please enter rat ID\n")
+
+ratid=input("Please enter a random ID and test the wire. Then use the \"New rat\" tag to start actual measures.\n")
 
 while True:
     time.sleep(0.01)
@@ -91,14 +97,14 @@ while True:
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
         line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
-        lineshort=ratid+"\t" + str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
-        print (lineshort)
+        latency[ratid]+=latency[ratid]+ str(elapsed) + "; "
+        print (latency[ratid])
         time.sleep(1)
         next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
         ## RFID equivalants
         if next=="00fbf27e":
             next="n"
-        if next=="00fc191f":
+        if next=="00fb2588":
             next="d"
         if next=="00fb8874":
             next="e"
@@ -109,10 +115,15 @@ while True:
             print ("Data deleted\n")
             next="a" # then test the same rat again
         else:
-            with open(datafile, "a") as f:
-                f.write(line)
-                f.close()
-            print ("Data saved\n")
+            if ratid[0:4]=="00fb":
+                print "RFID is not from rat, data not saved\n";
+            elif elapsed<1.5:
+                print "latency is less than 1.5 sec, data not saved\n";
+            else:
+                with open(datafile, "a") as f:
+                    f.write(line)
+                    f.close()
+                print ("Data saved\n")
         if (next=="e"):
             print ("Exit prgram\n")
             sys.exit()
