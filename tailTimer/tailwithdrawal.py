@@ -32,6 +32,7 @@ startflag = "\x02"
 endflag = "\x03"
 
 latency={}
+savedata=1 # default to save data
 
 def setupGPIO():
     GPIO.setmode(GPIO.BOARD)    # Numbers GPIOs by physical location
@@ -57,22 +58,23 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-user=input("Please enter your last name\n")
+user=input("Please enter your last name:\n")
 if user =="00fb4fb3":
     user="Chen"
 if user=="00fbb0b2":
     user="Udell"
 
-targettemp=input("What is that target temp in C?")
-if targettemp=="00fb2a62":
+targettemp=input("Enter the target temp in C,  or scan any key for 48C.\n")
+if not targettemp.isdigit():
     targettemp=48
 templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
 print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
-print ("Data are saved in " + datafile+"\n")
+#print ("Data are saved in " + datafile+"\n")
 
-ratid=input("Please enter a random ID and test the wire. Then use the \"New rat\" tag to start actual measures.\n")
+print ("Please test the wire.")
+ratid="00fbtest"
 
 while True:
     time.sleep(0.01)
@@ -83,8 +85,10 @@ while True:
             print ("Temp: " + str(temp1) + " Too hot!!")
         elif (temp1<templo):
             print ("Temp: " + str(temp1) + " Too cold!!")
-        else:
+        elif ratid[0:4] != "00fb":
             print ("Temp: " + str(temp1) + " please test " + ratid)
+        else:
+            print ("Temp: " + str(temp1) + "!!! "+ ratid +" is not a rat ID. ")
     else:
         sTime=time.time()
         print ("Timer started\n")
@@ -113,24 +117,31 @@ while True:
         if next=="00fb3131":
             next="a"
         ## 
-        if (next =="d"):
-            print ("Data deleted as requested\n")
-            next="a" # then test the same rat again
-        else:
-            if ratid[0:4]=="00fb":
-                print ("RFID is not from rat, data not saved");
-                next="n"
-            elif elapsed<1.5:
-                print ("latency is less than 1.5 sec, data not saved");
-                next="a"
-            else:
-                with open(datafile, "a") as f:
-                    f.write(line)
-                    f.close()
-                print ("Data saved\n")
         if (next=="e"):
             print ("Exit prgram\n")
             sys.exit()
+        if (next =="d"):
+            print ("Data deleted as requested\n")
+            next="a" # then test the same rat again
+            savedata=0
+        if elapsed<1.5:
+            print ("!!! latency < 1.5 sec, Data not saved");
+            savedata=0
+            next="a"
+        if temp> temphi or temp<templo:
+            print ("!!! temperature not in target range, Data not saved")
+            next="a"
+            savedata=0
+        if ratid[0:4]=="00fb":
+            print ("!!! RFID is not a valid rat ID, Data not saved");
+            next="n"
+            savedata=0
+        if savedata: 
+            with open(datafile, "a") as f:
+                f.write(line)
+                f.close()
+            print ("Data saved\n")
+            savedata=1
         print ("Please wait 10 seconds\n")
         time.sleep(10)
         if (next=="n"):
