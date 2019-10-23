@@ -1,7 +1,8 @@
 $fn=50;
 
 // define global variables (measurments, unit = mm)
-lcdWidth = 121.4;
+lcdWidth = 121.4 + 50;
+lcdWidthForScrewHolder = 121.4;
 lcdThickness = 7.91;
 lcdHeight = 76.80;
 baseBoardThickness = 3;
@@ -46,15 +47,21 @@ module makeRearendWall(head=1){
     }
 }
 
+//color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/6)/2) + ((baseBoardThickness+1) /2)]) cube([ (lcdHeight+((baseBoardThickness+1)*2)) / 4 ,(baseBoardThickness+1),lcdHeight/6],center=true);
+//makeTopBottomCover(top=false);
+//makeRearendWall(head=1);
+
 
 // top cover
 module makeTopBottomCover(top=true){
    if(top){
-   translate([0,0,lcdHeight/2]) cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth + ((baseBoardThickness+1) *2)) ,baseBoardThickness+1],center=true);    
+   // + ((baseBoardThickness+1) *2)
+   translate([0,0,lcdHeight/2]) cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth) , baseBoardThickness+1],center=true);    
    }
    
    if(!top){
-       cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth + ((baseBoardThickness+1) *2)) ,baseBoardThickness+1],center=true);
+       //+ ((baseBoardThickness+1) *2)
+       cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth) ,baseBoardThickness+1],center=true);
    }
    
 }
@@ -65,23 +72,23 @@ yTempVar = -( (lcdWidth/2) + ((baseBoardThickness/2)) + ( ((baseBoardThickness+1
 zTempVar = 40;
 
 module fourVerticalPoles(topPoles=true, head=true){
-    
+    radius = baseBoardThickness/2;
 if(topPoles){
 
 if(head){
-color("red") translate([xTempVar, yTempVar, zTempVar]) cylinder(r=baseBoardThickness/2,h=20,center=true);
-color("red") translate([-xTempVar, yTempVar, zTempVar]) cylinder(r=baseBoardThickness/2,h=20,center=true);
+color("red") translate([xTempVar, yTempVar, zTempVar]) cylinder(r=radius,h=20,center=true);
+color("red") translate([-xTempVar, yTempVar, zTempVar]) cylinder(r=radius,h=20,center=true);
 }
 else{
-color("red") translate([xTempVar, -yTempVar, zTempVar]) cylinder(r=baseBoardThickness/2,h=20,center=true);
-color("red") translate([-xTempVar, -yTempVar, zTempVar]) cylinder(r=baseBoardThickness/2,h=20,center=true);
+color("red") translate([xTempVar, -yTempVar, zTempVar]) cylinder(r=radius,h=20,center=true);
+color("red") translate([-xTempVar, -yTempVar, zTempVar]) cylinder(r=radius,h=20,center=true);
 }
 
 }
 
 if(!topPoles){
-color("red") translate([xTempVar,yTempVar,0]) cylinder(r=baseBoardThickness/2,h=20,center=true);
-color("red") translate([-xTempVar,yTempVar,0]) cylinder(r=baseBoardThickness/2,h=20,center=true);
+color("red") translate([xTempVar,yTempVar,0]) cylinder(r=baseBoardThickness/3,h=20,center=true);
+color("red") translate([-xTempVar,yTempVar,0]) cylinder(r=baseBoardThickness/3,h=20,center=true);
 }
 
 }
@@ -89,7 +96,8 @@ color("red") translate([-xTempVar,yTempVar,0]) cylinder(r=baseBoardThickness/2,h
 //color("blue") cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth + ((baseBoardThickness+1) *2)) ,baseBoardThickness+1],center=true);
 
 
-module placeScrewHolder(x=(lcdHeight/2 - (squareWidth/2)) , y=(lcdWidth/2 - (squareHeight/2)) , z=((baseBoardThickness+1)/2) + (squareThickness/2) + heightToScrew) {
+depth = squareThickness + 10;
+module placeScrewHolder(x=(lcdHeight/2 - (squareWidth/2)) , y=(lcdWidthForScrewHolder/2 - (squareHeight/2)) , z=((baseBoardThickness+1)/2) + (squareThickness/2) + heightToScrew) {
     translate([x,y,z])
     difference(){
             cube([squareWidth,squareHeight,squareThickness],center=true);
@@ -97,17 +105,47 @@ module placeScrewHolder(x=(lcdHeight/2 - (squareWidth/2)) , y=(lcdWidth/2 - (squ
     }
 }
 
+module placeCornerScrewHolder(x=0,y=0,z=0){
+    translate([x,y,z])
+    difference(){
+    color("red") cube([squareWidth,squareHeight,depth],center=true);
+    translate([0,0,(depth/2)/2]) color("blue") cylinder(r=screwInnerRadius,h=depth/2,center=true);
+    }
+}
+
 //placeScrewHolder(x=(lcdHeight/2 - (squareWidth/2)),y=(lcdWidth/2 - (squareHeight/2)),z=((baseBoardThickness+1)/2) + (squareThickness/2) + heightToScrew);
 
+
+toTranslateX = (lcdHeight/2) - (squareWidth/2);
+toTranslateY = (lcdWidth/2) - (squareHeight/2);
+toTranslateZ = (lcdHeight/2) - ((baseBoardThickness+1)/2) - (depth/2);
 module makeScrewHolders(){
 placeScrewHolder();
 
 placeScrewHolder(x=-(lcdHeight/2 - (squareWidth/2)));
 
-placeScrewHolder(y=-(lcdWidth/2 - (squareHeight/2)));
+placeScrewHolder(y= -(lcdWidthForScrewHolder/2 - (squareHeight/2) ) );
+//placeScrewHolder(y=-(lcdWidth/2 - (squareHeight/2)));
 
-placeScrewHolder(x=-(lcdHeight/2 - (squareWidth/2)),y=-(lcdWidth/2 - (squareHeight/2)));
+placeScrewHolder(x=-(lcdHeight/2 - (squareWidth/2)),y=-(lcdWidthForScrewHolder/2 - (squareHeight/2)));
 
+//toTranslateX = (lcdHeight/2) - (squareWidth/2);
+//toTranslateY = (lcdWidth/2) - (squareHeight/2);
+//toTranslateZ = (lcdHeight/2) - ((baseBoardThickness+1)/2) - (depth/2);
+    
+placeCornerScrewHolder(x=toTranslateX,y=-toTranslateY,z=toTranslateZ);
+placeCornerScrewHolder(x=-toTranslateX,y=-toTranslateY,z=toTranslateZ);        
+ 
+placeCornerScrewHolder(x=toTranslateX,y=toTranslateY,z=toTranslateZ);
+placeCornerScrewHolder(x=-toTranslateX,y=toTranslateY,z=toTranslateZ); 
+    
+    
+toTranslateYBottom = ( (lcdWidth/2) - (depth/2));
+toTranslateZBottom =   (squareHeight/2) + ( (baseBoardThickness+1) / 2);
+
+translate([toTranslateX,-toTranslateYBottom, toTranslateZBottom]) rotate([90,0,0]) placeCornerScrewHolder();
+translate([-toTranslateX,-toTranslateYBottom,toTranslateZBottom]) rotate([90,0,0]) placeCornerScrewHolder();
+       
 }
 
 extraBoardWidth = (smallChipHeight * 2) + 10;
@@ -199,6 +237,38 @@ module makeSlots(){
 }
 
 
+module prism(l,w,h,center=true){
+    translate_to = center ? [-(l/2),-(w/2),-(h/2)] : [0,0,0];
+    translate(translate_to)
+    polyhedron(
+        points=[[0,0,0],[l,0,0],[l,w,0],[0,w,0],[0,w,h],[l,w,h]],
+        faces=[[0,1,2,3],[5,4,3,2],[0,4,5,1],[0,3,4],[5,2,1]]
+    );
+}
+
+//rotate([0,180,90]) 
+triLength = lcdHeight;
+triWidth = lcdWidth;
+triHeight = baseBoardThickness + 15;
+//prism(lcdWidth,(lcdWidth/2) + 30,triHeight);
+//translate([0,0,(triHeight/2)+ ( (lcdHeight/2) - ((baseBoardThickness+1)/2) ) ]) 
+xx = atan(triHeight/triLength);
+yy = 180-90-xx;
+zz = 90-yy;
+hypo = sqrt( (triLength*triLength) + (triHeight+triHeight) );
+
+translate([-(lcdHeight/2 + (baseBoardThickness+1) ),0,hypo/2 -1]) rotate([-90-xx,0,-90]) prism(lcdWidth,lcdHeight,triHeight);
+
+//translate([0,0,(triHeight/2) + (lcdHeight/2) - ((baseBoardThickness+1)/2)]) rotate(-90,0,-90) prism(lcdWidth,lcdHeight,triHeight);
+//degreeToTurn = atan( (15) / (lcdWidth/2) );
+degreeToTurn = atan((lcdWidth/2) / triHeight);
+xDeg = atan((lcdWidth/2) / triHeight);
+yDeg = 180 - 90 - xDeg;
+
+//translate([0,0,79.09]) rotate([-degreeToTurn,180,90]) translate([0,0,15/2 + ((lcdHeight/2) - ( (baseBoardThickness+1) / 2))]) prism(lcdWidth,(lcdWidth/2),15);
+
+
+
 
 //******************************************//
 
@@ -219,16 +289,20 @@ union(){
   makeSideWall([0,1]);
   makeSideWall();
   makeRearendWall(1);
+    
+    difference(){
+       #makeRearendWall(1);
+   color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2)]) cube([ (lcdHeight+((baseBoardThickness+1)*2)) / 4 + 15,(baseBoardThickness+1),lcdHeight/4],center=true);
+  }
   makeScrewHolders();
   // move the sensor space to the rear-end
-  translate([0,(extraBoardHeight/2) + (lcdWidth/2) + (baseBoardThickness+1),0]) rotate([0,0,90]) sensorSpace();
+  //translate([0,(extraBoardHeight/2) + (lcdWidth/2) + (baseBoardThickness+1),0]) rotate([0,0,90]) sensorSpace();
 }
-#fourVerticalPoles(topPoles=true, head=false);
-#fourVerticalPoles(topPoles=false);
-}
-
+//#fourVerticalPoles(topPoles=true, head=false);
+//#fourVerticalPoles(topPoles=false);
 }
 
+}
 mainPiece();
 
 
@@ -243,19 +317,44 @@ union(){
 }
 }
 
-fontEndWall();
+//fontEndWall();
 
 module topCover(){
-difference(){
     
+
+//placeCornerScrewHolder(x=toTranslateX,y=-toTranslateY,z=toTranslateZ);
+//placeCornerScrewHolder(x=-toTranslateX,y=-toTranslateY,z=toTranslateZ);        
+// 
+//placeCornerScrewHolder(x=toTranslateX,y=toTranslateY,z=toTranslateZ);
+//placeCornerScrewHolder(x=-toTranslateX,y=toTranslateY,z=toTranslateZ); 
+
+difference(){    
 makeTopBottomCover(top=true);
 
-#fourVerticalPoles(topPoles=true,head=false);
-#fourVerticalPoles(topPoels=true);    
+union(){
+    translate([toTranslateX,-toTranslateY,toTranslateZ]) translate([0,0,(depth/2)/2]) color("blue") cylinder(r=screwInnerRadius,h=depth/2 + 20,center=true);
+
+    translate([-toTranslateX,-toTranslateY,toTranslateZ]) translate([0,0,(depth/2)/2]) color("blue") cylinder(r=screwInnerRadius,h=depth/2 + 20,center=true);
+        
+
+    translate([toTranslateX,toTranslateY,toTranslateZ]) translate([0,0,(depth/2)/2]) color("blue") cylinder(r=screwInnerRadius,h=depth/2 + 20,center=true);
+        
+
+    translate([-toTranslateX,toTranslateY,toTranslateZ]) translate([0,0,(depth/2)/2]) color("blue") cylinder(r=screwInnerRadius,h=depth/2 + 20,center=true);
+}
 
 }
+//difference(){
+//    
+//makeTopBottomCover(top=true);
+//
+////#fourVerticalPoles(topPoles=true,head=false);
+////#fourVerticalPoles(topPoels=true);    
+//
+//}
 }
 
 topCover();
+
 
 
