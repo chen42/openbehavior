@@ -16,7 +16,7 @@ screwInnerRadius = 2.56;
 smallChipWidth = 19.18;
 smallChipHeight = 33.32;
 
-heightToScrew = 12.88;
+heightToScrew = 13.15; //12.88
 
 smallChipThickness = 1.69;
 smallChipHoleRadius = 2.42;
@@ -43,20 +43,21 @@ module makeRearendWall(head=1){
     
     // end wall
     if(head == 0){
-        translate([0,-(((baseBoardThickness+1) /2)+(lcdWidth/2)),(lcdHeight/2)/2 - ((baseBoardThickness+1) /2) + ((baseBoardThickness+1) /2 )]) cube([lcdHeight+((baseBoardThickness+1)*2),baseBoardThickness+1,lcdHeight/2 - (baseBoardThickness+1) ],center=true);    
+//        translate([0,-(((baseBoardThickness+1) /2)+(lcdWidth/2)),(lcdHeight/2)/2 - ((baseBoardThickness+1) /2) + ((baseBoardThickness+1) /2 )]) cube([lcdHeight+((baseBoardThickness+1)*2),baseBoardThickness+1,lcdHeight/2 - (baseBoardThickness+1) ],center=true);    
+                translate([0,-(((baseBoardThickness+1) /2)+(lcdWidth/2)),((lcdHeight/2) /2 -((baseBoardThickness+1)/2))]) cube([lcdHeight+((baseBoardThickness+1)*2),baseBoardThickness+1,lcdHeight/2 ],center=true);
     }
+    
+    //lcdHeight/2
 }
 
 //color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/6)/2) + ((baseBoardThickness+1) /2)]) cube([ (lcdHeight+((baseBoardThickness+1)*2)) / 4 ,(baseBoardThickness+1),lcdHeight/6],center=true);
 //makeTopBottomCover(top=false);
 //makeRearendWall(head=1);
 
-
-// top cover
 module makeTopBottomCover(top=true){
    if(top){
    // + ((baseBoardThickness+1) *2)
-   translate([0,0,lcdHeight/2]) cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth) , baseBoardThickness+1],center=true);    
+   translate([0,0,lcdHeight/2]) cube([lcdHeight+((baseBoardThickness+1) *2), (lcdWidth) +(baseBoardThickness+1)*2 , baseBoardThickness+1],center=true);    
    }
    
    if(!top){
@@ -119,6 +120,9 @@ module placeCornerScrewHolder(x=0,y=0,z=0){
 toTranslateX = (lcdHeight/2) - (squareWidth/2);
 toTranslateY = (lcdWidth/2) - (squareHeight/2);
 toTranslateZ = (lcdHeight/2) - ((baseBoardThickness+1)/2) - (depth/2);
+
+toTranslateYBottom = ( (lcdWidth/2) - (depth/2));
+toTranslateZBottom =   (squareHeight/2) + ( (baseBoardThickness+1) / 2);
 module makeScrewHolders(){
 placeScrewHolder();
 
@@ -129,22 +133,17 @@ placeScrewHolder(y= -(lcdWidthForScrewHolder/2 - (squareHeight/2) ) );
 
 placeScrewHolder(x=-(lcdHeight/2 - (squareWidth/2)),y=-(lcdWidthForScrewHolder/2 - (squareHeight/2)));
 
-//toTranslateX = (lcdHeight/2) - (squareWidth/2);
-//toTranslateY = (lcdWidth/2) - (squareHeight/2);
-//toTranslateZ = (lcdHeight/2) - ((baseBoardThickness+1)/2) - (depth/2);
-    
+// top four screw holder
 placeCornerScrewHolder(x=toTranslateX,y=-toTranslateY,z=toTranslateZ);
 placeCornerScrewHolder(x=-toTranslateX,y=-toTranslateY,z=toTranslateZ);        
  
 placeCornerScrewHolder(x=toTranslateX,y=toTranslateY,z=toTranslateZ);
 placeCornerScrewHolder(x=-toTranslateX,y=toTranslateY,z=toTranslateZ); 
     
-    
-toTranslateYBottom = ( (lcdWidth/2) - (depth/2));
-toTranslateZBottom =   (squareHeight/2) + ( (baseBoardThickness+1) / 2);
+// 
 
-translate([toTranslateX,-toTranslateYBottom, toTranslateZBottom]) rotate([90,0,0]) placeCornerScrewHolder();
-translate([-toTranslateX,-toTranslateYBottom,toTranslateZBottom]) rotate([90,0,0]) placeCornerScrewHolder();
+translate([toTranslateX,-toTranslateYBottom, toTranslateZBottom + heightToScrew]) rotate([90,0,0]) placeCornerScrewHolder();
+translate([-toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew]) rotate([90,0,0]) placeCornerScrewHolder();
        
 }
 
@@ -227,6 +226,22 @@ rotate([0,0,90]) cube([screenWidth,screenHeight,(baseBoardThickness+1)],center=t
 }
 }
 
+// 40.5;
+// 8.35
+// 4.2
+
+//- ( (lcdWidth/2)-(screenWidth/2) + (5.88/2) )
+//color("red") translate([(lcdHeight/2) , -screenWidth/2 + (8.35/2) + 40.5/2 ,0]) 
+
+module makePowerSlot(){
+slotWidth = 8.35;
+slotHeight = 4.2;
+slotDepth = baseBoardThickness+1;
+slotToEdge = 40.5;
+color("red") translate([(lcdHeight/2) - ((baseBoardThickness+1)/2) + slotDepth,-screenWidth/2 + (slotWidth/2) + slotToEdge/2,(slotDepth/2) + (squareThickness/2) + heightToScrew]) cube([slotDepth,slotWidth,slotHeight],center=true);
+}
+
+
 
 module makeSlots(){
    difference(){
@@ -257,8 +272,16 @@ yy = 180-90-xx;
 zz = 90-yy;
 hypo = sqrt( (triLength*triLength) + (triHeight+triHeight) );
 
-translate([-(lcdHeight/2 + (baseBoardThickness+1) ),0,hypo/2 -1]) rotate([-90-xx,0,-90]) prism(lcdWidth,lcdHeight,triHeight);
+//translate([-(lcdHeight/2 + (baseBoardThickness+1) ),0,hypo/2 -1]) rotate([-90-xx,0,-90]) prism(lcdWidth,lcdHeight,triHeight);
 
+//#cube([triLength,triLength,triHeight],center=true);
+
+module makeTriangleWidget(){
+translate([-(lcdHeight/2 + (baseBoardThickness+1) ),0,hypo/2 -1]) rotate([-90-xx,0,-90]) difference(){
+    prism(lcdWidth,lcdHeight,triHeight);
+    cube([triLength,triLength,triHeight],center=true);
+}
+}
 //translate([0,0,(triHeight/2) + (lcdHeight/2) - ((baseBoardThickness+1)/2)]) rotate(-90,0,-90) prism(lcdWidth,lcdHeight,triHeight);
 //degreeToTurn = atan( (15) / (lcdWidth/2) );
 degreeToTurn = atan((lcdWidth/2) / triHeight);
@@ -286,14 +309,20 @@ module mainPiece(){
 difference(){
 union(){
   baseWithScreen();
-  makeSideWall([0,1]);
+  
   makeSideWall();
-  makeRearendWall(1);
-    
+  //makeRearendWall(1);
+  
+  difference(){
+  makeSideWall([0,1]);
+  makePowerSlot();
+  }
     difference(){
        #makeRearendWall(1);
    color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2)]) cube([ (lcdHeight+((baseBoardThickness+1)*2)) / 4 + 15,(baseBoardThickness+1),lcdHeight/4],center=true);
   }
+  
+  makeTriangleWidget();
   makeScrewHolders();
   // move the sensor space to the rear-end
   //translate([0,(extraBoardHeight/2) + (lcdWidth/2) + (baseBoardThickness+1),0]) rotate([0,0,90]) sensorSpace();
@@ -303,18 +332,25 @@ union(){
 }
 
 }
-mainPiece();
+//mainPiece();
 
 
 module fontEndWall(){
 difference(){
 
 #makeRearendWall(0);
-union(){
-#fourVerticalPoles(topPoles=true);    
-#fourVerticalPoles(topPoles=false);
+    
+//union(){
+//#fourVerticalPoles(topPoles=true);    
+//#fourVerticalPoles(topPoles=false);
+//}
+    
+    translate([-toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew]) color("blue") rotate([90,0,0]) cylinder(r=screwInnerRadius,h=depth/2+20,center=true);
+
+translate([toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew]) color("blue") rotate([90,0,0]) cylinder(r=screwInnerRadius,h=depth/2+20,center=true);
 }
-}
+
+
 }
 
 //fontEndWall();
@@ -344,16 +380,19 @@ union(){
 }
 
 }
-//difference(){
-//    
-//makeTopBottomCover(top=true);
-//
-////#fourVerticalPoles(topPoles=true,head=false);
-////#fourVerticalPoles(topPoels=true);    
-//
-//}
+
 }
 
+//******************************************//
+//******************************************//
+/*
+    ****** PRINT EACH PART SEPARATELY ******
+*/
+//******************************************//
+//******************************************//
+
+mainPiece();
+fontEndWall();
 topCover();
 
 
