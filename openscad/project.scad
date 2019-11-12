@@ -1,7 +1,7 @@
 $fn=50;
 
 // define global variables (measurments, unit = mm)
-lcdWidth = 121.4 + 50;
+lcdWidth = 121.4 + 25;
 lcdWidthForScrewHolder = 121.4;
 lcdThickness = 7.91;
 lcdHeight = 76.80;
@@ -12,7 +12,7 @@ squareHeight=7.5;
 squareWidth=7.5;
 squareThickness=2.5;
 
-screwInnerRadius = 2.56;
+screwInnerRadius = 1.5;//2.56;
 smallChipWidth = 19.18;
 smallChipHeight = 33.32;
 
@@ -73,7 +73,7 @@ yTempVar = -( (lcdWidth/2) + ((baseBoardThickness/2)) + ( ((baseBoardThickness+1
 zTempVar = 40;
 
 module fourVerticalPoles(topPoles=true, head=true){
-    radius = baseBoardThickness/2;
+    radius = 1.50;//baseBoardThickness/2;
 if(topPoles){
 
 if(head){
@@ -238,7 +238,7 @@ slotWidth = 8.35;
 slotHeight = 4.2;
 slotDepth = baseBoardThickness+1;
 slotToEdge = 40.5;
-color("red") translate([(lcdHeight/2) - ((baseBoardThickness+1)/2) + slotDepth,-screenWidth/2 + (slotWidth/2) + slotToEdge/2,(slotDepth/2) + (squareThickness/2) + heightToScrew]) cube([slotDepth,slotWidth,slotHeight],center=true);
+color("red") translate([(lcdHeight/2) - ((baseBoardThickness+1)/2) + slotDepth,-screenWidth/2 + (slotWidth/2) + slotToEdge/2 + (5),(slotDepth/2) + (squareThickness/2) + heightToScrew]) cube([slotDepth+3,slotWidth+3,slotHeight+3],center=true);
 }
 
 
@@ -291,7 +291,13 @@ yDeg = 180 - 90 - xDeg;
 //translate([0,0,79.09]) rotate([-degreeToTurn,180,90]) translate([0,0,15/2 + ((lcdHeight/2) - ( (baseBoardThickness+1) / 2))]) prism(lcdWidth,(lcdWidth/2),15);
 
 
+module tempSupport(){
+support_height=13;
+support_radius=5;
+translate([(lcdHeight+((baseBoardThickness+1) *2))/2 - (support_radius), -58,support_height/2 + (lcdHeight/2)]) cylinder(r=support_radius,h=support_height,center=true);
 
+translate([(lcdHeight+((baseBoardThickness+1) *2))/2 - (support_radius), 58,support_height/2 + (lcdHeight/2)]) cylinder(r=support_radius,h=support_height,center=true);
+}
 
 //******************************************//
 
@@ -302,8 +308,13 @@ yDeg = 180 - 90 - xDeg;
 
 //******************************************//
 
+module tempSlot(){
+union(){
+        color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2) + 10]) cube([ (lcdHeight+((baseBoardThickness+1)*30)) / 4 + 15,(baseBoardThickness+1),lcdHeight/4],center=true);
+translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2) + 24])cube([5,(baseBoardThickness+1),5],center=true);
 
-
+}
+}
 // putting together two side walls and the base
 module mainPiece(){
 difference(){
@@ -318,11 +329,12 @@ union(){
   makePowerSlot();
   }
     difference(){
-       #makeRearendWall(1);
-   color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2)]) cube([ (lcdHeight+((baseBoardThickness+1)*2)) / 4 + 15,(baseBoardThickness+1),lcdHeight/4],center=true);
+        #makeRearendWall(1);
+        tempSlot();
+//        color("red") translate([0, (lcdWidth/2) + ((baseBoardThickness+1)/2) ,((lcdHeight/4)/2) + ((baseBoardThickness+1) /2) + 10]) cube([ (lcdHeight+((baseBoardThickness+1)*30)) / 4 + 15,(baseBoardThickness+1),lcdHeight/4],center=true);
   }
   
-  makeTriangleWidget();
+  //makeTriangleWidget();
   makeScrewHolders();
   // move the sensor space to the rear-end
   //translate([0,(extraBoardHeight/2) + (lcdWidth/2) + (baseBoardThickness+1),0]) rotate([0,0,90]) sensorSpace();
@@ -391,9 +403,14 @@ union(){
 //******************************************//
 //******************************************//
 
+
+
 mainPiece();
 fontEndWall();
-topCover();
 
+union(){
+tempSupport();
+topCover();
+}
 
 
