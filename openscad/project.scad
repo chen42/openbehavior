@@ -238,7 +238,7 @@ slotWidth = 8.35;
 slotHeight = 4.2;
 slotDepth = baseBoardThickness+1;
 slotToEdge = 40.5;
-color("red") translate([(lcdHeight/2) - ((baseBoardThickness+1)/2) + slotDepth,-screenWidth/2 + (slotWidth/2) + slotToEdge/2 + (5),(slotDepth/2) + (squareThickness/2) + heightToScrew]) cube([slotDepth+3,slotWidth+3,slotHeight+3],center=true);
+color("red") translate([(lcdHeight/2) - ((baseBoardThickness+1)/2) + slotDepth,-screenWidth/2 + (slotWidth/2) + slotToEdge/2 + (5),(slotDepth/2) + (squareThickness/2) + heightToScrew]) cube([slotDepth+3,slotWidth+7,slotHeight+7],center=true);
 }
 
 
@@ -292,7 +292,7 @@ yDeg = 180 - 90 - xDeg;
 
 
 module tempSupport(){
-support_height=13;
+support_height=27;
 support_radius=5;
 translate([(lcdHeight+((baseBoardThickness+1) *2))/2 - (support_radius), -58,support_height/2 + (lcdHeight/2)]) cylinder(r=support_radius,h=support_height,center=true);
 
@@ -344,19 +344,13 @@ union(){
 }
 
 }
-//mainPiece();
 
 
 module fontEndWall(){
 difference(){
 
 #makeRearendWall(0);
-    
-//union(){
-//#fourVerticalPoles(topPoles=true);    
-//#fourVerticalPoles(topPoles=false);
-//}
-    
+ 
     translate([-toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew]) color("blue") rotate([90,0,0]) cylinder(r=screwInnerRadius,h=depth/2+20,center=true);
 
 translate([toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew]) color("blue") rotate([90,0,0]) cylinder(r=screwInnerRadius,h=depth/2+20,center=true);
@@ -365,16 +359,7 @@ translate([toTranslateX,-toTranslateYBottom,toTranslateZBottom + heightToScrew])
 
 }
 
-//fontEndWall();
-
 module topCover(){
-    
-
-//placeCornerScrewHolder(x=toTranslateX,y=-toTranslateY,z=toTranslateZ);
-//placeCornerScrewHolder(x=-toTranslateX,y=-toTranslateY,z=toTranslateZ);        
-// 
-//placeCornerScrewHolder(x=toTranslateX,y=toTranslateY,z=toTranslateZ);
-//placeCornerScrewHolder(x=-toTranslateX,y=toTranslateY,z=toTranslateZ); 
 
 difference(){    
 makeTopBottomCover(top=true);
