@@ -103,8 +103,8 @@ module frontpanel(){
 }
 
 
-//translate([-40,0,0])rotate([0,90,0])frontpanel();
-//translate([-35,0,0])rotate([0,90,0])antenna_cover();
-spoutholder();
-//color("blue")cboard_cover();
+translate([-40,0,0])rotate([0,90,0])frontpanel();
+#color("red")translate([-35,0,0])rotate([0,90,0])antenna_cover();
+#spoutholder();
+#color("blue")cboard_cover();
 
