@@ -1,30 +1,27 @@
 #!/bin/bash
 
-echo ""
 echo "------------------------"
 echo "Current date and time is "
-echo "------------------------"
+
 date 
 
-echo "Is that correct? (Y/n)? " 
-read ch
-if [ $ch = 'n' ] ; then 
-	echo "Enter the date the following format: yyyy-mm-dd"
-	read dt
-	sudo date +%Y-%m-%d -s "$dt"
-	echo "Enter the current time in the following format: hh:mm:ss" 
-	read dt 
-	sudo date --set="$dt"
-fi
+echo "Please write down the data and time shown above if it is not correct!" 
+echo "-----------------------------------------------------------"
+python /home/pi/openbehavior/tailTimer/tailwithdrawal.py 
 
-sudo python /home/pi/openbehavior/tailwithdrawal/tailwithdrawal.py 
-
+echo ""
 echo "--------------------------------"
-echo "Please plug in a usb drive, click on \"cancel\" when a window pops up, press entery to copy the data"
+echo "Please plug in a usb drive, enter anything to continue"
 echo "--------------------------------"
+echo ""
 read dummy 
-sudo umount /dev/sda1
 sudo mount /dev/sda1 /home/pi/usbDrive
+echo ""
+echo ""
+echo "START COPYING FILES"
 sudo cp /home/pi/Pies/tailwithdrawal/* /home/pi/usbDrive/ -v
+echo "FILES COPIED"
+sudo umount /dev/sda1
+echo "PLEASE REMOVE THE USB DRIVE"
 
 
