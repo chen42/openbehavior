@@ -1,6 +1,9 @@
 from time import sleep
 import RPi.GPIO as GPIO
 import argparse
+import signal
+import sys
+
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-steps', type=int, default=3000)
@@ -11,11 +14,7 @@ steps=args.steps
 rotate_dir=args.clockwise
 
 GPIO.setwarnings(False)
-#DIR = 20
-#STEP = 21
-#CW = 1
-#CCW = 0
-#SPR = 200 #120
+
 
 class PumpMove:
     def __init__(self):
@@ -23,15 +22,20 @@ class PumpMove:
         self.STEP = 21
         self.CW = 1
         self.CCW = 0
+        self.BUTTON = 16
+        self.STOP_BUTTON = 12
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.DIR, GPIO.OUT)
-        GPIO.setup(self.STEP, GPIO.OUT)
-        GPIO.output(self.DIR,self.CW)
+        self.GPIO = GPIO
+        self.GPIO.setmode(self.GPIO.BCM)
+        self.GPIO.setup(self.DIR, self.GPIO.OUT, initial=self.GPIO.HIGH)
+        self.GPIO.setup(self.STEP, self.GPIO.OUT, initial=self.GPIO.HIGH)
+        self.GPIO.setup(self.BUTTON, self.GPIO.IN, pull_up_down=self.GPIO.PUD_DOWN)
+        self.GPIO.setup(self.STOP_BUTTON, self.GPIO.IN, pull_up_down=self.GPIO.PUD_DOWN)
+        self.GPIO.output(self.DIR,self.CW)
         #self.step_count = stp_cnt
         #self.delay = delay
         self.MODE = (14,15)
-        GPIO.setup(self.MODE, GPIO.OUT)
+        self.GPIO.setup(self.MODE, self.GPIO.OUT)
         self.RESOLUTION = {
                             'Full': (0,0),
                             'Half': (1,0),
@@ -39,64 +43,83 @@ class PumpMove:
                             '1/16': (1,1),
                           }
 
-        GPIO.output(self.MODE, self.RESOLUTION['Full'])
+        # GPIO.output(self.MODE, self.RESOLUTION['Full'])
+        # GPIO.output(self.MODE, self.RESOLUTION['Half'])
+        self.GPIO.output(self.MODE, self.RESOLUTION['1/8'])
+        # GPIO.output(self.MODE, self.RESOLUTION['1/16'])
         
         self.step_counts = steps
         self.delay = .0209 / 50
         self.rotate_dir = rotate_dir
-    def move(self):
-        if(not self.rotate_dir):
-            GPIO.output(self.DIR, self.CCW)
+
+    def move(self, flag):
+        if flag:
+            self.GPIO.output(self.MODE, self.RESOLUTION['Full'])
+            self.GPIO.output(self.DIR, self.CCW)
 
         for step in range(self.step_counts):
-            GPIO.output(self.STEP, GPIO.HIGH)
+            print("step = ", step)
+            self.GPIO.output(self.STEP, self.GPIO.HIGH)
             sleep(self.delay)
-            GPIO.output(self.STEP, GPIO.LOW)
+            self.GPIO.output(self.STEP, self.GPIO.LOW)
             sleep(self.delay)
+
+    def forward(self):
+        # if self.GPIO.input(self.BUTTON) == self.GPIO.HIGH:
+        self.GPIO.output(self.MODE, self.RESOLUTION['Full'])
+        self.GPIO.output(self.DIR,self.CW)
+        for step in range(self.step_counts):
+            print("step = ", step)
+            self.GPIO.output(self.STEP, self.GPIO.HIGH)
+            sleep(self.delay)
+            self.GPIO.output(self.STEP, self.GPIO.LOW)
+            sleep(self.delay)
+        
+        self.GPIO.output(self.STEP, self.GPIO.HIGH)
+
+    def backward(self):
+        self.GPIO.output(self.MODE, self.RESOLUTION['Full'])
+        self.GPIO.output(self.DIR, self.CCW)
+        for step in range(self.step_counts):
+            print("step = ", step)
+            self.GPIO.output(self.STEP, self.GPIO.HIGH)
+            sleep(self.delay)
+            self.GPIO.output(self.STEP, self.GPIO.LOW)
+            sleep(self.delay)
+        self.GPIO.output(self.STEP, self.GPIO.HIGH)
+        
+
 
     def __del__(self):
-        GPIO.cleanup()
+        self.GPIO.cleanup()
             
-
-
+mover = PumpMove()    
 if __name__ == '__main__':
-    mover = PumpMove()
-    mover.move()
+
+    FORWARDBUTTON = 16
+    BACKWARDBUTTON = 12
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(FORWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BACKWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    def forward_btn_callback(channel):
+        if not GPIO.input(FORWARDBUTTON):
+            mover.forward()
     
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(DIR, GPIO.OUT)
-#GPIO.setup(STEP, GPIO.OUT)
-##GPIO.output(DIR,CW)
-#GPIO.output(DIR,rotate_dir)
-#
-#step_count = SPR
-#delay = .0208
-#
-#
-#MODE = (14,15)
-#GPIO.setup(MODE,GPIO.OUT)
-#
-#RESOLUTION = {
-#        'Full': (0,0),
-#        'Half': (1,0),
-#        '1/8': (0,1),
-#        '1/16': (1,1),
-#        }
-#
-#GPIO.output(MODE, RESOLUTION['Full'])
-#
-#step_count = steps #10000 #SPR * 50
-#delay = .0209 / 50#50
+    def backward_btn_callback(channel):
+        if not GPIO.input(BACKWARDBUTTON):
+            mover.backward()
 
+    def signal_handler(sig, frame):
+        GPIO.cleanup()
+        sys.exit(0)
 
-#GPIO.output(DIR,CCW)
-#for x in range(step_count):
-#    GPIO.output(STEP,GPIO.HIGH)
-#    sleep(delay)
-#    GPIO.output(STEP, GPIO.LOW)
-#    sleep(delay)
+    # mover = PumpMove()
 
+    GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING, callback=forward_btn_callback,bouncetime=100)
+    GPIO.add_event_detect(BACKWARDBUTTON, GPIO.FALLING, callback=backward_btn_callback,bouncetime=100)
 
-#GPIO.cleanup()
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.pause()
 
-
+        
