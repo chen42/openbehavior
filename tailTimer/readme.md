@@ -34,16 +34,21 @@ $ sudo raspi-config
 and select appropriate options. 
 
 
-Then clone this repo (or just copy the tailwithdrawal.py script).  To run the program automatically after boot, add the following line to the .bashrc file of the user pi (adjust the path accordingly):
+Then clone this repo. 
+
+```
+git clone github.com/chen42/openbehavior
+```
+
+To run the program automatically after boot, add the following line to the .bashrc file of the user pi (adjust the path accordingly):
 
 
 ```
-python  /home/pi/tailTimer/tailwithdrawal.py
+runtailtimer.sh
 ```
 
 
 
 ### Usage
-During operation, the ground wire and thermal probe remain immersed together in the hot water at approximately 50% of the depth. The latency wire is dipped into the hot water at the same time as a rat’s tail and is taken out of the hot water, together with the tail, when a pain response is observed (i.e., the tail starts to “flick” in response to heat).
-
+During operation, the ground wire and thermal probe remain immersed together in the hot water at approximately 50% of the depth. The latency wire is dipped into the hot water at the same time as a rat’s tail and is taken out of the hot water, together with the tail, when a pain response is observed (i.e., the tail starts to “flick” in response to heat). Data will be automatically copied to a connected USB storage device upon exiting the program. 
 

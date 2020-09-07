@@ -1,10 +1,6 @@
 #!/bin/bash
 
 echo "------------------------"
-echo "Current date and time is "
-
-date 
-
 echo "Please write down the data and time shown above if it is not correct!" 
 echo "-----------------------------------------------------------"
 python /home/pi/openbehavior/tailTimer/tailwithdrawal.py 
