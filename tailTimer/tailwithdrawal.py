@@ -58,13 +58,15 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-user=input("Please enter your last name:\n")
-if user =="00fb4fb3":
-    user="Chen"
+user=input("TailTimer started.\nPlease enter your name:\n")
+if user=="00fb4fb3":
+    user="Hao Chen"
 if user=="00fbb0b2":
-    user="Udell"
-
-targettemp=input("Enter the target temp in C,  or scan any key for 48C.\n")
+    user="Mallory Udell"
+if user=="00fbf277":
+    user="Paige Lemen"
+print ("\nWelcome, " + user + "\n")
+targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
     targettemp=48
 templo=int(targettemp)-0.50
