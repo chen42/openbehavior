@@ -3,7 +3,7 @@
 echo "------------------------"
 echo "Please write down the data and time shown above if it is not correct!" 
 echo "-----------------------------------------------------------"
-python /home/pi/openbehavior/tailTimer/tailwithdrawal.py 
+sudo python /home/pi/openbehavior/tailTimer/tailwithdrawal.py 
 
 echo ""
 echo "--------------------------------"

@@ -26,12 +26,12 @@ device=device.strip()
 today=datetime.date.today()
 td=str(today)
 
-file_dir = "/homepi/Pies/tailwithdrawl/"
+file_dir = "/home/pi/Pies/tailwithdrawl/"
 # create the directory if not already exist
 if not os.path.isdir(file_dir):
-   os.mkdirs(file_dir) 
+   os.makedirs(file_dir) 
 
-datafile = file_dir + td + ".csv"
+datafile = file_dir + "tailimmersion_" + td + ".csv"
 
 
 # flags
@@ -70,7 +70,10 @@ if user =="00fb4fb3":
     user="Chen"
 if user=="00fbb0b2":
     user="Udell"
-
+if user=="00fbf277":
+    user="Lemen"
+if user=="00fbaca4":
+    user="Jiang"
 targettemp=input("Enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
     targettemp=48
@@ -78,7 +81,7 @@ templo=int(targettemp)-0.50
 temphi=int(targettemp)+0.50
 
 print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
-#print ("Data are saved in " + datafile+"\n")
+print ("Data are saved in " + datafile+"\n")
 
 print ("Please test the wire.")
 ratid="00fbtest"
@@ -113,7 +116,7 @@ while True:
         else: 
             latency[ratid] = str(elapsed) + ", "
         print ("Rat is "+ ratid+", latency = "+ latency[ratid])
-        next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
+        next=input("Choose one of the following:\n \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
         ## RFID equivalants
         if next=="00fbf27e":
             next="n"
@@ -124,9 +127,6 @@ while True:
         if next=="00fb3131":
             next="a"
         ## 
-        if (next=="e"):
-            print ("Exit prgram\n")
-            sys.exit()
         if (next =="d"):
             print ("Data deleted as requested\n")
             next="a" # then test the same rat again
@@ -146,9 +146,11 @@ while True:
         if savedata: 
             with open(datafile, "a") as f:
                 f.write(line)
-                f.close()
-            print ("Data saved\n")
-            savedata=1
+            print ("Data saved to " + datafile)  
+        if (next=="e"):
+            print ("Exit prgram\n")
+            sys.exit()
+        savedata=1
         print ("Please wait 10 seconds\n")
         time.sleep(10)
         if (next=="n"):
