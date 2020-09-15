@@ -25,7 +25,14 @@ device=idfile.read()
 device=device.strip()
 today=datetime.date.today()
 td=str(today)
-datafile="/home/pi/Pies/tailwithdrawal/tailwithdrawal"+td+".csv"
+
+file_dir = "/homepi/Pies/tailwithdrawl/"
+# create the directory if not already exist
+if not os.path.isdir(file_dir):
+   os.mkdirs(file_dir) 
+
+datafile = file_dir + td + ".csv"
+
 
 # flags
 startflag = "\x02"
