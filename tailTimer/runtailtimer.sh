@@ -11,11 +11,12 @@ echo "Please plug in a usb drive, enter anything to continue"
 echo "--------------------------------"
 echo ""
 read dummy 
-sudo mount /dev/sda1 /home/pi/usbDrive
+sudo mount /dev/sda1 /mnt
 echo ""
 echo ""
 echo "START COPYING FILES"
-sudo cp /home/pi/Pies/tailwithdrawal/* /home/pi/usbDrive/ -v
+
+sudo cp /home/pi/Pies/tailwithdrawl/* /mnt/ -v
 echo "FILES COPIED"
 sudo umount /dev/sda1
 echo "PLEASE REMOVE THE USB DRIVE"
