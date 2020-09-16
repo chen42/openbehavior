@@ -5,6 +5,9 @@ import time
 import subprocess
 import os
 from ids import *
+from pump_move import PumpMove
+from gpiozero import Button
+
 
 
 # Run the deviceinfo script
@@ -68,6 +71,25 @@ else: # vr
     sessionLength=60*60*1 # one hour assay
 
 
+# ************************************************************************************************
+# BUTTON MOVE setting
+
+mover = PumpMove()
+FORWARDBUTTON = Button(5) #16
+BACKWARDBUTTON = Button(27) #12
+
+def forward():
+    while FORWARDBUTTON.is_pressed:
+        mover.move("forward")
+
+def backward():
+    while BACKWARDBUTTON.is_pressed:
+        mover.move("backward", steps=500)
+
+FORWARDBUTTON.when_pressed = forward
+BACKWARDBUTTON.when_pressed = backward
+# ************************************************************************************************
+
 rat1=input("please scan rat1\n")
 time.sleep(5)
 rat2=input("please scan rat2\n")
@@ -77,7 +99,12 @@ time.sleep(1) # time to put the rat in the chamber
 sTime=time.time()
 lapsed=0
 
-subprocess.call("python ./operant.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
+
+
+# delete mover to prevent overheating
+del(mover)
+
+subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
 while lapsed < sessionLength:
     #hms=time.strftime("%H:%M:%S", time.localtime())

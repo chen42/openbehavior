@@ -5,25 +5,28 @@ import signal
 import sys
 from gpiozero import InputDevice
 from gpiozero import Servo
+import pigpio
 # from gpiozero import DigitalInputDevice
 # from gpiozero import SmoothedInputDevice
 
 
-parser=argparse.ArgumentParser()
-parser.add_argument('-steps', type=int, default=100)
-parser.add_argument('-clockwise', type=int, default=1)
-args=parser.parse_args()
+# parser=argparse.ArgumentParser()
+# parser.add_argument('-steps', type=int, default=100)
+# parser.add_argument('-clockwise', type=int, default=1)
+# args=parser.parse_args()
 
-steps=args.steps
-rotate_dir=args.clockwise
+# steps=args.steps
+# rotate_dir=args.clockwise
+steps = 100
+rotate_dir = 1
 
 GPIO.setwarnings(False)
 
 
 class PumpMove:
     def __init__(self):
-        self.DIR = 20
-        self.STEP = 21
+        self.DIR = 26
+        self.STEP = 6
         self.CW = 1
         self.CCW = 0
         self.BUTTON = 16
@@ -38,7 +41,7 @@ class PumpMove:
         self.GPIO.output(self.DIR,self.CW)
         #self.step_count = stp_cnt
         #self.delay = delay
-        self.MODE = (14,15)
+        self.MODE = (17,22)
         self.GPIO.setup(self.MODE, self.GPIO.OUT)
         self.RESOLUTION = {
                             'Full': (0,0),
@@ -56,14 +59,15 @@ class PumpMove:
         self.delay = .0209 / 50
         self.rotate_dir = rotate_dir
 
-    def move(self, direction):
+    def move(self, direction, steps=100):
         direction_dict = {"forward": self.CW, "backward": self.CCW}
 
         try:
             self.GPIO.output(self.MODE, self.RESOLUTION['Full'])
             self.GPIO.output(self.DIR, direction_dict[direction])
-            for step in range(self.step_counts):
-                print("step = ", step)
+            # for step in range(self.step_counts):
+            for step in range(steps):
+                # print("step = ", step)
                 self.GPIO.output(self.STEP, self.GPIO.HIGH)
                 sleep(self.delay)
                 self.GPIO.output(self.STEP, self.GPIO.LOW)
@@ -78,67 +82,15 @@ class PumpMove:
         
     def __del__(self):
         self.GPIO.cleanup()
-            
-if __name__ == '__main__':
-    mover = PumpMove()    
-    SERVO = 2
-    RECEIVER = 26
 
-    FORWARDBUTTON = 16
-    BACKWARDBUTTON = 12
-    IR = 17
-    SERVO = 27
-    sensor = InputDevice(IR, pull_up=True)
-    servo = Servo(SERVO, initial_value=None)
-    
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(FORWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BACKWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#     GPIO.add_event_detect(IR, GPIO.FALLING, callback=ir_callback, bouncetime=100)
 
 
-    def forward_btn_callback(channel):
-        if not GPIO.input(FORWARDBUTTON):
-            mover.move('forward')
-            # mover.forward()
-    
-    def backward_btn_callback(channel):
-        if not GPIO.input(BACKWARDBUTTON):
-            mover.move('backward')
-            # mover.backward()
-
-    def signal_handler(sig, frame):
-        GPIO.cleanup()
-        sys.exit(0)
-
-    def ir_callback(channel):
-        # object detected
-        if sensor.value == 1:
-            print("1")
-            servo.min()
-            sleep(.5)
-            servo.mid()
-            sleep(.5)
-            servo.max()
-            sleep(.5)
-
-        # object disappeared
-        if sensor.value == 0:
-            print("0")
-            servo.max()
-            sleep(.5)
-            servo.mid()
-            sleep(.5)
-            servo.min()
-            sleep(.5)
-
-    GPIO.add_event_detect(IR, GPIO.FALLING, callback=ir_callback, bouncetime=100)
+#     GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING, callback=forward_btn_callback,bouncetime=100)
+#     GPIO.add_event_detect(BACKWARDBUTTON, GPIO.FALLING, callback=backward_btn_callback,bouncetime=100)
 
 
-    GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING, callback=forward_btn_callback,bouncetime=100)
-    GPIO.add_event_detect(BACKWARDBUTTON, GPIO.FALLING, callback=backward_btn_callback,bouncetime=100)
-
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.pause()
+#     signal.signal(signal.SIGINT, signal_handler)
+#     signal.pause()
 
         
