@@ -25,6 +25,7 @@ import mover_subproc
 # import mover_subproc
 # subprocess.call("python3 ./mover_subproc.py")
 
+<<<<<<< HEAD
 '''
 # connection to adafruit TB6612
 # motor: SY28STH32-0674A
@@ -54,6 +55,9 @@ GND
 
 '''
 print("inside operant1")
+=======
+#print("inside operant1")
+>>>>>>> eca1de1b606838f8b7456c795d287660e49be6c2
 
 
 parser=argparse.ArgumentParser()
@@ -141,7 +145,10 @@ maxISI = 15  # max lapse between RFIC scan and first lick in a cluster
 maxILI = 2 # max inter lick interval in seconds  
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> eca1de1b606838f8b7456c795d287660e49be6c2
 def pumpforward(x=180): #x=80 is 60ul
     for i in range(x):
         stby.write(27,1)
@@ -264,6 +271,7 @@ while lapsed < sessionLength:
         try:
             f=open("/home/pi/_active", "r")
             (rat, scantime)=f.read().strip().split("\t")
+<<<<<<< HEAD
             scantime=float(scantime)
             f.close()
         except:
@@ -273,6 +281,21 @@ while lapsed < sessionLength:
             rat="ratUnknown"
         print (lastActiveLick)
         if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
+=======
+            print("rat = ", rat)
+            print("scantime = ", scantime)
+            scantime=float(scantime)
+            f.close()
+        except ValueError:
+            rat="ratUnknown"
+            scantime=0
+        if not rat:
+            print("not rat")
+            rat="ratUnknown"
+        print (lastActiveLick)
+        if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
+            print("second if statements")
+>>>>>>> eca1de1b606838f8b7456c795d287660e49be6c2
             rat="ratUnknown"
         act[rat]+=1
         dlogger.logEvent(rat, time.time()-scantime, "ACTIVE", lapsed, nextratio[rat])
@@ -337,7 +360,17 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
+<<<<<<< HEAD
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
 
 
+=======
+print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+showData("final")
+
+
+# del(pumpmover)
+
+#subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
+>>>>>>> eca1de1b606838f8b7456c795d287660e49be6c2
