@@ -8,6 +8,8 @@ from ids import *
 from gpiozero import Button
 from pump_move import PumpMove
 
+
+
 # Run the deviceinfo script
 # pring("Hurry up, Wifi!")
 # os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
@@ -93,19 +95,24 @@ def backward():
 
 forwardbtn.when_pressed = forward
 backwardbtn.when_pressed = backward
+# ************************************************************************************************
+# BUTTON MOVE setting
+
 
 rat1=input("please scan rat1\n")
 time.sleep(5)
 rat2=input("please scan rat2\n")
 
-# del(mover)
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
 time.sleep(1) # time to put the rat in the chamber
 sTime=time.time()
 lapsed=0
 
-subprocess.call("python ./operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
+# delete mover to prevent overheating
+del(mover)
+
+subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
 while lapsed < sessionLength:
     #hms=time.strftime("%H:%M:%S", time.localtime())

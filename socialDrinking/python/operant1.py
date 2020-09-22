@@ -16,12 +16,10 @@ import busio # MPR121
 import adafruit_mpr121
 import ids
 from pump_move import PumpMove
-# from gpiozero import InputDevice
-# from gpiozero import Servo
-# from gpiozero import Button
 import RPi.GPIO as GPIO
 
-
+# import mover_subproc
+# subprocess.call("python3 ./mover_subproc.py")
 
 '''
 # connection to adafruit TB6612
@@ -51,7 +49,6 @@ GND
 GND
 
 '''
-print("inside operant1")
 
 
 parser=argparse.ArgumentParser()
@@ -137,7 +134,6 @@ vreinstate=0
 minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
 maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
 maxILI = 2 # max inter lick interval in seconds  
-
 
 
 def pumpforward(x=180): #x=80 is 60ul
@@ -267,10 +263,21 @@ while lapsed < sessionLength:
         except:
             rat="ratUnknown"
             scantime=0
+        # if not rat:
+        #     rat="ratUnknown"
+        # if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
+            
+        #     scantime=float(scantime)
+        #     f.close()
+
+        # except ValueError:
+        #     rat="ratUnknown"
+        #     scantime=0
         if not rat:
             rat="ratUnknown"
-        #print (lastActiveLick)
+        print (lastActiveLick)
         if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
+            print("second if statements")
             rat="ratUnknown"
         act[rat]+=1
         dlogger.logEvent(rat, time.time()-scantime, "ACTIVE", lapsed, nextratio[rat])
@@ -339,5 +346,9 @@ dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
 
-
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
+print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+showData("final")
+
+
+
