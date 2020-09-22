@@ -23,8 +23,8 @@ GPIO.setwarnings(False)
 
 class PumpMove:
     def __init__(self):
-        self.DIR = 20
-        self.STEP = 21
+        self.DIR = 26
+        self.STEP = 6
         self.CW = 1
         self.CCW = 0
         # self.BUTTON = 16
@@ -39,7 +39,7 @@ class PumpMove:
         self.GPIO.output(self.DIR,self.CW)
         #self.step_count = stp_cnt
         #self.delay = delay
-        self.MODE = (14,15)
+        self.MODE = (17,22)
         self.GPIO.setup(self.MODE, self.GPIO.OUT)
         self.RESOLUTION = {
                             'Full': (0,0),
@@ -64,7 +64,6 @@ class PumpMove:
             self.GPIO.output(self.MODE, self.RESOLUTION['Full'])
             self.GPIO.output(self.DIR, direction_dict[direction])
             for step in range(steps):
-                print("step = ", step)
                 self.GPIO.output(self.STEP, self.GPIO.HIGH)
                 sleep(self.delay)
                 self.GPIO.output(self.STEP, self.GPIO.LOW)
