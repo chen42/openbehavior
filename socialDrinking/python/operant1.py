@@ -15,6 +15,15 @@ import board # MPR121
 import busio # MPR121
 import adafruit_mpr121
 import ids
+# from pump_move import PumpMove
+# from gpiozero import InputDevice
+# from gpiozero import Servo
+# from gpiozero import Button
+import RPi.GPIO as GPIO
+import mover_subproc
+
+# import mover_subproc
+# subprocess.call("python3 ./mover_subproc.py")
 
 '''
 # connection to adafruit TB6612
@@ -44,8 +53,7 @@ GND
 GND
 
 '''
-
-print("inside operant")
+print("inside operant1")
 
 
 parser=argparse.ArgumentParser()
@@ -72,13 +80,13 @@ rat0ID="ratUnknown"
 
 ## initiate pump motor
 pi = pigpio.pi()
-motor = StepperMotor(pi, 17, 23, 22, 24)
-pwma = pigpio.pi()
-pwma.write(18,1)
-pwmb = pigpio.pi()
-pwmb.write(12,1)
-stby = pigpio.pi()
-stby.write(27,0)
+# motor = StepperMotor(pi, 17, 23, 22, 24)
+# pwma = pigpio.pi()
+# pwma.write(18,1)
+# pwmb = pigpio.pi()
+# pwmb.write(12,1)
+# stby = pigpio.pi()
+# stby.write(27,0)
 
 # Create I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -155,6 +163,92 @@ def showData(phase="progress"):
     print (rat0ID+": Active=" + str(act[rat0ID])+" Inactive="+str(ina[rat0ID]) + " Reward=" +  str(rew[rat0ID]) + " Timeout: "+ str(pumptimedout[rat0ID]) + "\n")
     return time.time()
 
+
+
+#################################################################
+# new pump mover code
+# mover = PumpMove()
+
+# SERVO = 2
+# RECEIVER = 26
+
+# FORWARDBUTTON = 5 #16
+# BACKWARDBUTTON = 27 #12
+
+
+# IR = 17
+# # SERVO = 27
+# sensor = InputDevice(IR, pull_up=True)
+# # servo = Servo(SERVO, initial_value=None)
+
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(FORWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.setup(BACKWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+# while True:
+#     if FORWARDBUTTON.is_pressed:
+#         mover.move("forward")
+#     elif BACKWARDBUTTON.is_pressed:
+#         mover.move("backward")
+
+#     if FORWARDBUTTON.is_pressed and BACKWARDBUTTON.is_pressed:
+#         del(mover)
+#         break
+ 
+def forward_btn_callback(channel):
+    if not GPIO.input(FORWARDBUTTON):
+        mover.move('forward')
+        # mover.forward()
+
+def backward_btn_callback(channel):
+    if not GPIO.input(BACKWARDBUTTON):
+        mover.move('backward')
+        # mover.backward()
+
+# def signal_handler(sig, frame):
+#     GPIO.cleanup()
+#     sys.exit(0)
+
+
+# # def ir_callback(channel):
+# #     # object detected
+# #     if sensor.value == 1:
+# #         print("1")
+# #         servo.min()
+# #         sleep(.5)
+# #         servo.mid()
+# #         sleep(.5)
+# #         servo.max()
+# #         sleep(.5)
+
+# #     # object disappeared
+# #     if sensor.value == 0:
+# #         print("0")
+# #         servo.max()
+# #         sleep(.5)
+# #         servo.mid()
+# #         sleep(.5)
+# #         servo.min()
+# #         sleep(.5)
+
+
+    
+#     # signal.signal(signal.SIGINT, signal_handler)
+#     # signal.pause()
+
+
+# GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING)
+# GPIO.add_event_callback(FORWARDBUTTON, forward_btn_callback)
+
+# GPIO.add_event_detect(BACKWARDBUTTON, GPIO.FALLING)
+# GPIO.add_event_callback(BACKWARDBUTTON, backward_btn_callback)
+
+# # GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING, callback=forward_btn_callback, bouncetime=100)
+# # time.sleep(.5)
+# # GPIO.add_event_callback(BACKWARDBUTTON, backward_btn_callback)
+#################################################################
+
+
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
@@ -163,6 +257,8 @@ while lapsed < sessionLength:
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
+    
+
     if act1 == 1:
         thisActiveLick=time.time()
         try:
@@ -195,7 +291,10 @@ while lapsed < sessionLength:
                 print ("timeout on " + rat)
                 pumpTimer.start()
                 subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
-                pumpforward(180) # This is 60ul
+
+                mover_subproc.forward()
+                # subprocess.call("python3 mover_subproc.py")
+                # pumpforward(180) # This is 60ul
                 updateTime=showData()
                 if schedule == "fr":
                     nextratio[rat]=ratio
@@ -230,6 +329,7 @@ while lapsed < sessionLength:
     if time.time()-updateTime > 60*5:
         updateTime=showData()
 
+
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:
@@ -237,7 +337,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
-print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
 
-#subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
+
