@@ -5,7 +5,7 @@ delay=`shuf -i1-3 -n1`
 
 # make sure wlan0 is up
 ifconfig wlan0 up
-while [ `sudo ifconfig wlan0 |grep Bcast |wc -l` -ne 1 ]
+while [ `sudo ifconfig wlan0 |grep broadcast |wc -l` -ne 1 ]
 	do
 	sleep 2
 	cnt=$[$cnt+1]
@@ -18,6 +18,13 @@ done
 # remove files older than 30 days
 rm `find /home/pi/Pies/* -mtime +30` 
 
-rsync -az -e ssh /home/pi/Pies/ root@149.56.128.122:~/Dropbox/Pies/  
+gzip /home/pi/SocialDrinking/*csv
+rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
+for i in {1..5}; do
+	echo "sleep $i min"
+	sleep ${i}s
+	rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
+done
+
 
 
