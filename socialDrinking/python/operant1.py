@@ -25,35 +25,7 @@ import mover_subproc
 # import mover_subproc
 # subprocess.call("python3 ./mover_subproc.py")
 
-'''
-# connection to adafruit TB6612
-# motor: SY28STH32-0674A
-Vcmotor --> 12V 5A power supply
-VM --> floating
-Vcc --> 3V3 Pin 17
-GND --> GND Pin 06
-PwmA --> 3V3 Pin 01
-AIN2 --> Pin 15 - BCM 22
-AIN1 --> Pin 11 - BCM 17
-STBY --> Pin 13 - BCM 27
-BIN1 --> Pin 16 - BCM 23
-BIN2 --> Pin 18 - BCM 24
-PwmB --> Pin 32 - BCM
-MotorA --> Red (A+) and Green (A-) wires
-MotorB --> Blue (B+) and Black (B-) wires
-GND of Power supply --> Pin 39 (gnd) Raspberry Pi
-
-# touch sensor  mpr121
-SDA
-SCL
-5V
-GND
-
-# Cue LED
-GND
-
-'''
-print("inside operant1")
+#print("inside operant1")
 
 
 parser=argparse.ArgumentParser()
@@ -139,7 +111,6 @@ vreinstate=0
 minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
 maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
 maxILI = 2 # max inter lick interval in seconds  
-
 
 
 def pumpforward(x=180): #x=80 is 60ul
