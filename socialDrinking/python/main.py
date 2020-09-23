@@ -100,8 +100,11 @@ backwardbtn.when_pressed = backward
 
 
 rat1=input("please scan rat1\n")
-time.sleep(5)
-rat2=input("please scan rat2\n")
+rat2 = input("please scan rat2\n")
+while(rat1 == rat2):
+    rat2 = input("prat2 and rat1 ID identical, please scan rat2 again\n")
+
+# rat2=input("please scan rat2\n")
 
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
