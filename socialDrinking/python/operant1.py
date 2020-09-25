@@ -18,38 +18,6 @@ import ids
 from pump_move import PumpMove
 import RPi.GPIO as GPIO
 
-# import mover_subproc
-# subprocess.call("python3 ./mover_subproc.py")
-
-'''
-# connection to adafruit TB6612
-# motor: SY28STH32-0674A
-Vcmotor --> 12V 5A power supply
-VM --> floating
-Vcc --> 3V3 Pin 17
-GND --> GND Pin 06
-PwmA --> 3V3 Pin 01
-AIN2 --> Pin 15 - BCM 22
-AIN1 --> Pin 11 - BCM 17
-STBY --> Pin 13 - BCM 27
-BIN1 --> Pin 16 - BCM 23
-BIN2 --> Pin 18 - BCM 24
-PwmB --> Pin 32 - BCM
-MotorA --> Red (A+) and Green (A-) wires
-MotorB --> Blue (B+) and Black (B-) wires
-GND of Power supply --> Pin 39 (gnd) Raspberry Pi
-
-# touch sensor  mpr121
-SDA
-SCL
-5V
-GND
-
-# Cue LED
-GND
-
-'''
-
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-schedule',  type=str, default="vr")
@@ -69,19 +37,8 @@ rat1ID=args.rat1ID
 rat2ID=args.rat2ID
 rat0ID="ratUnknown"
 
-# motor code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
-# pip3 install pigpio
-# git clone https://github.com/stripcode/pigpio-stepper-motor
-
 ## initiate pump motor
 pi = pigpio.pi()
-# motor = StepperMotor(pi, 17, 23, 22, 24)
-# pwma = pigpio.pi()
-# pwma.write(18,1)
-# pwmb = pigpio.pi()
-# pwmb.write(12,1)
-# stby = pigpio.pi()
-# stby.write(27,0)
 
 # Create I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -136,11 +93,6 @@ maxISI = 15  # max lapse between RFIC scan and first lick in a cluster
 maxILI = 2 # max inter lick interval in seconds  
 
 
-def pumpforward(x=180): #x=80 is 60ul
-    for i in range(x):
-        stby.write(27,1)
-        motor.doClockwiseStep()
-
 def resetPumpTimeout(rat):
     pumptimedout[rat] = False
 
@@ -157,94 +109,23 @@ def showData(phase="progress"):
     print (rat0ID+": Active=" + str(act[rat0ID])+" Inactive="+str(ina[rat0ID]) + " Reward=" +  str(rew[rat0ID]) + " Timeout: "+ str(pumptimedout[rat0ID]) + "\n")
     return time.time()
 
-
-
-#################################################################
-# new pump mover code
-# mover = PumpMove()
-
-# SERVO = 2
-# RECEIVER = 26
-
-# FORWARDBUTTON = 5 #16
-# BACKWARDBUTTON = 27 #12
-
-
-# IR = 17
-# # SERVO = 27
-# sensor = InputDevice(IR, pull_up=True)
-# # servo = Servo(SERVO, initial_value=None)
-
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(FORWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# GPIO.setup(BACKWARDBUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-# while True:
-#     if FORWARDBUTTON.is_pressed:
-#         mover.move("forward")
-#     elif BACKWARDBUTTON.is_pressed:
-#         mover.move("backward")
-
-#     if FORWARDBUTTON.is_pressed and BACKWARDBUTTON.is_pressed:
-#         del(mover)
-#         break
- 
-def forward_btn_callback(channel):
-    if not GPIO.input(FORWARDBUTTON):
-        mover.move('forward')
-        # mover.forward()
-
-def backward_btn_callback(channel):
-    if not GPIO.input(BACKWARDBUTTON):
-        mover.move('backward')
-        # mover.backward()
-
-# def signal_handler(sig, frame):
-#     GPIO.cleanup()
-#     sys.exit(0)
-
-
-# # def ir_callback(channel):
-# #     # object detected
-# #     if sensor.value == 1:
-# #         print("1")
-# #         servo.min()
-# #         sleep(.5)
-# #         servo.mid()
-# #         sleep(.5)
-# #         servo.max()
-# #         sleep(.5)
-
-# #     # object disappeared
-# #     if sensor.value == 0:
-# #         print("0")
-# #         servo.max()
-# #         sleep(.5)
-# #         servo.mid()
-# #         sleep(.5)
-# #         servo.min()
-# #         sleep(.5)
-
-
-    
-#     # signal.signal(signal.SIGINT, signal_handler)
-#     # signal.pause()
-
-
-# GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING)
-# GPIO.add_event_callback(FORWARDBUTTON, forward_btn_callback)
-
-# GPIO.add_event_detect(BACKWARDBUTTON, GPIO.FALLING)
-# GPIO.add_event_callback(BACKWARDBUTTON, backward_btn_callback)
-
-# # GPIO.add_event_detect(FORWARDBUTTON, GPIO.FALLING, callback=forward_btn_callback, bouncetime=100)
-# # time.sleep(.5)
-# # GPIO.add_event_callback(BACKWARDBUTTON, backward_btn_callback)
-#################################################################
-
-
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
+
+def get_rat_scantime(fname, thislick, lastlick):
+    try:
+        with open(fname, "r") as f:
+            (rat,scantime) = f.read().strip().split("\t")
+            scantime = float(scantime)
+    except:
+        rat="ratUnknown"
+        scantime=0
+
+    if rat is None or \
+        (thislick - lastlick[rat]>maxILI and thislick - scantime > maxISI):
+        rat = "ratUnknown"
+    
+    return rat, scantime
 
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
@@ -252,33 +133,9 @@ while lapsed < sessionLength:
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
     
-
     if act1 == 1:
         thisActiveLick=time.time()
-        try:
-            f=open("/home/pi/_active", "r")
-            (rat, scantime)=f.read().strip().split("\t")
-            scantime=float(scantime)
-            f.close()
-        except:
-            rat="ratUnknown"
-            scantime=0
-        # if not rat:
-        #     rat="ratUnknown"
-        # if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
-            
-        #     scantime=float(scantime)
-        #     f.close()
-
-        # except ValueError:
-        #     rat="ratUnknown"
-        #     scantime=0
-        if not rat:
-            rat="ratUnknown"
-        print (lastActiveLick)
-        if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
-            print("second if statements")
-            rat="ratUnknown"
+        (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
         act[rat]+=1
         dlogger.logEvent(rat, time.time()-scantime, "ACTIVE", lapsed, nextratio[rat])
         lastActiveLick[rat]=thisActiveLick
@@ -309,21 +166,11 @@ while lapsed < sessionLength:
                 elif schedule == "pr":
                     breakpoint+=1.0
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
+
+
     elif ina0 == 1:
         thisInactiveLick=time.time()
-        try:
-            f=open("/home/pi/_inactive", "r")
-            (rat, scantime)=f.read().strip().split("\t")
-            scantime=float(scantime)
-            rat=rat[2:]
-            f.close()
-        except:
-            rat="ratUnknown"
-            scantime=0
-        if not rat:
-            rat="ratUnknown"
-        if thisInactiveLick-lastInactiveLick[rat]>maxILI and thisInactiveLick-scantime>maxISI:
-            rat="ratUnknown"
+        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
         ina[rat]+=1
         dlogger.logEvent(rat, time.time()-scantime, "INACTIVE", lapsed)
         lastInactiveLick[rat]=thisInactiveLick
