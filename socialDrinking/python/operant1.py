@@ -127,7 +127,7 @@ def get_rat_scantime(fname, thislick, lastlick, active=True):
         scantime=0
 
     if rat is None or \
-        (thislick - lastlick[rat]>maxILI and thislick - scantime > maxISI):
+        (thislick - lastlick[rat]["time"]>maxILI and thislick - scantime > maxISI):
         rat = "ratUnknown"
     
     return rat, scantime
@@ -145,17 +145,16 @@ while lapsed < sessionLength:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
 
-        if( lastActiveLick[rat]["time"] == float(sTime) ):
+        if(thisActiveLick - lastActiveLick[rat]["time"] > 1):
             lastActiveLick[rat]["time"] = thisActiveLick
             lastActiveLick[rat]["scantime"] = scantime
-            continue
+        else:
+            act[rat]+=1
+            dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
+            lastActiveLick[rat]["time"]=thisActiveLick
+            lastActiveLick[rat]["scantime"]=scantime
 
-        act[rat]+=1
-        dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
-        lastActiveLick[rat]["time"]=thisActiveLick
-        lastActiveLick[rat]["scantime"]=scantime
-
-        updateTime=showData()
+            updateTime=showData()
         #blinkCueLED(0.2)
         if not pumptimedout[rat]:
             touchcounter[rat] += 1 # for issuing rewards
@@ -187,18 +186,17 @@ while lapsed < sessionLength:
     elif ina0 == 1:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick, active=False)
-
-        if( lastInactiveLick[rat]["time"] == float(sTime) ):
+        if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
             lastInactiveLick[rat]["time"] = thisInactiveLick
             lastInactiveLick[rat]["scantime"] = scantime
-            continue
+        else:
+            ina[rat]+=1
+            dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
+            lastInactiveLick[rat]["time"]=thisInactiveLick
+            lastInactiveLick[rat]["scantime"]=scantime
 
-        ina[rat]+=1
-        dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
-        lastInactiveLick[rat]["time"]=thisInactiveLick
-        lastInactiveLick[rat]["scantime"]=scantime
+            updateTime=showData()
 
-        updateTime=showData()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick
