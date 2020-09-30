@@ -82,15 +82,18 @@ nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
 rew={rat0ID:0, rat1ID:0, rat2ID:0}
 act={rat0ID:0, rat1ID:0, rat2ID:0}
 ina={rat0ID:0, rat1ID:0, rat2ID:0}
-lastActiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
-lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+# lastActiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+# lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+lastActiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
+lastInactiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
+
 pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
 lapsed=0  # time since program start
 updateTime=0 # time since last data print out 
 vreinstate=0
 minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
 maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
-maxILI = 2 # max inter lick interval in seconds  
+maxILI = 1 # max inter lick interval in seconds  
 
 
 def resetPumpTimeout(rat):
@@ -129,6 +132,9 @@ def get_rat_scantime(fname, thislick, lastlick, active=True):
     
     return rat, scantime
 
+# prev_act_lick = 0
+# prev_inact_lick = 0
+
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
@@ -138,12 +144,17 @@ while lapsed < sessionLength:
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
-        act[rat]+=1
-        recorded_time = time.time() - scantime
-        if(recorded_time > 1):
+
+        if( lastActiveLick[rat]["time"] == float(sTime) ):
+            lastActiveLick[rat]["time"] = thisActiveLick
+            lastActiveLick[rat]["scantime"] = scantime
             continue
-        dlogger.logEvent(rat,  recorded_time, "ACTIVE", lapsed, nextratio[rat])
-        lastActiveLick[rat]=thisActiveLick
+
+        act[rat]+=1
+        dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
+        lastActiveLick[rat]["time"]=thisActiveLick
+        lastActiveLick[rat]["scantime"]=scantime
+
         updateTime=showData()
         #blinkCueLED(0.2)
         if not pumptimedout[rat]:
@@ -176,12 +187,17 @@ while lapsed < sessionLength:
     elif ina0 == 1:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick, active=False)
-        ina[rat]+=1
-        recorded_time = time.time() - scantime
-        if(recorded_time > 1):
+
+        if( lastInactiveLick[rat]["time"] == float(sTime) ):
+            lastInactiveLick[rat]["time"] = thisInactiveLick
+            lastInactiveLick[rat]["scantime"] = scantime
             continue
-        dlogger.logEvent(rat, recorded_time, "INACTIVE", lapsed)
-        lastInactiveLick[rat]=thisInactiveLick
+
+        ina[rat]+=1
+        dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
+        lastInactiveLick[rat]["time"]=thisInactiveLick
+        lastInactiveLick[rat]["scantime"]=scantime
+
         updateTime=showData()
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
