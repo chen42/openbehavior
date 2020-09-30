@@ -139,7 +139,10 @@ while lapsed < sessionLength:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
         act[rat]+=1
-        dlogger.logEvent(rat, time.time()-scantime, "ACTIVE", lapsed, nextratio[rat])
+        recorded_time = time.time() - scantime
+        if(recorded_time > 1):
+            continue
+        dlogger.logEvent(rat,  recorded_time, "ACTIVE", lapsed, nextratio[rat])
         lastActiveLick[rat]=thisActiveLick
         updateTime=showData()
         #blinkCueLED(0.2)
@@ -174,7 +177,10 @@ while lapsed < sessionLength:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick, active=False)
         ina[rat]+=1
-        dlogger.logEvent(rat, time.time()-scantime, "INACTIVE", lapsed)
+        recorded_time = time.time() - scantime
+        if(recorded_time > 1):
+            continue
+        dlogger.logEvent(rat, recorded_time, "INACTIVE", lapsed)
         lastInactiveLick[rat]=thisInactiveLick
         updateTime=showData()
     # keep this here so that the PR data file will record lapse from sesion start 
