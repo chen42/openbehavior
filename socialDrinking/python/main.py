@@ -99,9 +99,10 @@ backwardbtn.when_pressed = backward
 # BUTTON MOVE setting
 
 
-rat1=input("please scan rat1\n")
+rat1 = input("please scan rat1\n")
 rat2 = input("please scan rat2\n")
-while(rat1 == rat2):
+
+while(rat1 == rat2[2:] or rat1 == rat2):
     rat2 = input("prat2 and rat1 ID identical, please scan rat2 again\n")
 
 # rat2=input("please scan rat2\n")
