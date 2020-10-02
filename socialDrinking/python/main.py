@@ -8,82 +8,12 @@ from ids import *
 from gpiozero import Button
 from pump_move import PumpMove
 
-
-
-# Run the deviceinfo script
-# pring("Hurry up, Wifi!")
-# os.system("/home/pi/openbehavior/wifi-network/deviceinfo.sh")
-
-# get date and time 
-datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-date=time.strftime("%Y-%m-%d", time.localtime())
-
-RatID=input("please scan a command RFID\n")
-
-# the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
-if RatID[-1:]=="E":
-    schedule="pr"
-    breakpoint=2.0
-    timeout = 20
-    nextratio=int(5*2.72**(breakpoint/5)-5)
-    sessionLength=10*60 # session ends after 10 min inactivity
-    ratio=""
-    #signal motion sensor to keep recording until this is changed
-    with open ("/home/pi/prend", "w") as f:
-        f.write("no")
-elif RatID[-1] == "K":
-    schedule="fr"
-    ratio = 2
-    timeout =  20
-    # sessionLength=60*60*1 # one hour assay
-    sessionLength=15
-    nextratio=ratio
-elif RatID[-1:]=="F":
-    schedule="fr"
-    ratio = 2
-    timeout =  20
-    sessionLength=60*60*1 # one hour assay
-    nextratio=ratio
-elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7":
-    schedule="ext"
-    timeout=0
-    ratio=1000000
-    nextratio=1000000
-    sessionLength=60*60*1
-    print("Run Ext"+str(ratio)+" Prog.\nPls Scan Rat")
-elif RatID=="2E90EDD21796":
-    schedule="vr"
-    ratio = 10
-    timeout =  20
-    sessionLength=60*60*22 # twenty two hour assay
-    nextratio=ratio
-    print("Run VR"+str(ratio)+"22h\nPls Scan Rat")
-    time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID=="0400F16C5DC4":
-    vreinstate=1
-    schedule="vr"
-    ratio = 5 
-    timeout = 1 
-    sessionLength=60*60*1 # one hour assay
-    nextratio=ratio
-    print("Run VREINST\n"+"Pls Scan Rat")
-    time.sleep(3)
-    RatID=ReadRFID("/dev/ttyAMA0")
-else: # vr
-    schedule="vr"
-    ratio=10
-    nextratio=ratio
-    timeout = 20
-    sessionLength=60*60*1 # one hour assay
-
-
-
+# start the pump  
 mover = PumpMove()
-
 forwardbtn = Button("GPIO5")
 backwardbtn = Button("GPIO27")
-
+# ************************************************************************************************
+# BUTTON MOVE setting
 
 def forward():
     while forwardbtn.value == 1:
@@ -95,17 +25,79 @@ def backward():
 
 forwardbtn.when_pressed = forward
 backwardbtn.when_pressed = backward
-# ************************************************************************************************
-# BUTTON MOVE setting
 
 
+# get date and time 
+datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+date=time.strftime("%Y-%m-%d", time.localtime())
+
+RatID=input("please scan a command RFID\n")
+
+# the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
+if RatID[-1:]=="F": # PR
+    schedule="pr"
+    breakpoint=2
+    timeout = 20
+    nextratio=int(5*2.72**(breakpoint/5)-5)
+    sessionLength=20*60 # session ends after 20 min inactivity
+    ratio=""
+    #signal motion sensor to keep recording until this is changed
+    with open ("/home/pi/prend", "w") as f:
+        f.write("no")
+elif RatID[-1:] == "1":  #FR5 1h
+    schedule="fr"
+    ratio = 5
+    timeout =  20
+    sessionLength=60*60*1 # one hour assay
+    nextratio=ratio
+elif RatID[-1:]=="F": # FR5, 16h 
+    schedule="fr"
+    ratio = 5
+    timeout =  20
+    sessionLength=60*60*16 # one hour assay
+    nextratio=ratio
+elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7": # extinction
+    schedule="ext"
+    timeout=0
+    ratio=1000000
+    nextratio=1000000
+    sessionLength=60*60*1
+elif RatID[-1:]=="A": #VR10, 1h
+    schedule="vr"
+    ratio = 10
+    timeout =  20
+    sessionLength=60*60*1 #
+    nextratio=ratio
+elif RatID[-1:]=="B": #VR10, 4h
+    schedule="vr"
+    ratio = 10
+    timeout =  20
+    sessionLength=60*60*4 #
+    nextratio=ratio
+elif RatID[-1:]=="C": #VRreinstate, 4h
+    vreinstate=1
+    schedule="vr"
+    ratio = 5
+    timeout = 1
+    sessionLength=60*60*4 # one hour assay
+    nextratio=ratio
+    RatID=ReadRFID("/dev/ttyAMA0")
+else: # vr10 16h
+    schedule="vr"
+    ratio=10
+    nextratio=ratio
+    timeout = 20
+    sessionLength=60*60*16
+
+h=str(int(sessionLength/3600))
+print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
+
+time.sleep(3)
 rat1 = input("please scan rat1\n")
 rat2 = input("please scan rat2\n")
 
-while(rat1 == rat2[2:] or rat1 == rat2):
-    rat2 = input("prat2 and rat1 ID identical, please scan rat2 again\n")
-
-# rat2=input("please scan rat2\n")
+while(rat1[-8:] == rat2[-8:]):
+    rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
 
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
@@ -119,7 +111,6 @@ del(mover)
 subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
 while lapsed < sessionLength:
-    #hms=time.strftime("%H:%M:%S", time.localtime())
     lapsed=time.time()-sTime
     try:
         rfid=input("rfid waiting")
