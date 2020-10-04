@@ -11,8 +11,8 @@ class LickLogger:
         self.startTime=time.strftime("%Y-%m-%d\t%H:%M:%S", time.localtime())
 
     def createDataFile(self, schedule, ratIDs):
-        date=time.strftime("%Y-%m-%d\t%H_%M_%S", time.localtime())
-        self.datafile = DATA_DIR + DATA_PREFIX + "_" + date + "_" + str(self.devID) + '_S' + str(self.sessID) +  "_" + schedule + "_" + str(ratIDs) + '.csv'
+        date=time.strftime("%Y-%m-%d_%H_%M_%S", time.localtime())
+        self.datafile = DATA_DIR + DATA_PREFIX + date + "_" + str(self.devID) + '_S' + str(self.sessID) +  "_" + schedule + "_" + str(ratIDs) + '.csv'
         print ("\nData file location:\n", self.datafile)
         # open data file
         with open(self.datafile,"a") as f:
