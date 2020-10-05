@@ -96,16 +96,20 @@ while True:
         print ("Timer started\n")
         while (tail_out==False):
             tail_out= GPIO.input(Tail)
-        elapsed=time.time()-sTime + 0.4 # calibrated at 2s and 10s  found this consistent system error        
+            time.sleep(0.02)
+            elapsed=time.time()-sTime + 0.4 # calibrated at 2s and 10s  found this consistent system error        
+            if  (elapsed>10):
+                print ("Maximum latency of 10 s reached\n");
+                tail_out=True
         elapsed=round(elapsed, 3)
         temp2=read_temp()
         temp=round((temp1+temp2)/2, 3)
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
         line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
-        if (ratid in latency.keys()): 
+        if (ratid in latency.keys()):
             latency[ratid] += str(elapsed) + ", "
-        else: 
+        else:
             latency[ratid] = str(elapsed) + ", "
         print ("Rat is "+ ratid+", latency = "+ latency[ratid])
         next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
@@ -138,7 +142,7 @@ while True:
             print ("!!! RFID is not a valid rat ID, Data not saved");
             next="n"
             savedata=0
-        if savedata: 
+        if savedata:
             with open(datafile, "a") as f:
                 f.write(line)
                 f.close()
