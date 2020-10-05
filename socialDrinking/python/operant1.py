@@ -92,8 +92,8 @@ lapsed=0  # time since program start
 updateTime=0 # time since last data print out 
 vreinstate=0
 minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
-maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
-maxILI = 1 # max inter lick interval in seconds  
+maxISI = 15  # max lapse between RFID scan and first lick in a cluster 
+maxILI = 3 # max interval between licks used to turn an RFID into unknown.   
 
 
 def resetPumpTimeout(rat):
@@ -127,20 +127,17 @@ def get_rat_scantime(fname, thislick, lastlick, active=True):
         scantime=0
 
     if rat is None or \
-        (thislick - lastlick[rat]["time"]>maxILI and thislick - scantime > maxISI):
+        (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
         rat = "ratUnknown"
-    
     return rat, scantime
 
-# prev_act_lick = 0
-# prev_inact_lick = 0
 
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
-    
+
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
@@ -181,8 +178,6 @@ while lapsed < sessionLength:
                 elif schedule == "pr":
                     breakpoint+=1.0
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
-
-
     elif ina0 == 1:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick, active=False)
@@ -194,7 +189,6 @@ while lapsed < sessionLength:
             dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
             lastInactiveLick[rat]["time"]=thisInactiveLick
             lastInactiveLick[rat]["scantime"]=scantime
-
             updateTime=showData()
 
     # keep this here so that the PR data file will record lapse from sesion start 
@@ -214,7 +208,6 @@ dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
-
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
 print(ids.devID+  "Session"+ids.sesID + " Done!\n")
 showData("final")
