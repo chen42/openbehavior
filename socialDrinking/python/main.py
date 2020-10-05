@@ -44,37 +44,37 @@ if RatID[-1:]=="F": # PR
     #signal motion sensor to keep recording until this is changed
     with open ("/home/pi/prend", "w") as f:
         f.write("no")
-elif RatID[-1:] == "1":  #FR5 1h
+elif RatID[-1:] == "A":  #FR5 1h
     schedule="fr"
     ratio = 5
     timeout =  20
     sessionLength=60*60*1 # one hour assay
     nextratio=ratio
-elif RatID[-1:]=="F": # FR5, 16h 
+elif RatID[-1:]=="B": # FR5, 16h 
     schedule="fr"
     ratio = 5
     timeout =  20
     sessionLength=60*60*16 # one hour assay
     nextratio=ratio
-elif RatID=="2E90EDD20283" or RatID=="2E90EDD226A7": # extinction
+elif RatID[-1:]=="C": # extinction
     schedule="ext"
     timeout=0
     ratio=1000000
     nextratio=1000000
     sessionLength=60*60*1
-elif RatID[-1:]=="A": #VR10, 1h
+elif RatID[-1:]=="1": #VR10, 1h
     schedule="vr"
     ratio = 10
     timeout =  20
     sessionLength=60*60*1 #
     nextratio=ratio
-elif RatID[-1:]=="B": #VR10, 4h
+elif RatID[-1:]=="4": #VR10, 4h
     schedule="vr"
     ratio = 10
     timeout =  20
     sessionLength=60*60*4 #
     nextratio=ratio
-elif RatID[-1:]=="C": #VRreinstate, 4h
+elif RatID[-1:]=="D": #VRreinstate, 4h
     vreinstate=1
     schedule="vr"
     ratio = 5
