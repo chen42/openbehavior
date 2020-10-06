@@ -16,7 +16,7 @@ while [ `sudo ifconfig wlan0 |grep broadcast |wc -l` -ne 1 ]
 done
 
 # remove files older than 30 days
-rm `find /home/pi/Pies/* -mtime +30` 
+rm `find /home/pi/SocialDrinking/* -mtime +30` 
 
 gzip /home/pi/SocialDrinking/*csv
 rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
