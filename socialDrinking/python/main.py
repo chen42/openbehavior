@@ -122,9 +122,7 @@ while lapsed < sessionLength:
             inactive.write(record)
             inactive.close()
         with open(ROOT + "/"+date+"_inactive", "a+") as inactive:
-            print ("\n====inactive====")
-            print ("|| "+rfid )
-            print (  "================")
+            print ("\n    inactive spout " + rfid + "\t")
             inactive.write(record)
             inactive.close()
 
@@ -134,10 +132,7 @@ while lapsed < sessionLength:
             active.write(record)
             active.close()
         with open(ROOT+"/"+date+"_active", "a+") as active:
-            print ("\n====active====")
-            print ("|| "+rfid )
-            print ("==============")
+            print ("\n      active spout " + rfid + "\t")
             active.write(record)
             active.close()
 
-#subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
