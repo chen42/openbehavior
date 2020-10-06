@@ -16,6 +16,7 @@ import busio # MPR121
 import adafruit_mpr121
 import ids
 from pump_move import PumpMove
+from gpiozero import DigitalInputDevice
 import RPi.GPIO as GPIO
 
 
@@ -77,6 +78,8 @@ dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 sTime = time.time()
 
 # GLOBAL VARIABLES
+FORWARD_LIMIT_BTN = 23
+BACKWARD_LIMIT_BTN = 24
 FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
 nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
@@ -87,6 +90,11 @@ ina={rat0ID:0, rat1ID:0, rat2ID:0}
 # lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
 lastActiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
 lastInactiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
+
+
+FORWARD_LIMIT = DigitalInputDevice(FORWARD_LIMIT_BTN)
+BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+
 
 pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
 lapsed=0  # time since program start
@@ -133,6 +141,7 @@ def get_rat_scantime(fname, thislick, lastlick, active=True):
     return rat, scantime
 
 
+
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
@@ -173,6 +182,20 @@ while lapsed < sessionLength:
                     mover = PumpMove()
                     mover.move("forward")
                     del(mover)
+
+                # # when the frame bump to the forward micro switch:
+                # # stop moving forward and being moving backward to the original position
+                # mover = PumpMove()
+                # if(FORWARD_LIMIT.value):
+                #     # while the frame has not bump to the backward micro switch:
+                #     # keep moving backward
+                #     while(BACKWARD_LIMIT.value == 0):
+                #         mover.move("backward")
+                # else: # otherwise, move forward
+                #     mover.move("forward")
+                #     # set the move backward flag to true
+                # del(mover)
+
 
                 updateTime=showData()
                 if schedule == "fr":
