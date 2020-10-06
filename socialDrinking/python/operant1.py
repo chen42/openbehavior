@@ -77,6 +77,7 @@ dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 sTime = time.time()
 
 # GLOBAL VARIABLES
+FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
 nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
 rew={rat0ID:0, rat1ID:0, rat2ID:0}
@@ -166,9 +167,12 @@ while lapsed < sessionLength:
                 pumpTimer.start()
                 subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
 
-                mover = PumpMove()
-                mover.move("forward")
-                del(mover)
+                global FORWARD_COUNTER
+                FORWARD_COUNTER = FORWARD_COUNTER + 1
+                if(FORWARD_COUNTER <= 115):
+                    mover = PumpMove()
+                    mover.move("forward")
+                    del(mover)
 
                 updateTime=showData()
                 if schedule == "fr":
