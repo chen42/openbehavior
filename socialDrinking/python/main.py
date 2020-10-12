@@ -7,11 +7,20 @@ import os
 from ids import *
 from gpiozero import Button
 from pump_move import PumpMove
+from gpiozero import DigitalInputDevice
 
 # start the pump  
 mover = PumpMove()
 forwardbtn = Button("GPIO5")
 backwardbtn = Button("GPIO27")
+
+BACKWARD_LIMIT_BTN = 23
+BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+
+# ************************************************************************************************
+# BUTTON MOVE setting
+
+BA
 # ************************************************************************************************
 # BUTTON MOVE setting
 
@@ -20,7 +29,7 @@ def forward():
         mover.move("forward")
 
 def backward():
-    while backwardbtn.value == 1:
+    while BACKWARD_LIMIT.value != 1:
         mover.move("backward")
 
 forwardbtn.when_pressed = forward

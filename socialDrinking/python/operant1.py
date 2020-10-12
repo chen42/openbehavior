@@ -79,7 +79,7 @@ sTime = time.time()
 
 # GLOBAL VARIABLES
 FORWARD_LIMIT_BTN = 24
-BACKWARD_LIMIT_BTN = 23
+# BACKWARD_LIMIT_BTN = 23
 FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
 nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
@@ -93,7 +93,7 @@ lastInactiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":fl
 
 
 FORWARD_LIMIT = DigitalInputDevice(FORWARD_LIMIT_BTN)
-BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+# BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
 
 
 pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
