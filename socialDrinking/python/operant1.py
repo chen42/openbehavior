@@ -78,8 +78,8 @@ dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 sTime = time.time()
 
 # GLOBAL VARIABLES
-FORWARD_LIMIT_BTN = 23
-BACKWARD_LIMIT_BTN = 24
+FORWARD_LIMIT_BTN = 24
+BACKWARD_LIMIT_BTN = 23
 FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
 nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
@@ -176,13 +176,18 @@ while lapsed < sessionLength:
                 pumpTimer.start()
                 subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
 
-                global FORWARD_COUNTER
-                FORWARD_COUNTER = FORWARD_COUNTER + 1
-                if(FORWARD_COUNTER <= 115):
+                # global FORWARD_COUNTER
+                # FORWARD_COUNTER = FORWARD_COUNTER + 1
+                # if(FORWARD_COUNTER <= 115):
+                #     mover = PumpMove()
+                #     mover.move("forward")
+                #     del(mover)
+
+                if(not FORWARD_LIMIT.value):
                     mover = PumpMove()
                     mover.move("forward")
                     del(mover)
-
+                
                 # # when the frame bump to the forward micro switch:
                 # # stop moving forward and being moving backward to the original position
                 # mover = PumpMove()
