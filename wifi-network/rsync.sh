@@ -18,11 +18,11 @@ done
 # remove files older than 30 days
 rm `find /home/pi/SocialDrinking/* -mtime +30` 
 
-gzip /home/pi/SocialDrinking/*csv
+gzip -f /home/pi/SocialDrinking/*csv
 rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
 for i in {1..5}; do
 	echo "sleep $i min"
-	sleep ${i}s
+	sleep ${i}m
 	rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
 done
 
