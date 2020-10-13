@@ -230,13 +230,17 @@ while lapsed < sessionLength:
     if time.time()-updateTime > 60*5:
         updateTime=showData()
 
-
+    if(FORWARD_LIMIT.value):
+        break
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:
 #        f.write("yes")
 
-dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
+if(FORWARD_LIMIT.value):
+    dlogger.logEvent("out of syringe", time.time(), "SessionEnd",time.time() - sTime)
+else:
+    dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
