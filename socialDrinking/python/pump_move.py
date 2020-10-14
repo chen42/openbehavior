@@ -38,6 +38,7 @@ class PumpMove:
         #self.delay = delay
         self.MODE = (17,22)
         self.GPIO.setup(self.MODE, self.GPIO.OUT)
+        # self.GPIO.setup(23, GPIO.IN, pull_up_down=)
         self.RESOLUTION = {
                             'Full': (0,0),
                             'Half': (1,0),
@@ -75,7 +76,8 @@ class PumpMove:
         # elif direction == "backward":
         
     def __del__(self):
-        self.GPIO.cleanup()
+        self.GPIO.cleanup(self.MODE)
+
 
 #     GPIO.add_event_detect(IR, GPIO.FALLING, callback=ir_callback, bouncetime=100)
 

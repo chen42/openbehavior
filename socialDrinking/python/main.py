@@ -14,7 +14,7 @@ mover = PumpMove()
 forwardbtn = Button("GPIO5")
 backwardbtn = Button("GPIO27")
 
-BACKWARD_LIMIT_BTN = 23
+BACKWARD_LIMIT_BTN = "GPIO23"
 BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
 
 # ************************************************************************************************
