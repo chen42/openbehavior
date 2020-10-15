@@ -108,6 +108,7 @@ while(rat1[-8:] == rat2[-8:]):
     rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
 
 
+
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
 time.sleep(1) # time to put the rat in the chamber
 sTime=time.time()
@@ -118,6 +119,7 @@ del(mover)
 
 subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
+RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(self.devID)+ "_S"+str(self.sessID)+ "_RFID.csv"
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
     try:
@@ -129,7 +131,7 @@ while lapsed < sessionLength:
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
-        with open(ROOT + "/"+date+"_inactive", "a+") as inactive:
+        with open(RFIDFILE, "a+") as inactive:
             print ("\n    inactive spout " + rfid + "\t")
             inactive.write(record)
             inactive.close()
@@ -139,7 +141,7 @@ while lapsed < sessionLength:
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
             active.close()
-        with open(ROOT+"/"+date+"_active", "a+") as active:
+        with open(RFIDFILE, "a+") as active:
             print ("\n      active spout " + rfid + "\t")
             active.write(record)
             active.close()
