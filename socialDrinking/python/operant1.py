@@ -79,6 +79,7 @@ sTime = time.time()
 
 # GLOBAL VARIABLES
 FORWARD_LIMIT_BTN = 24
+FORWARD_LIMIT_REACHED = False
 # BACKWARD_LIMIT_BTN = 23
 FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
@@ -92,7 +93,9 @@ lastActiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":floa
 lastInactiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
 
 
-FORWARD_LIMIT = DigitalInputDevice(FORWARD_LIMIT_BTN)
+# FORWARD_LIMIT = DigitalInputDevice(18)
+FORWARD_LIMIT = GPIO.setup(FORWARD_LIMIT_BTN, GPIO.IN, pull_up_down= GPIO.PUD_DOWN)
+
 # BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
 
 
@@ -142,12 +145,20 @@ def get_rat_scantime(fname, thislick, lastlick, active=True):
 
 
 
+# FORWARD_LIMIT = DigitalInputDevice("GPIO24")
+
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
 
+    
+
+    if GPIO.input(FORWARD_LIMIT_BTN):
+        FORWARD_LIMIT_REACHED = True
+        # dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+    # else:
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
@@ -157,7 +168,10 @@ while lapsed < sessionLength:
             lastActiveLick[rat]["scantime"] = scantime
         else:
             act[rat]+=1
-            dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
+            if FORWARD_LIMIT_REACHED:
+                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+            else:
+                dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
             lastActiveLick[rat]["time"]=thisActiveLick
             lastActiveLick[rat]["scantime"]=scantime
 
@@ -168,7 +182,6 @@ while lapsed < sessionLength:
             if touchcounter[rat] >= nextratio[rat]  and rat !="ratUnknown":
                 rew[rat]+=1
                 #print("reward for "+rat+":"+str(rew[rat]))
-                dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
                 touchcounter[rat] = 0
                 pumptimedout[rat] = True
                 pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
@@ -176,31 +189,14 @@ while lapsed < sessionLength:
                 pumpTimer.start()
                 subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
 
-                # global FORWARD_COUNTER
-                # FORWARD_COUNTER = FORWARD_COUNTER + 1
-                # if(FORWARD_COUNTER <= 115):
-                #     mover = PumpMove()
-                #     mover.move("forward")
-                #     del(mover)
-
-                if(not FORWARD_LIMIT.value):
+                # if(not FORWARD_LIMIT.value):
+                if FORWARD_LIMIT_REACHED:
+                    dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+                else:
+                    dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
                     mover = PumpMove()
                     mover.move("forward")
                     del(mover)
-                
-                # # when the frame bump to the forward micro switch:
-                # # stop moving forward and being moving backward to the original position
-                # mover = PumpMove()
-                # if(FORWARD_LIMIT.value):
-                #     # while the frame has not bump to the backward micro switch:
-                #     # keep moving backward
-                #     while(BACKWARD_LIMIT.value == 0):
-                #         mover.move("backward")
-                # else: # otherwise, move forward
-                #     mover.move("forward")
-                #     # set the move backward flag to true
-                # del(mover)
-
 
                 updateTime=showData()
                 if schedule == "fr":
@@ -218,7 +214,11 @@ while lapsed < sessionLength:
             lastInactiveLick[rat]["scantime"] = scantime
         else:
             ina[rat]+=1
-            dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
+
+            if FORWARD_LIMIT_REACHED:
+                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+            else:
+                dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
             lastInactiveLick[rat]["time"]=thisInactiveLick
             lastInactiveLick[rat]["scantime"]=scantime
             updateTime=showData()
@@ -230,17 +230,12 @@ while lapsed < sessionLength:
     if time.time()-updateTime > 60*5:
         updateTime=showData()
 
-    if(FORWARD_LIMIT.value):
-        break
 # signal the motion script to stop recording
 #if schedule=='pr':
 #    with open("/home/pi/prend", "w") as f:
 #        f.write("yes")
 
-if(FORWARD_LIMIT.value):
-    dlogger.logEvent("out of syringe", time.time(), "SessionEnd",time.time() - sTime)
-else:
-    dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
+dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")

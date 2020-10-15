@@ -14,7 +14,7 @@ mover = PumpMove()
 forwardbtn = Button("GPIO5")
 backwardbtn = Button("GPIO27")
 
-BACKWARD_LIMIT_BTN = 23
+BACKWARD_LIMIT_BTN = "GPIO23"
 BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
 
 # ************************************************************************************************
@@ -101,8 +101,8 @@ h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
 time.sleep(3)
-rat1 = input("please scan rat1\n")
-rat2 = input("please scan rat2\n")
+rat1 = input("please scan rat1\n")[-8:]
+rat2 = input("please scan rat2\n")[-8:]
 
 while(rat1[-8:] == rat2[-8:]):
     rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
