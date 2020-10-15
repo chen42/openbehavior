@@ -119,7 +119,8 @@ del(mover)
 
 subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
-RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(self.devID)+ "_S"+str(self.sessID)+ "_RFID.csv"
+ids = IDS()
+RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesID)+ "_RFID.csv"
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
     try:
@@ -127,7 +128,7 @@ while lapsed < sessionLength:
     except EOFError:
         break
     if (len(rfid)==10):
-        record=rfid+"\t"+str(time.time())+"\n"
+        record=rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
@@ -137,7 +138,7 @@ while lapsed < sessionLength:
             inactive.close()
 
     if (len(rfid)==8):
-        record=rfid+"\t"+str(time.time())+"\n"
+        record=rfid+"\t"+str(time.time())+ "\tactive\t" + str(lapsed)+ "\n"
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
             active.close()

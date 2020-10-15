@@ -130,7 +130,7 @@ def showData(phase="progress"):
 def get_rat_scantime(fname, thislick, lastlick, active=True):
     try:
         with open(fname, "r") as f:
-            (rat,scantime) = f.read().strip().split("\t")
+            (rat,scantime, dummy) = f.read().strip().split("\t")
             if not active:
                 rat = rat[2:]
             scantime = float(scantime)
