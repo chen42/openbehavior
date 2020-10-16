@@ -136,11 +136,6 @@ def showData(phase="progress"):
     if phase=="final":
         print(ids.devID+  " Session_"+str(ids.sesID))
      
-    # print ("[" + str(minsLeft) + " min Left]")
-    # print (rat1ID+": Active=" + str(act[rat1ID])+" Inactive="+str(ina[rat1ID]) + " Reward=" +  str(rew[rat1ID]) + " Timeout: "+ str(pumptimedout[rat1ID]))
-    # print (rat2ID+": Active=" + str(act[rat2ID])+" Inactive="+str(ina[rat2ID]) + " Reward=" +  str(rew[rat2ID]) + " Timeout: "+ str(pumptimedout[rat2ID]) + "\n")
-    # print (rat0ID+": Active=" + str(act[rat0ID])+" Inactive="+str(ina[rat0ID]) + " Reward=" +  str(rew[rat0ID]) + " Timeout: "+ str(pumptimedout[rat0ID]) + "\n")
-
     print ("\x1b[0;31;40m" + \
            "[" + str(minsLeft) + " min Left]" + \
            "\x1b[0m")
@@ -148,47 +143,6 @@ def showData(phase="progress"):
     colored_print(rat1ID, act[rat1ID], ina[rat1ID], rew[rat1ID], pumptimedout[rat1ID])
     colored_print(rat2ID, act[rat2ID], ina[rat2ID], rew[rat2ID], pumptimedout[rat2ID])
     colored_print(rat0ID, act[rat0ID], ina[rat0ID], rew[rat0ID], pumptimedout[rat0ID])
-
-
-    # print ("\x1b[0;34;40m" + \
-    #        rat1ID+": Active=" + str(act[rat1ID])+ \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;33;40m" + \
-    #        " Inactive="+str(ina[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;32;40m" + \
-    #        " Reward=" +  str(rew[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;35;40m" + \
-    #        " Timeout: "+ str(pumptimedout[rat1ID]) + \
-    #        "\x1b[0m"
-    #       )
-    # print ("\x1b[0;34;40m" + \
-    #        rat1ID+": Active=" + str(act[rat1ID])+ \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;33;40m" + \
-    #        " Inactive="+str(ina[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;32;40m" + \
-    #        " Reward=" +  str(rew[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;35;40m" + \
-    #        " Timeout: "+ str(pumptimedout[rat1ID]) + \
-    #        "\x1b[0m"
-    #       )
-    # print ("\x1b[0;34;40m" + \
-    #        rat1ID+": Active=" + str(act[rat1ID])+ \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;33;40m" + \
-    #        " Inactive="+str(ina[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;32;40m" + \
-    #        " Reward=" +  str(rew[rat1ID]) + \
-    #        "\x1b[0m" + \
-    #        "\x1b[0;35;40m" + \
-    #        " Timeout: "+ str(pumptimedout[rat1ID]) + \
-    #        "\x1b[0m"
-    #       )
 
     return time.time()
 
