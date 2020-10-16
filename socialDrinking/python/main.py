@@ -104,7 +104,7 @@ time.sleep(3)
 rat1 = input("please scan rat1\n")[-8:]
 rat2 = input("please scan rat2\n")[-8:]
 
-while(rat1[-8:] == rat2[-8:]):
+while(rat1 == rat2):
     rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
 
 
@@ -128,7 +128,7 @@ while lapsed < sessionLength:
     except EOFError:
         break
     if (len(rfid)==10):
-        record=rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
+        record=rfid[-8:]+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()

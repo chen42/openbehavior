@@ -127,12 +127,10 @@ def showData(phase="progress"):
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
-def get_rat_scantime(fname, thislick, lastlick, active=True):
+def get_rat_scantime(fname, thislick, lastlick):
     try:
         with open(fname, "r") as f:
             (rat, scantime, dummy1,dummy2) = f.read().strip().split("\t")
-            if not active:
-                rat = rat[2:]
             scantime = float(scantime)
     except:
         rat="ratUnknown"
@@ -208,7 +206,7 @@ while lapsed < sessionLength:
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
         thisInactiveLick=time.time()
-        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick, active=False)
+        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
         if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
             lastInactiveLick[rat]["time"] = thisInactiveLick
             lastInactiveLick[rat]["scantime"] = scantime
