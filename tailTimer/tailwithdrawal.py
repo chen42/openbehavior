@@ -63,7 +63,7 @@ if user=="00fb4fb3":
     user="Hao Chen"
 if user=="00fbb0b2":
     user="Mallory Udell"
-if user=="00fbf277":
+if user=="00fbf277" or user[-4:] =="fef0":
     user="Paige Lemen"
 print ("\nWelcome, " + user + "\n")
 targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
@@ -114,13 +114,13 @@ while True:
         print ("Rat is "+ ratid+", latency = "+ latency[ratid])
         next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
         ## RFID equivalants
-        if next=="00fbf27e":
+        if next=="00fbf27e" or next[-2:]=="71":
             next="n"
-        if next=="00fb2588":
+        if next=="00fb2588" or next[-2:]=="92":
             next="d"
-        if next=="00fb8874":
+        if next=="00fb8874" or next[-2:]=="5a":
             next="e"
-        if next=="00fb3131":
+        if next=="00fb3131" or next[-2:]=="6c":
             next="a"
         ## 
         if (next=="e"):
@@ -138,7 +138,7 @@ while True:
             print ("!!! temperature not in target range, Data not saved")
             next="a"
             savedata=0
-        if ratid[0:4]=="00fb":
+        if ratid[0:4]=="00fb" or ratid[0:4]=="3200":
             print ("!!! RFID is not a valid rat ID, Data not saved");
             next="n"
             savedata=0
