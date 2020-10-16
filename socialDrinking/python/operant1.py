@@ -182,6 +182,7 @@ while lapsed < sessionLength:
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
+        print("active rfid: {}\n".format(rat))
 
         if(thisActiveLick - lastActiveLick[rat]["time"] > 1):
             lastActiveLick[rat]["time"] = thisActiveLick
@@ -229,6 +230,7 @@ while lapsed < sessionLength:
     elif ina0 == 1:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
+        print("inactive rfid: {}\n".format(rat))
         if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
             lastInactiveLick[rat]["time"] = thisInactiveLick
             lastInactiveLick[rat]["scantime"] = scantime
