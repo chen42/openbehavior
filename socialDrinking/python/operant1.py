@@ -126,7 +126,6 @@ def colored_print(ratID, act_count, inact_count, reward_count, timeout):
            " Timeout: "+ str(timeout) + \
            "\x1b[0m"
           )
-        
 
 def showData(phase="progress"):
     if schedule=='pr':
@@ -135,37 +134,29 @@ def showData(phase="progress"):
         minsLeft=int((sessionLength-lapsed)/60)
     if phase=="final":
         print(ids.devID+  " Session_"+str(ids.sesID))
-     
     print ("\x1b[0;31;40m" + \
            "[" + str(minsLeft) + " min Left]" + \
            "\x1b[0m")
-
     colored_print(rat1ID, act[rat1ID], ina[rat1ID], rew[rat1ID], pumptimedout[rat1ID])
     colored_print(rat2ID, act[rat2ID], ina[rat2ID], rew[rat2ID], pumptimedout[rat2ID])
     colored_print(rat0ID, act[rat0ID], ina[rat0ID], rew[rat0ID], pumptimedout[rat0ID])
-
     return time.time()
 
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
 def get_rat_scantime(fname, thislick, lastlick):
+    # lastlick can be either lastInactiveLick or lastActiveLick
     try:
         with open(fname, "r") as f:
-            (rat, scantime, dummy1,dummy2) = f.read().strip().split("\t")
+            (rat, scantime, dummy1, dummy2) = f.read().strip().split("\t")
             scantime = float(scantime)
     except:
         rat="ratUnknown"
         scantime=0
-
-    if rat is None or \
-        (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
+    if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
         rat = "ratUnknown"
     return rat, scantime
-
-
-
-# FORWARD_LIMIT = DigitalInputDevice("GPIO24")
 
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
@@ -173,12 +164,9 @@ while lapsed < sessionLength:
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
 
-    
-
     if GPIO.input(FORWARD_LIMIT_BTN):
         FORWARD_LIMIT_REACHED = True
         # dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
-    # else:
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
@@ -218,7 +206,6 @@ while lapsed < sessionLength:
                     mover = PumpMove()
                     mover.move("forward")
                     del(mover)
-
                 updateTime=showData()
                 if schedule == "fr":
                     nextratio[rat]=ratio
@@ -236,11 +223,10 @@ while lapsed < sessionLength:
             lastInactiveLick[rat]["scantime"] = scantime
         else:
             ina[rat]+=1
-
-            if FORWARD_LIMIT_REACHED:
-                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
-            else:
-                dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
+#            if FORWARD_LIMIT_REACHED:
+#                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+#            else:
+            dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
             lastInactiveLick[rat]["time"]=thisInactiveLick
             lastInactiveLick[rat]["scantime"]=scantime
             updateTime=showData()
@@ -248,8 +234,8 @@ while lapsed < sessionLength:
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick
-    #show data if idle more than 5 min 
-    if time.time()-updateTime > 60*5:
+    #show data if idle more than 1 min 
+    if time.time()-updateTime > 60*1:
         updateTime=showData()
 
 # signal the motion script to stop recording
