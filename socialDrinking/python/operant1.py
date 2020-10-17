@@ -159,8 +159,13 @@ def get_rat_scantime(fname, thislick, lastlick):
     print("\nlastInactiveLick\t: " + lastInactiveLick)
     print("\nlastActiveLick\t: " + lastActiveLick)
     print("\nlastLick\t: " + lastlick)
-    if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
-        rat = "ratUnknown"
+
+    try:
+        if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
+            rat = "ratUnknown"
+    except KeyError:
+        print("rat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
+        
     return rat, scantime
 
 while lapsed < sessionLength:
