@@ -154,6 +154,11 @@ def get_rat_scantime(fname, thislick, lastlick):
     except:
         rat="ratUnknown"
         scantime=0
+    print ("getting the scantime of rat " + rat)
+    print ("from " + fname)
+    print("\nlastInactiveLick\t: " + lastInactiveLick)
+    print("\nlastActiveLick\t: " + lastActiveLick)
+    print("\nlastLick\t: " + lastlick)
     if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
         rat = "ratUnknown"
     return rat, scantime
@@ -170,8 +175,6 @@ while lapsed < sessionLength:
     if act1 == 1:
         thisActiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
-        print("active rfid: {}\n".format(rat))
-
         if(thisActiveLick - lastActiveLick[rat]["time"] > 1):
             lastActiveLick[rat]["time"] = thisActiveLick
             lastActiveLick[rat]["scantime"] = scantime
@@ -217,7 +220,6 @@ while lapsed < sessionLength:
     elif ina0 == 1:
         thisInactiveLick=time.time()
         (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
-        print("inactive rfid: {}\n".format(rat))
         if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
             lastInactiveLick[rat]["time"] = thisInactiveLick
             lastInactiveLick[rat]["scantime"] = scantime
