@@ -41,11 +41,11 @@ date=time.strftime("%Y-%m-%d", time.localtime())
 
 RatID=input("please scan a command RFID\n")
 
-# the default schedule is vr10 timeout20. Other reinforcemnt schedules can be started by using RFIDs.
+# the default schedule is vr10 timeout10. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID[-1:]=="F": # PR
     schedule="pr"
     breakpoint=2
-    timeout = 20
+    timeout = 10
     nextratio=int(5*2.72**(breakpoint/5)-5)
     sessionLength=20*60 # session ends after 20 min inactivity
     ratio=""
@@ -55,13 +55,13 @@ if RatID[-1:]=="F": # PR
 elif RatID[-1:] == "A":  #FR5 1h
     schedule="fr"
     ratio = 5
-    timeout =  20
+    timeout =  10
     sessionLength=60*60*1 # one hour assay
     nextratio=ratio
 elif RatID[-1:]=="B": # FR5, 16h 
     schedule="fr"
     ratio = 5
-    timeout =  20
+    timeout =  10
     sessionLength=60*60*16 # one hour assay
     nextratio=ratio
 elif RatID[-1:]=="C": # extinction
@@ -73,13 +73,13 @@ elif RatID[-1:]=="C": # extinction
 elif RatID[-1:]=="1": #VR10, 1h
     schedule="vr"
     ratio = 10
-    timeout =  20
+    timeout =  10
     sessionLength=60*60*1 #
     nextratio=ratio
 elif RatID[-1:]=="4": #VR10, 4h
     schedule="vr"
     ratio = 10
-    timeout =  20
+    timeout =  10
     sessionLength=60*60*4 #
     nextratio=ratio
 elif RatID[-1:]=="D": #VRreinstate, 4h
@@ -94,7 +94,7 @@ else: # vr10 16h
     schedule="vr"
     ratio=10
     nextratio=ratio
-    timeout = 20
+    timeout = 10
     sessionLength=60*60*16
 
 h=str(int(sessionLength/3600))
