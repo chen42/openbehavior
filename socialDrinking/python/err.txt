@@ -1,0 +1,135 @@
+inside operant1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Can't connect to pigpio at localhost(8888)
+
+Did you start the pigpio daemon? E.g. sudo pigpiod
+
+Did you specify the correct Pi host/port in the environment
+variables PIGPIO_ADDR/PIGPIO_PORT?
+E.g. export PIGPIO_ADDR=soft, export PIGPIO_PORT=8888
+
+Did you specify the correct Pi host/port in the
+pigpio.pi() function? E.g. pigpio.pi('soft', 8888)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Data file location:
+ /home/pi/SocialDrinking/Oxy_BOX_X_S80_rat1_rat2.csv
+before initialize mover
+after initialize mover
+mover ->  <pump_move.PumpMove object at 0x7647a670>
+inside while loop
+deleted mover
+[59 min Left]
+rat1: Active=0 Inactive=0 Reward=0 Timeout: False
+rat2: Active=0 Inactive=0 Reward=0 Timeout: False
+
+ratUnknown: Active=0 Inactive=0 Reward=0 Timeout: False
+
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+inside while loop
+mover does not exist yet
+Traceback (most recent call last):
+  File "operant1.py", line 247, in <module>
+    time.sleep(0.05) # allow 20 licks per sec
+KeyboardInterrupt

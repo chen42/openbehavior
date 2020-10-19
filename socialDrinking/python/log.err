@@ -1,0 +1,46 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Can't connect to pigpio at localhost(8888)
+
+Did you start the pigpio daemon? E.g. sudo pigpiod
+
+Did you specify the correct Pi host/port in the environment
+variables PIGPIO_ADDR/PIGPIO_PORT?
+E.g. export PIGPIO_ADDR=soft, export PIGPIO_PORT=8888
+
+Did you specify the correct Pi host/port in the
+pigpio.pi() function? E.g. pigpio.pi('soft', 8888)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_bus_device/i2c_device.py", line 68, in __init__
+    i2c.writeto(device_address, b'')
+  File "/home/pi/.local/lib/python3.5/site-packages/busio.py", line 69, in writeto
+    return self._i2c.writeto(address, buffer, stop=stop)
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_blinka/microcontroller/generic_linux/i2c.py", line 38, in writeto
+    self._i2c_bus.write_bytes(address, buffer[start:end])
+  File "/home/pi/.local/lib/python3.5/site-packages/Adafruit_PureIO/smbus.py", line 244, in write_bytes
+    self._device.write(buf)
+OSError: [Errno 5] Input/output error
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_bus_device/i2c_device.py", line 74, in __init__
+    i2c.readfrom_into(device_address, result)
+  File "/home/pi/.local/lib/python3.5/site-packages/busio.py", line 59, in readfrom_into
+    return self._i2c.readfrom_into(address, buffer, stop=stop)
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_blinka/microcontroller/generic_linux/i2c.py", line 44, in readfrom_into
+    readin = self._i2c_bus.read_bytes(address, end-start)
+  File "/home/pi/.local/lib/python3.5/site-packages/Adafruit_PureIO/smbus.py", line 155, in read_bytes
+    return self._device.read(number)
+OSError: [Errno 5] Input/output error
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "operant1.py", line 85, in <module>
+    mpr121 = adafruit_mpr121.MPR121(i2c)
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_mpr121.py", line 127, in __init__
+    self._i2c = i2c_device.I2CDevice(i2c, address)
+  File "/home/pi/.local/lib/python3.5/site-packages/adafruit_bus_device/i2c_device.py", line 76, in __init__
+    raise ValueError("No I2C device at address: %x" % device_address)
+ValueError: No I2C device at address: 5a

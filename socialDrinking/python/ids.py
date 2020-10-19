@@ -9,7 +9,7 @@ DEVID_FILE = ROOT+'/deviceid'
 RATID_FILE = ROOT+'/ratids'
 SESSIONID_FILE = ROOT+'/sessionid'
 DATA_DIR = ROOT+'/SocialDrinking'
-DATA_PREFIX = "/Oxy_"
+DATA_PREFIX = "/Soc_"
 
 with open (ROOT+"/_active", "w") as act:
     act.write("ratUnknown\t"+str(time.time()))

@@ -45,6 +45,8 @@ GND
 
 '''
 
+print("inside operant")
+
 
 parser=argparse.ArgumentParser()
 parser.add_argument('-schedule',  type=str, default="vr")

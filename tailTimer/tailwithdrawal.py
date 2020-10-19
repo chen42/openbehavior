@@ -65,13 +65,15 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-user=input("Please enter your last name:\n")
-if user =="00fb4fb3":
-    user="Chen"
+user=input("TailTimer started.\nPlease enter your name:\n")
+if user=="00fb4fb3":
+    user="Hao Chen"
 if user=="00fbb0b2":
-    user="Udell"
-
-targettemp=input("Enter the target temp in C,  or scan any key for 48C.\n")
+    user="Mallory Udell"
+if user=="00fbf277" or user[-4:] =="fef0":
+    user="Paige Lemen"
+print ("\nWelcome, " + user + "\n")
+targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
     targettemp=48
 templo=int(targettemp)-0.50
@@ -101,27 +103,31 @@ while True:
         print ("Timer started\n")
         while (tail_out==False):
             tail_out= GPIO.input(Tail)
-        elapsed=time.time()-sTime + 0.4 # calibrated at 2s and 10s  found this consistent system error        
+            time.sleep(0.02)
+            elapsed=time.time()-sTime + 0.4 # calibrated at 2s and 10s  found this consistent system error        
+            if  (elapsed>10):
+                print ("Maximum latency of 10 s reached\n");
+                tail_out=True
         elapsed=round(elapsed, 3)
         temp2=read_temp()
         temp=round((temp1+temp2)/2, 3)
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
         line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
-        if (ratid in latency.keys()): 
+        if (ratid in latency.keys()):
             latency[ratid] += str(elapsed) + ", "
-        else: 
+        else:
             latency[ratid] = str(elapsed) + ", "
         print ("Rat is "+ ratid+", latency = "+ latency[ratid])
         next=input("Type \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
         ## RFID equivalants
-        if next=="00fbf27e":
+        if next=="00fbf27e" or next[-2:]=="71":
             next="n"
-        if next=="00fb2588":
+        if next=="00fb2588" or next[-2:]=="92":
             next="d"
-        if next=="00fb8874":
+        if next=="00fb8874" or next[-2:]=="5a":
             next="e"
-        if next=="00fb3131":
+        if next=="00fb3131" or next[-2:]=="6c":
             next="a"
         ## 
         if (next=="e"):
@@ -139,11 +145,11 @@ while True:
             print ("!!! temperature not in target range, Data not saved")
             next="a"
             savedata=0
-        if ratid[0:4]=="00fb":
+        if ratid[0:4]=="00fb" or ratid[0:4]=="3200":
             print ("!!! RFID is not a valid rat ID, Data not saved");
             next="n"
             savedata=0
-        if savedata: 
+        if savedata:
             with open(datafile, "a") as f:
                 f.write(line)
                 f.close()
