@@ -154,17 +154,12 @@ def get_rat_scantime(fname, thislick, lastlick):
     except:
         rat="ratUnknown"
         scantime=0
-    print ("getting the scantime of rat " + rat)
-    print ("from " + fname)
-    print("\nlastInactiveLick\t: " + lastInactiveLick)
-    print("\nlastActiveLick\t: " + lastActiveLick)
-    print("\nlastLick\t: " + lastlick)
 
     try:
         if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
             rat = "ratUnknown"
     except KeyError:
-        print("rat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
+        print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
         
     return rat, scantime
 
