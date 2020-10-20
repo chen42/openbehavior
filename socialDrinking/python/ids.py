@@ -48,6 +48,8 @@ class IDS:
         with open (SESSIONID_FILE, "r+") as sessID:
             self.sesID=int(sessID.read().strip())
             newSesID=self.sesID+1
+            self.sesID = newSesID
             sessID.seek(0)
             sessID.write(str(newSesID))
+            
 
