@@ -119,7 +119,7 @@ lapsed=0
 # delete mover to prevent overheating
 del(mover)
 
-subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
+subprocess.call("python3 operant.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
