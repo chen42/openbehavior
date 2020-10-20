@@ -15,37 +15,9 @@ import board # MPR121
 import busio # MPR121
 import adafruit_mpr121
 import ids
-
-'''
-# connection to adafruit TB6612
-# motor: SY28STH32-0674A
-Vcmotor --> 12V 5A power supply
-VM --> floating
-Vcc --> 3V3 Pin 17
-GND --> GND Pin 06
-PwmA --> 3V3 Pin 01
-AIN2 --> Pin 15 - BCM 22
-AIN1 --> Pin 11 - BCM 17
-STBY --> Pin 13 - BCM 27
-BIN1 --> Pin 16 - BCM 23
-BIN2 --> Pin 18 - BCM 24
-PwmB --> Pin 32 - BCM
-MotorA --> Red (A+) and Green (A-) wires
-MotorB --> Blue (B+) and Black (B-) wires
-GND of Power supply --> Pin 39 (gnd) Raspberry Pi
-
-# touch sensor  mpr121
-SDA
-SCL
-5V
-GND
-
-# Cue LED
-GND
-
-'''
-
-print("inside operant")
+from pump_move import PumpMove
+from gpiozero import DigitalInputDevice
+import RPi.GPIO as GPIO
 
 
 parser=argparse.ArgumentParser()
@@ -66,19 +38,8 @@ rat1ID=args.rat1ID
 rat2ID=args.rat2ID
 rat0ID="ratUnknown"
 
-# motor code from https://www.raspberrypi.org/forums/viewtopic.php?t=220247#p1352169
-# pip3 install pigpio
-# git clone https://github.com/stripcode/pigpio-stepper-motor
-
 ## initiate pump motor
 pi = pigpio.pi()
-motor = StepperMotor(pi, 17, 23, 22, 24)
-pwma = pigpio.pi()
-pwma.write(18,1)
-pwmb = pigpio.pi()
-pwmb.write(12,1)
-stby = pigpio.pi()
-stby.write(27,0)
 
 # Create I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -117,30 +78,54 @@ dlogger.createDataFile(schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID)
 sTime = time.time()
 
 # GLOBAL VARIABLES
+FORWARD_LIMIT_BTN = 24
+FORWARD_LIMIT_REACHED = False
+# BACKWARD_LIMIT_BTN = 23
+FORWARD_COUNTER = 0
 touchcounter={rat0ID:0,rat1ID:0, rat2ID:0}
 nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
 rew={rat0ID:0, rat1ID:0, rat2ID:0}
 act={rat0ID:0, rat1ID:0, rat2ID:0}
 ina={rat0ID:0, rat1ID:0, rat2ID:0}
-lastActiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
-lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+# lastActiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+# lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
+lastActiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
+lastInactiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
+
+
+# FORWARD_LIMIT = DigitalInputDevice(18)
+FORWARD_LIMIT = GPIO.setup(FORWARD_LIMIT_BTN, GPIO.IN, pull_up_down= GPIO.PUD_DOWN)
+
+# BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+
+
 pumptimedout={rat0ID:False, rat1ID:False, rat2ID:False}
 lapsed=0  # time since program start
 updateTime=0 # time since last data print out 
 vreinstate=0
 minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per second)
-maxISI = 15  # max lapse between RFIC scan and first lick in a cluster 
-maxILI = 2 # max inter lick interval in seconds  
+maxISI = 15  # max lapse between RFID scan and first lick in a cluster 
+maxILI = 3 # max interval between licks used to turn an RFID into unknown.   
 
-
-
-def pumpforward(x=180): #x=80 is 60ul
-    for i in range(x):
-        stby.write(27,1)
-        motor.doClockwiseStep()
 
 def resetPumpTimeout(rat):
     pumptimedout[rat] = False
+
+def colored_print(ratID, act_count, inact_count, reward_count, timeout):
+    print (ratID+ \
+           "\x1b[0;32;40m" + \
+           ": Active=" + str(act_count)+ \
+           "\x1b[0m" + \
+           "\x1b[0;33;40m" + \
+           " Inactive="+str(inact_count) + \
+           "\x1b[0m" + \
+           "\x1b[0;32;40m" + \
+           " Reward=" +  str(reward_count) + \
+           "\x1b[0m" + \
+           "\x1b[0;35;40m" + \
+           " Timeout: "+ str(timeout) + \
+           "\x1b[0m"
+          )
 
 def showData(phase="progress"):
     if schedule=='pr':
@@ -149,53 +134,81 @@ def showData(phase="progress"):
         minsLeft=int((sessionLength-lapsed)/60)
     if phase=="final":
         print(ids.devID+  " Session_"+str(ids.sesID))
-    print ("[" + str(minsLeft) + " min Left]")
-    print (rat1ID+": Active=" + str(act[rat1ID])+" Inactive="+str(ina[rat1ID]) + " Reward=" +  str(rew[rat1ID]) + " Timeout: "+ str(pumptimedout[rat1ID]))
-    print (rat2ID+": Active=" + str(act[rat2ID])+" Inactive="+str(ina[rat2ID]) + " Reward=" +  str(rew[rat2ID]) + " Timeout: "+ str(pumptimedout[rat2ID]) + "\n")
-    print (rat0ID+": Active=" + str(act[rat0ID])+" Inactive="+str(ina[rat0ID]) + " Reward=" +  str(rew[rat0ID]) + " Timeout: "+ str(pumptimedout[rat0ID]) + "\n")
+    print ("\x1b[0;31;40m" + \
+           "[" + str(minsLeft) + " min Left]" + \
+           "\x1b[0m")
+    colored_print(rat1ID, act[rat1ID], ina[rat1ID], rew[rat1ID], pumptimedout[rat1ID])
+    colored_print(rat2ID, act[rat2ID], ina[rat2ID], rew[rat2ID], pumptimedout[rat2ID])
+    colored_print(rat0ID, act[rat0ID], ina[rat0ID], rew[rat0ID], pumptimedout[rat0ID])
     return time.time()
 
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
+
+def get_rat_scantime(fname, thislick, lastlick):
+    # lastlick can be either lastInactiveLick or lastActiveLick
+    try:
+        with open(fname, "r") as f:
+            (rat, scantime, dummy1, dummy2) = f.read().strip().split("\t")
+            scantime = float(scantime)
+    except:
+        rat="ratUnknown"
+        scantime=0
+
+    try:
+        if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
+            rat = "ratUnknown"
+    except KeyError:
+        print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
+        
+    return rat, scantime
 
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
     lapsed = time.time() - sTime
+
+    if GPIO.input(FORWARD_LIMIT_BTN):
+        FORWARD_LIMIT_REACHED = True
+        # dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
     if act1 == 1:
         thisActiveLick=time.time()
-        try:
-            f=open("/home/pi/_active", "r")
-            (rat, scantime)=f.read().strip().split("\t")
-            scantime=float(scantime)
-            f.close()
-        except:
-            rat="ratUnknown"
-            scantime=0
-        if not rat:
-            rat="ratUnknown"
-        print (lastActiveLick)
-        if thisActiveLick-lastActiveLick[rat]>maxILI and thisActiveLick-scantime>maxISI:
-            rat="ratUnknown"
-        act[rat]+=1
-        dlogger.logEvent(rat, time.time()-scantime, "ACTIVE", lapsed, nextratio[rat])
-        lastActiveLick[rat]=thisActiveLick
-        updateTime=showData()
+        (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
+        if(thisActiveLick - lastActiveLick[rat]["time"] > 1):
+            lastActiveLick[rat]["time"] = thisActiveLick
+            lastActiveLick[rat]["scantime"] = scantime
+        else:
+            act[rat]+=1
+            if FORWARD_LIMIT_REACHED:
+                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+            else:
+                dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
+            lastActiveLick[rat]["time"]=thisActiveLick
+            lastActiveLick[rat]["scantime"]=scantime
+
+            updateTime=showData()
         #blinkCueLED(0.2)
         if not pumptimedout[rat]:
             touchcounter[rat] += 1 # for issuing rewards
             if touchcounter[rat] >= nextratio[rat]  and rat !="ratUnknown":
                 rew[rat]+=1
                 #print("reward for "+rat+":"+str(rew[rat]))
-                dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
                 touchcounter[rat] = 0
                 pumptimedout[rat] = True
                 pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
                 print ("timeout on " + rat)
                 pumpTimer.start()
                 subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
-                pumpforward(180) # This is 60ul
+
+                # if(not FORWARD_LIMIT.value):
+                if FORWARD_LIMIT_REACHED:
+                    dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+                else:
+                    dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
+                    mover = PumpMove()
+                    mover.move("forward")
+                    del(mover)
                 updateTime=showData()
                 if schedule == "fr":
                     nextratio[rat]=ratio
@@ -206,28 +219,25 @@ while lapsed < sessionLength:
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
         thisInactiveLick=time.time()
-        try:
-            f=open("/home/pi/_inactive", "r")
-            (rat, scantime)=f.read().strip().split("\t")
-            scantime=float(scantime)
-            rat=rat[2:]
-            f.close()
-        except:
-            rat="ratUnknown"
-            scantime=0
-        if not rat:
-            rat="ratUnknown"
-        if thisInactiveLick-lastInactiveLick[rat]>maxILI and thisInactiveLick-scantime>maxISI:
-            rat="ratUnknown"
-        ina[rat]+=1
-        dlogger.logEvent(rat, time.time()-scantime, "INACTIVE", lapsed)
-        lastInactiveLick[rat]=thisInactiveLick
-        updateTime=showData()
+        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
+        if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
+            lastInactiveLick[rat]["time"] = thisInactiveLick
+            lastInactiveLick[rat]["scantime"] = scantime
+        else:
+            ina[rat]+=1
+#            if FORWARD_LIMIT_REACHED:
+#                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+#            else:
+            dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
+            lastInactiveLick[rat]["time"]=thisInactiveLick
+            lastInactiveLick[rat]["scantime"]=scantime
+            updateTime=showData()
+
     # keep this here so that the PR data file will record lapse from sesion start 
     if schedule=="pr":
         lapsed = time.time() - lastActiveLick
-    #show data if idle more than 5 min 
-    if time.time()-updateTime > 60*5:
+    #show data if idle more than 1 min 
+    if time.time()-updateTime > 60*1:
         updateTime=showData()
 
 # signal the motion script to stop recording
@@ -237,7 +247,11 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
+print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
+showData("final")
+subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
 print(ids.devID+  "Session"+ids.sesID + " Done!\n")
 showData("final")
 
-#subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
+
+

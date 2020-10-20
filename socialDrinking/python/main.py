@@ -38,9 +38,13 @@ backwardbtn.when_pressed = backward
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
+# get device and session ids
+ids = IDS()
+ids.sessionIncrement()
+# file to store RFID scann times
+RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesID)+ "_RFID.csv"
 
 RatID=input("please scan a command RFID\n")
-
 # the default schedule is vr10 timeout10. Other reinforcemnt schedules can be started by using RFIDs.
 if RatID[-1:]=="F": # PR
     schedule="pr"
@@ -50,7 +54,7 @@ if RatID[-1:]=="F": # PR
     sessionLength=20*60 # session ends after 20 min inactivity
     ratio=""
     #signal motion sensor to keep recording until this is changed
-    with open ("/home/pi/prend", "w") as f:
+    with open ("ROOT/prend", "w") as f:
         f.write("no")
 elif RatID[-1:] == "A":  #FR5 1h
     schedule="fr"
@@ -100,17 +104,15 @@ else: # vr10 16h
 h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
-time.sleep(3)
 rat1 = input("please scan rat1\n")[-8:]
+time.sleep(1) # delay for time to get the next rat
 rat2 = input("please scan rat2\n")[-8:]
 
 while(rat1 == rat2):
     rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
 
-
-
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
-time.sleep(1) # time to put the rat in the chamber
+# start time
 sTime=time.time()
 lapsed=0
 
@@ -119,12 +121,10 @@ del(mover)
 
 subprocess.call("python3 operant1.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
-ids = IDS()
-RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesID)+ "_RFID.csv"
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
     try:
-        rfid=input("rfid waiting")
+        rfid=input("rfid waiting\n")
     except EOFError:
         break
     if (len(rfid)==10):
