@@ -101,6 +101,7 @@ else: # vr10 16h
     timeout = 10
     sessionLength=60*60*16
 
+
 h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
