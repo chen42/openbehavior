@@ -35,4 +35,11 @@ class LickLogger:
             ID2_str = (("{}\t"*9).format(*data_dict["ratID2"])) + "\n"
             ID0_str = (("{}\t"*9).format(*data_dict["ratID0"])) + "\n"
             f.write(ID1_str + ID2_str + ID0_str)
+        
+        poke_count_files = {"ACT_POKE":"act_count.txt","INACT_POKE":"inact_count.txt"}
+        with open(DATA_DIR + "/" + fname, "a+") as f:
+            for ref, count_file in poke_count_files.items():
+                with open(DATA_DIR + "/" + count_file, "r") as f1:
+                    f.write("{}:{}\n".format(ref, f1.read()))
+                
 
