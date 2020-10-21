@@ -131,8 +131,9 @@ while lapsed < sessionLength:
     except EOFError:
         break
     if (len(rfid)==10):
+        rfid = rfid[-8:]
         poke_counts[rfid]["inact"] = poke_counts[rfid]["inact"] + 1
-        record=rfid[-8:]+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
+        record=rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()

@@ -248,7 +248,7 @@ while lapsed < sessionLength:
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
 date=time.strftime("%Y-%m-%d", time.localtime())
-formatted_schedule = schedule+str(ratio)+'TO'+str(timeout), rat1ID+"_"+rat2ID
+formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2ID
 finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(date,ids.devID,ids.sesID,formatted_schedule)
 data_dict = {
             "ratID1":[rat1ID, date,ids.devID,ids.sesID,schedule,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID]],
