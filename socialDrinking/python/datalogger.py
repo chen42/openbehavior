@@ -28,18 +28,21 @@ class LickLogger:
 
     @staticmethod
     def finalLog(fname,data_dict):
-        print(data_dict)
-        print(data_dict["ratID1"])
         with open(DATA_DIR+ "/" + fname, "a+") as f:
             ID1_str = (("{}\t"*9).format(*data_dict["ratID1"])) + "\n"
             ID2_str = (("{}\t"*9).format(*data_dict["ratID2"])) + "\n"
             ID0_str = (("{}\t"*9).format(*data_dict["ratID0"])) + "\n"
             f.write(ID1_str + ID2_str + ID0_str)
         
-        poke_count_files = {"ACT_POKE":"act_count.txt","INACT_POKE":"inact_count.txt"}
+        ratids = [data_dict["ratID1"][0], data_dict["ratID2"][0]]
+        poke_count_files = {"ACT_POKE": ["{}_act_count.txt".format(ID) for ID in ratids],
+                            "INACT_POKE": ["{}_inact_count.txt".format(ID) for ID in ratids]
+                           }
         with open(DATA_DIR + "/" + fname, "a+") as f:
-            for ref, count_file in poke_count_files.items():
-                with open(DATA_DIR + "/" + count_file, "r") as f1:
-                    f.write("{}:{}\n".format(ref, f1.read()))
+            for ref, count_files in poke_count_files.items():
+                for file in count_files:
+                    with open(DATA_DIR + "/" + file, "r") as f1:
+                        (rfid,poke_count) = f1.read().split(":")
+                        f.write("{} - {}:{}\n".format(ref, rfid, poke_count))
                 
 

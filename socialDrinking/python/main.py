@@ -122,9 +122,8 @@ del(mover)
 
 subprocess.call("python3 operant.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
 
+poke_counts = {rat1:{"act": 0, "inact": 0}, rat2:{"act":0, "inact":0}}
 
-ACT_POKE = 0
-INACT_POKE = 0
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
     try:
@@ -132,26 +131,28 @@ while lapsed < sessionLength:
     except EOFError:
         break
     if (len(rfid)==10):
-        INACT_POKE = INACT_POKE + 1
+        poke_counts[rfid]["inact"] = poke_counts[rfid]["inact"] + 1
         record=rfid[-8:]+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
-        with open(RFIDFILE, "a+") as inactive:
-            print ("\n    inactive spout " + rfid + "\t")
-            inactive.write(record)
-        with open(DATA_DIR + "/" + "inact_count.txt", "w") as f:
-            f.write(str(INACT_POKE))
+        # with open(RFIDFILE, "a+") as inactive:
+        #     print ("\n    inactive spout " + rfid + "\t")
+        #     inactive.write(record)
+        fname = "{}/{}_inact_count.txt".format(DATA_DIR, rfid)
+        with open(fname, "w+") as f:
+            f.write("{}:{}".format(rfid, poke_counts[rfid]["inact"]))
             
 
     if (len(rfid)==8):
-        ACT_POKE = ACT_POKE + 1
+        poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
         record=rfid+"\t"+str(time.time())+ "\tactive\t" + str(lapsed)+ "\n"
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
             active.close()
-        with open(RFIDFILE, "a+") as active:
-            print ("\n      active spout " + rfid + "\t")
-            active.write(record)
-        with open(DATA_DIR + "/" + "act_count.txt", "w") as f:
-            f.write(str(ACT_POKE))
+        # with open(RFIDFILE, "a+") as active:
+        #     print ("\n      active spout " + rfid + "\t")
+        #     active.write(record)
+        fname = "{}/{}_act_count.txt".format(DATA_DIR, rfid)
+        with open(fname, "w+") as f:
+            f.write("{}:{}".format(rfid,poke_counts[rfid]["act"]))
