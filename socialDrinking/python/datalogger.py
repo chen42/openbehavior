@@ -26,3 +26,13 @@ class LickLogger:
         with open (self.datafile, "a") as datafile:
             datafile.write(outputstr)
 
+    # @staticmethod
+    # def
+    @staticmethod
+    def finalLog(fname,data_dict):
+        with open(fname, "a+") as f:
+            ID1_str = "{}\n*11".format("ratID1",data_dict["ratID1"])
+            ID2_str = "{}\n*11".format("ratID2",data_dict["ratID2"])
+            ID0_str = "{}\n*11".format("ratID0",data_dict["ratID0"])
+            f.write(ID1_str + ID2_str + ID0_str)
+

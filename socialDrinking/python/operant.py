@@ -247,6 +247,15 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
+date = time.strftime("%Y-%m-%d_%H_%M_%S", time.localtime())
+finallog_fname = "Soc_{}_{}_S{}_{}_rfids_summary.tab".format(date,ids.devID,ids.sesID,schedule)
+data_dict = {
+            rat1ID:[date,ids.devID,ids.sesID,schedule,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID]],
+            rat2ID:[date,ids.devID,ids.sesID,schedule,sessionLength,act[rat2ID],ina[rat2ID],rew[rat2ID]],
+            rat0ID:[date,ids.devID,ids.sesID,schedule,sessionLength,act[rat0ID],ina[rat0ID],rew[rat0ID]]
+            }
+LickLogger.finalLog(finallog_fname, data_dict)
+
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
