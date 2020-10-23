@@ -28,24 +28,27 @@ class LickLogger:
 
     @staticmethod
     def finalLog(fname,data_dict):
-        with open(DATA_DIR+ "/" + fname, "a+") as f:
-            ID1_str = (("{}\t"*9).format(*data_dict["ratID1"])) + "\n"
-            ID2_str = (("{}\t"*9).format(*data_dict["ratID2"])) + "\n"
-            ID0_str = (("{}\t"*9).format(*data_dict["ratID0"])) + "\n"
-            f.write(ID1_str + ID2_str + ID0_str)
-        
         ratids = [data_dict["ratID1"][0], data_dict["ratID2"][0]]
+        poke_counts = {ratids[0]:0, ratids[1]:0}
         poke_count_files = {"ACT_POKE": ["{}_act_count.txt".format(ID) for ID in ratids],
                             "INACT_POKE": ["{}_inact_count.txt".format(ID) for ID in ratids]
                            }
+
         with open(DATA_DIR + "/" + fname, "a+") as f:
-            for ref, count_files in poke_count_files.items():
+            for _, count_files in poke_count_files.items():
                 for file in count_files:
                     try:
                         with open(DATA_DIR + "/" + file, "r") as f1:
                             (rfid,poke_count) = f1.read().split(":")
-                            f.write("{} - {}:{}\n".format(ref, rfid, poke_count))
+                            poke_count[rfid] = poke_count
                     except FileNotFoundError:
                         continue
+
+        with open(DATA_DIR+ "/" + fname, "a+") as f:
+            ID1_str = (("{}\t"*10).format(*data_dict["ratID1"], poke_counts[ratids[0]])) + "\n"
+            ID2_str = (("{}\t"*10).format(*data_dict["ratID2"], poke_counts[ratids[1]])) + "\n"
+            ID0_str = (("{}\t"*10).format(*data_dict["ratID0"])) + "\n"
+            f.write(ID1_str + ID2_str + ID0_str)
+        
                 
 
