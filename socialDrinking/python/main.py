@@ -42,64 +42,64 @@ command_ids = [
     "002cdfc3",
 ]
 
+while RatID not in command_ids:
+    RatID = input("command ID not found, please rescan the id: ")[-8:]
 
 # the default schedule is vr10 timeout10. Other reinforcemnt schedules can be started by using RFIDs.
-while RatID not in RatID:
-    RatID = input("command ID not found, please rescan the id: ")[-8:]
-    if RatID[-2:] == "3c" or RatID[-2:] == "88": # PR
-        schedule="pr"
-        breakpoint=2
-        timeout = 10
-        nextratio=int(5*2.72**(breakpoint/5)-5)
-        sessionLength=20*60 # session ends after 20 min inactivity
-        ratio=""
-        #signal motion sensor to keep recording until this is changed
-        with open ("ROOT/prend", "w") as f:
-            f.write("no")
-    elif RatID[-2:] == "52" or RatID[-2:] == "8f":  #FR5 1h
-        schedule="fr"
-        ratio = 5
-        timeout =  10
-        sessionLength=60*60*1 # one hour assay
-        nextratio=ratio
-    elif RatID[-2:] == "6f" or RatID[-2:] == "b9": # FR5, 16h 
-        schedule="fr"
-        ratio = 5
-        timeout =  10
-        sessionLength=60*60*16 # one hour assay
-        nextratio=ratio
-    elif RatID[-2:] == "65" or RatID[-2:] == "8c": # extinction
-        schedule="ext"
-        timeout=0
-        ratio=1000000
-        nextratio=1000000
-        sessionLength=60*60*1
-    elif RatID[-2:] == "ef" or RatID[-2:] == "a7": #VR10, 1h
-        schedule="vr"
-        ratio = 10
-        timeout =  10
-        sessionLength=60*60*1 #
-        nextratio=ratio
-    elif RatID[-2:] == "9a" or RatID[-2:] == "2f": #VR10, 4h
-        schedule="vr"
-        ratio = 10
-        timeout =  10
-        sessionLength=60*60*4 #
-        nextratio=ratio
-    elif RatID[-2:] == "ff" or RatID[-2:] == "2d": #VRreinstate, 4h
-        vreinstate=1
-        schedule="vr"
-        ratio = 5
-        timeout = 1
-        sessionLength=60*60*4 # one hour assay
-        nextratio=ratio
-        RatID=ReadRFID("/dev/ttyAMA0")
-    elif RatID[-2:] == "8e" or RatID[-2:] == "c3": # vr10 16h
-        schedule="vr"
-        ratio=10
-        nextratio=ratio
-        timeout = 10
-        sessionLength=60*60*16
+if RatID[-2:] == "3c" or RatID[-2:] == "88": # PR
+    schedule="pr"
+    breakpoint=2
+    timeout = 10
+    nextratio=int(5*2.72**(breakpoint/5)-5)
+    sessionLength=20*60 # session ends after 20 min inactivity
+    ratio=""
+    #signal motion sensor to keep recording until this is changed
+    with open ("ROOT/prend", "w") as f:
+        f.write("no")
+elif RatID[-2:] == "52" or RatID[-2:] == "8f":  #FR5 1h
+    schedule="fr"
+    ratio = 5
+    timeout =  10
+    sessionLength=60*60*1 # one hour assay
+    nextratio=ratio
+elif RatID[-2:] == "6f" or RatID[-2:] == "b9": # FR5, 16h 
+    schedule="fr"
+    ratio = 5
+    timeout =  10
+    sessionLength=60*60*16 # one hour assay
+    nextratio=ratio
+elif RatID[-2:] == "65" or RatID[-2:] == "8c": # extinction
+    schedule="ext"
+    timeout=0
+    ratio=1000000
+    nextratio=1000000
+    sessionLength=60*60*1
+elif RatID[-2:] == "ef" or RatID[-2:] == "a7": #VR10, 1h
+    schedule="vr"
+    ratio = 10
+    timeout =  10
+    sessionLength=60*60*1 #
+    nextratio=ratio
+elif RatID[-2:] == "9a" or RatID[-2:] == "2f": #VR10, 4h
+    schedule="vr"
+    ratio = 10
+    timeout =  10
+    sessionLength=60*60*4 #
+    nextratio=ratio
+elif RatID[-2:] == "ff" or RatID[-2:] == "2d": #VRreinstate, 4h
+    vreinstate=1
+    schedule="vr"
+    ratio = 5
+    timeout = 1
+    sessionLength=60*60*4 # one hour assay
+    nextratio=ratio
+    RatID=ReadRFID("/dev/ttyAMA0")
+elif RatID[-2:] == "8e" or RatID[-2:] == "c3": # vr10 16h
+    schedule="vr"
+    ratio=10
+    nextratio=ratio
+    timeout = 10
+    sessionLength=60*60*16
 
 #### PUMP and BUTTON
 # start the pump after the command ID is scanned
