@@ -41,8 +41,11 @@ class LickLogger:
         with open(DATA_DIR + "/" + fname, "a+") as f:
             for ref, count_files in poke_count_files.items():
                 for file in count_files:
-                    with open(DATA_DIR + "/" + file, "r") as f1:
-                        (rfid,poke_count) = f1.read().split(":")
-                        f.write("{} - {}:{}\n".format(ref, rfid, poke_count))
+                    try:
+                        with open(DATA_DIR + "/" + file, "r") as f1:
+                            (rfid,poke_count) = f1.read().split(":")
+                            f.write("{} - {}:{}\n".format(ref, rfid, poke_count))
+                    except FileNotFoundError:
+                        continue
                 
 
