@@ -101,7 +101,6 @@ else: # vr10 16h
     timeout = 10
     sessionLength=60*60*16
 
-
 h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
@@ -131,18 +130,18 @@ while lapsed < sessionLength:
     except EOFError:
         break
     if (len(rfid)==10):
-        rfid = rfid[-8:]
-        poke_counts[rfid]["inact"] = poke_counts[rfid]["inact"] + 1
-        record=rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
+        temp_rfid = rfid[-8:]
+        poke_counts[temp_rfid]["inact"] = poke_counts[temp_rfid]["inact"] + 1
+        record=temp_rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
         with open(RFIDFILE, "a+") as inactive:
-            print ("\n    inactive spout " + rfid + "\t")
+            print ("\n    inactive spout " + temp_rfid + "\t")
             inactive.write(record)
-        fname = "{}/{}_inact_count.txt".format(DATA_DIR, rfid)
+        fname = "{}/{}_inact_count.txt".format(DATA_DIR, temp_rfid)
         with open(fname, "w+") as f:
-            f.write("{}:{}".format(rfid, poke_counts[rfid]["inact"]))
+            f.write("{}:{}".format(temp_rfid, poke_counts[temp_rfid]["inact"]))
             
 
     if (len(rfid)==8):
