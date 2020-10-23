@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-# introduce a small random delay so that the server does not get too much requrest at the same time.
+# introduce a small random delay so that the server does not get too many requrests at the same time.
 delay=`shuf -i1-3 -n1` 
 
 # make sure wlan0 is up
@@ -15,16 +15,15 @@ while [ `sudo ifconfig wlan0 |grep broadcast |wc -l` -ne 1 ]
 	fi
 done
 
-# remove files older than 30 days
-rm `find /home/pi/SocialDrinking/* -mtime +30` 
+# remove files older than 15 days
+rm `find /home/pi/SocialDrinking/* -mtime +15` 
 
 gzip -f /home/pi/SocialDrinking/*csv
-rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
-for i in {1..5}; do
-	echo "sleep $i min"
-	sleep ${i}m
-	rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDriking/ 
-done
 
+rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDrinking/ 
+sleep 1m
+#sync one more time
+rsync -auvp -e ssh /home/pi/SocialDrinking/ root@149.56.128.122:~/Dropbox/Pies/SocialDrinking/ 
 
+sudo reboot
 
