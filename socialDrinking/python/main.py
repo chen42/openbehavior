@@ -137,9 +137,9 @@ while lapsed < sessionLength:
         with open(ROOT + "/_inactive", "w+") as inactive:
             inactive.write(record)
             inactive.close()
-        # with open(RFIDFILE, "a+") as inactive:
-        #     print ("\n    inactive spout " + rfid + "\t")
-        #     inactive.write(record)
+        with open(RFIDFILE, "a+") as inactive:
+            print ("\n    inactive spout " + rfid + "\t")
+            inactive.write(record)
         fname = "{}/{}_inact_count.txt".format(DATA_DIR, rfid)
         with open(fname, "w+") as f:
             f.write("{}:{}".format(rfid, poke_counts[rfid]["inact"]))
@@ -151,9 +151,9 @@ while lapsed < sessionLength:
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
             active.close()
-        # with open(RFIDFILE, "a+") as active:
-        #     print ("\n      active spout " + rfid + "\t")
-        #     active.write(record)
+        with open(RFIDFILE, "a+") as active:
+            print ("\n      active spout " + rfid + "\t")
+            active.write(record)
         fname = "{}/{}_act_count.txt".format(DATA_DIR, rfid)
         with open(fname, "w+") as f:
             f.write("{}:{}".format(rfid,poke_counts[rfid]["act"]))
