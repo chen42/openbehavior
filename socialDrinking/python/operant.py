@@ -87,6 +87,8 @@ nextratio={rat0ID:0,rat1ID:ratio, rat2ID:ratio}
 rew={rat0ID:0, rat1ID:0, rat2ID:0}
 act={rat0ID:0, rat1ID:0, rat2ID:0}
 ina={rat0ID:0, rat1ID:0, rat2ID:0}
+act_licks_when_empty = {rat1ID:0, rat2ID: 0, rat0ID:0}
+
 # lastActiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
 # lastInactiveLick={rat0ID:float(sTime), rat1ID:float(sTime), rat2ID:float(sTime)}
 lastActiveLick={rat0ID:{"time":float(sTime), "scantime": 0}, rat1ID:{"time":float(sTime), "scantime":0}, rat2ID:{"time":float(sTime), "scantime":0}}
@@ -107,6 +109,8 @@ minInterLickInterval=0.15 # minimal interlick interval (about 6-7 licks per seco
 maxISI = 15  # max lapse between RFID scan and first lick in a cluster 
 maxILI = 3 # max interval between licks used to turn an RFID into unknown.   
 
+
+first_time_empty = False
 
 def resetPumpTimeout(rat):
     pumptimedout[rat] = False
@@ -145,6 +149,11 @@ def showData(phase="progress"):
 #if (vreinstate):
 #    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
 
+def set_empty_syringe_licks():
+    for rat in act_licks_when_empty.keys():
+        act_licks_when_empty[rat] = act[rat]
+
+
 def get_rat_scantime(fname, thislick, lastlick):
     # lastlick can be either lastInactiveLick or lastActiveLick
     try:
@@ -181,6 +190,10 @@ while lapsed < sessionLength:
         else:
             act[rat]+=1
             if FORWARD_LIMIT_REACHED:
+                if first_time_empty is False:
+                    set_empty_syringe_licks()
+                    first_time_empty = True
+
                 dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
             else:
                 dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
@@ -252,9 +265,9 @@ formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2I
 schedule_to = schedule+str(ratio)+'TO'+str(timeout)
 finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(date,ids.devID,ids.sesID,formatted_schedule)
 data_dict = {
-            "ratID1":[rat1ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID]],
-            "ratID2":[rat2ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat2ID],ina[rat2ID],rew[rat2ID]],
-            "ratID0":[rat0ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat0ID],ina[rat0ID],rew[rat0ID]]
+            "ratID1":[rat1ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID], act_licks_when_empty[rat1ID]],
+            "ratID2":[rat2ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat2ID],ina[rat2ID],rew[rat2ID], act_licks_when_empty[rat2ID]],
+            "ratID0":[rat0ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat0ID],ina[rat0ID],rew[rat0ID], act_licks_when_empty[rat0ID]]
             }
 datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
