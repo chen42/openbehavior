@@ -64,7 +64,7 @@ gpio.setup(TIR, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(TOUCHLED, gpio.OUT)
 
 # get date and time 
-datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+datetime=time.strftime("%Y-%m-%d_%H_%M_%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
 
 # deal with session and box ID, and data file location
@@ -260,10 +260,9 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
-date=time.strftime("%Y-%m-%d", time.localtime())
 formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2ID
 schedule_to = schedule+str(ratio)+'TO'+str(timeout)
-finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(date,ids.devID,ids.sesID,formatted_schedule)
+finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(datetime,ids.devID,ids.sesID,formatted_schedule)
 data_dict = {
             "ratID1":[rat1ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID], act_licks_when_empty[rat1ID]],
             "ratID2":[rat2ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat2ID],ina[rat2ID],rew[rat2ID], act_licks_when_empty[rat2ID]],
