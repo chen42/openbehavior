@@ -166,7 +166,14 @@ while lapsed < sessionLength:
             
 
     if (len(rfid)==8):
-        poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
+        try:
+            poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
+        except KeyError as e:
+            with open(ROOT + "/error.log", "a+") as f:
+                f.write("error - {}\n".format(e))
+                f.write("poke_counts - {}\n".format(poke_counts))
+                f.write("rfid - {}\n".format(rfid))
+
         record=rfid+"\t"+str(time.time())+ "\tactive\t" + str(lapsed)+ "\n"
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
