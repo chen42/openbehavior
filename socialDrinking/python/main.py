@@ -130,7 +130,7 @@ time.sleep(1) # delay for time to get the next rat
 rat2 = input("please scan rat2\n")[-8:]
 
 while(rat1 == rat2):
-    rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")
+    rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")[-8:]
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
 # start time
