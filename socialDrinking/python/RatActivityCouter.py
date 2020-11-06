@@ -40,11 +40,15 @@ class RatActivityCounter():
     def show_data(sessionLength, schedule, lapsed,
                   rat1,rat2,rat_unknown, phase="progress"):
         if schedule == "pr":
-            minsLeft = int((sessionLength-(time.time()-lastActiveLick[rat]))/60) ## need work, max of the two
+            minsLeft = int((sessionLength - (time.time() - rat1.last_act_licks["time"])) / 60)
         else:
             minsLeft = int((sessionLength-lapsed)/60)
         if phase == "final":
             print("{} Session_{}".format())
+
+        print ("\x1b[0;31;40m" + \
+                "[" + str(minsLeft) + " min Left]" + \
+                "\x1b[0m")
 
         RatActivityCounter.colored_print(rat1.ratid, rat1.active_licks,
                                          rat1.inactive_licks, rat1.rewards,

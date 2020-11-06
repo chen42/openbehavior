@@ -120,36 +120,6 @@ maxILI = 3 # max interval between licks used to turn an RFID into unknown.
 def resetPumpTimeout(rat):
     pumptimedout[rat] = False
 
-def colored_print(ratID, act_count, inact_count, reward_count, timeout):
-    print (ratID+ \
-           "\x1b[0;32;40m" + \
-           ": Active=" + str(act_count)+ \
-           "\x1b[0m" + \
-           "\x1b[0;33;40m" + \
-           " Inactive="+str(inact_count) + \
-           "\x1b[0m" + \
-           "\x1b[0;32;40m" + \
-           " Reward=" +  str(reward_count) + \
-           "\x1b[0m" + \
-           "\x1b[0;35;40m" + \
-           " Timeout: "+ str(timeout) + \
-           "\x1b[0m"
-          )
-
-def showData(phase="progress"):
-    if schedule=='pr':
-        minsLeft=int((sessionLength-(time.time()-lastActiveLick[rat]))/60) ## need work, max of the two
-    else:
-        minsLeft=int((sessionLength-lapsed)/60)
-    if phase=="final":
-        print(ids.devID+  " Session_"+str(ids.sesID))
-    print ("\x1b[0;31;40m" + \
-           "[" + str(minsLeft) + " min Left]" + \
-           "\x1b[0m")
-    colored_print(rat1ID, act[rat1ID], ina[rat1ID], rew[rat1ID], pumptimedout[rat1ID])
-    colored_print(rat2ID, act[rat2ID], ina[rat2ID], rew[rat2ID], pumptimedout[rat2ID])
-    colored_print(rat0ID, act[rat0ID], ina[rat0ID], rew[rat0ID], pumptimedout[rat0ID])
-
 def get_ratid_scantime(fname):
     try:
         with open(fname, "r") as f:
@@ -190,8 +160,12 @@ while lapsed < sessionLength:
                 dlogger.logEvent(rat, time.time(), "syringe empty", time.time() - sTime) 
             else:
                 dlogger.logEvent(rat, time.time() - last_act_licks["scantime"], "ACTIVE", lapsed, rat.next_ratio) # add next ratio
+
             RatActivityCouter.update_last_licks(last_act_licks, thisActiveLick, scantime)
-            showData()
+            
+            RatActivityCouter.show_data(sessionLength, schedule, lapsed, \
+                                        rats[rat1ID],rats[rat2ID],rats[rat0ID])
+
             updateTime = time.time()
 
         #blinkCueLED(0.2)
@@ -215,7 +189,9 @@ while lapsed < sessionLength:
                     mover.move("forward")
                     del(mover)
 
-                showData()
+                RatActivityCouter.show_data(sessionLength, schedule, lapsed, \
+                                        rats[rat1ID],rats[rat2ID],rats[rat0ID])
+
                 updateTime = time.time()
 
                 if schedule == "fr":
@@ -241,7 +217,10 @@ while lapsed < sessionLength:
             rat.incr_inactive_licks()
             dlogger.logEvent(rat,time.time() - lastInactiveLick["scantime"], "INACTIVE", lapsed)
             RatActivityCouter.update_last_licks(last_inact_licks, thisInactiveLick, scantime)
-            showData()
+
+            RatActivityCouter.show_data(sessionLength, schedule, lapsed, \
+                                    rats[rat1ID],rats[rat2ID],rats[rat0ID])
+
             updateTime = time.time()
 
     # keep this here so that the PR data file will record lapse from sesion start 
@@ -249,7 +228,9 @@ while lapsed < sessionLength:
         lapsed = time.time() - lastActiveLick
     #show data if idle more than 1 min 
     if time.time()-updateTime > 60*1:
-        updateTime=showData()
+        RatActivityCouter.show_data(sessionLength, schedule, lapsed, \
+                                rats[rat1ID],rats[rat2ID],rats[rat0ID])
+        updateTime = time.time()
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
@@ -266,7 +247,8 @@ datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
-showData("final")
+RatActivityCouter.show_data(sessionLength, schedule, lapsed, \
+                        rats[rat1ID],rats[rat2ID],rats[rat0ID], "final")
+
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
 print(ids.devID+  "Session"+ids.sesID + " Done!\n")
-showData("final")

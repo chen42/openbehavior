@@ -8,14 +8,9 @@ from gpiozero import Servo
 from gpiozero import Button
 from gpiozero import DigitalInputDevice
 import pigpio
-# from gpiozero import DigitalInputDevice
-# from gpiozero import SmoothedInputDevice
-
 
 steps=150
 rotate_dir=1
-
-
 
 GPIO.setwarnings(False)
 
