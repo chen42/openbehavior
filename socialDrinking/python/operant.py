@@ -150,44 +150,17 @@ def showData(phase="progress"):
     colored_print(rat2ID, act[rat2ID], ina[rat2ID], rew[rat2ID], pumptimedout[rat2ID])
     colored_print(rat0ID, act[rat0ID], ina[rat0ID], rew[rat0ID], pumptimedout[rat0ID])
 
-#if (vreinstate):
-#    subprocess.call('python /home/pi/openbehavior/operantLicking/python/#blinkenlights.py -times 10 &', shell=True)
-            
-
-def get_rat_scantime(fname,this_lick, last_lick):
+def get_ratid_scantime(fname):
     try:
         with open(fname, "r") as f:
-            (rat, scantime, dummy1, dummy2) = f.read().strip().split("\t")
+            (rat, scantime, dummy1, dummy1) = f.read().strip().split("\t")
             scantime = float(scantime)
     except:
-        rat="ratUnknown"
-        scantime=0
+        rat = "ratUnknown"
+        scantime = 0
 
-    try:
-        if rat is None or (this_lick - last_lick["time"] > maxILI and this_lick - scantime > maxISI):
-            rat = "ratUnknown"
-    except KeyError:
-        print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, this_lick, last_lick))
-        
     return rat, scantime
-
-# def get_rat_scantime(fname, thislick, lastlick):
-#     # lastlick can be either lastInactiveLick or lastActiveLick
-#     try:
-#         with open(fname, "r") as f:
-#             (rat, scantime, dummy1, dummy2) = f.read().strip().split("\t")
-#             scantime = float(scantime)
-#     except:
-#         rat="ratUnknown"
-#         scantime=0
-
-#     try:
-#         if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
-#             rat = "ratUnknown"
-#     except KeyError:
-#         print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
         
-#     return rat, scantime
 
 while lapsed < sessionLength:
     time.sleep(0.05) # allow 20 licks per sec
@@ -200,8 +173,13 @@ while lapsed < sessionLength:
 
     if act1 == 1:
         thisActiveLick=time.time()
-        (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
         
+        (ratid, scantime) = get_ratid_scantime(fname="/home/pi/_active")
+
+        rat = rats[ratid] 
+        if (thisActiveLick - rat.last_act_licks["time"] > maxILI) and (thisActiveLick - scantime > maxISI):
+            rat = rats["ratUnknown"]
+            
         last_act_licks = rat.last_act_licks
 
         if(thisActiveLick - last_act_licks["time"] > 1):
@@ -249,7 +227,13 @@ while lapsed < sessionLength:
                     rat.next_ratop = int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
         thisInactiveLick = time.time()
-        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastActiveLick)
+
+        (ratid, scantime) = get_ratid_scantime(fname="/home/pi/_inactive")
+
+        rat = rats[ratid] 
+        if (thisInactiveLick- rat.last_inact_licks["time"] > maxILI) and (thisInactiveLick - scantime > maxISI):
+            rat = rats["ratUnknown"]
+
         last_inact_licks = rat.last_inact_licks
         if thisInactiveLick - last_inact_licks["time"] > 1:
             RatActivityCouter.update_last_licks(last_inact_licks, thisInactiveLick, scantime)
@@ -266,13 +250,6 @@ while lapsed < sessionLength:
     #show data if idle more than 1 min 
     if time.time()-updateTime > 60*1:
         updateTime=showData()
-
-
-
-# signal the motion script to stop recording
-#if schedule=='pr':
-#    with open("/home/pi/prend", "w") as f:
-#        f.write("yes")
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
