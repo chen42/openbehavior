@@ -22,27 +22,8 @@ RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesI
 
 RatID=input("please scan a command RFID\n")[-8:]
 
-command_ids = [
-    "0084cb3c",
-    "002cd652",
-    "002ba76f",
-    "002c7365",
-    "002c94ef",
-    "0087739a",
-    "002d54ff",
-    "0084668e",
 
-    "002cd488",
-    "002cbc8f",
-    "002b51b9",
-    "002d558c",
-    "002d3da7",
-    "002c732f",
-    "002b392d",
-    "002cdfc3",
-]
-
-while RatID not in command_ids:
+while RatID not in COMMAND_IDS:
     RatID = input("command ID not found, please rescan the id: ")[-8:]
 
 # the default schedule is vr10 timeout10. Other reinforcemnt schedules can be started by using RFIDs.
