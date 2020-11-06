@@ -5,6 +5,8 @@ import signal
 import sys
 from gpiozero import InputDevice
 from gpiozero import Servo
+from gpiozero import Button
+from gpiozero import DigitalInputDevice
 import pigpio
 # from gpiozero import DigitalInputDevice
 # from gpiozero import SmoothedInputDevice
@@ -45,15 +47,18 @@ class PumpMove:
                             '1/8': (0,1),
                             '1/16': (1,1),
                           }
-
-        # GPIO.output(self.MODE, self.RESOLUTION['Full'])
-        # GPIO.output(self.MODE, self.RESOLUTION['Half'])
-        # self.GPIO.output(self.MODE, self.RESOLUTION['1/8'])
-        # GPIO.output(self.MODE, self.RESOLUTION['1/16'])
         
         self.step_counts = steps
         self.delay = .0209 / 50
         self.rotate_dir = rotate_dir
+        
+        self.BACKWARD_LIMIT = DigitalInputDevice("GPIO23")
+        
+        self.FORWARDBTN = Button("GPIO5")
+        self.BACKWARDBTN = Button("GPIO27")
+        self.FORWARDBTN.when_pressed = self.forward
+        self.BACKWARDBTN.when_pressed = self.backward
+
 
     def move(self, direction, steps=150):
         direction_dict = {"forward": self.CW, "backward": self.CCW}
@@ -74,6 +79,15 @@ class PumpMove:
         # if direction == "forward":
         #     pass
         # elif direction == "backward":
+    
+    def forward(self):
+        while self.FORWARDBTN.value == 1:
+            self.move("forward")
+    
+    def backward(self):
+        while self.BACKWARD_LIMIT.value != 1:
+            self.move("backward")
+        
         
     def __del__(self):
         self.GPIO.cleanup(self.MODE)
