@@ -48,8 +48,8 @@ class LickLogger:
                         continue
 
         with open(DATA_DIR+ "/" + fname, "a+") as f:
-            ID1_str = (("{}\t"*12).format(*data_dict["ratID1"], *poke_counts[ratids[0]].values())) + "\n"
-            ID2_str = (("{}\t"*12).format(*data_dict["ratID2"], *poke_counts[ratids[1]].values())) + "\n"
+            ID1_str = (("{}\t"*12).format(*data_dict["ratID1"], poke_counts[ratids[0]]["act"], poke_counts[ratids[0]]["inact"])) + "\n"
+            ID2_str = (("{}\t"*12).format(*data_dict["ratID2"], poke_counts[ratids[1]]["act"], poke_counts[ratids[1]]["inact"])) + "\n"
             ID0_str = (("{}\t"*10).format(*data_dict["ratID0"])) + "\n"
             f.write(ID1_str + ID2_str + ID0_str)
         
