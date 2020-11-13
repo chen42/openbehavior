@@ -65,6 +65,7 @@ gpio.setup(TOUCHLED, gpio.OUT)
 
 # get date and time 
 datetime=time.strftime("%Y-%m-%d_%H_%M_%S", time.localtime())
+session_start_time = time.strftime("%H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())
 
 # deal with session and box ID, and data file location
@@ -264,9 +265,9 @@ formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2I
 schedule_to = schedule+str(ratio)+'TO'+str(timeout)
 finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(datetime,ids.devID,ids.sesID,formatted_schedule)
 data_dict = {
-            "ratID1":[rat1ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat1ID],ina[rat1ID],rew[rat1ID], act_licks_when_empty[rat1ID]],
-            "ratID2":[rat2ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat2ID],ina[rat2ID],rew[rat2ID], act_licks_when_empty[rat2ID]],
-            "ratID0":[rat0ID, date,ids.devID,ids.sesID,schedule_to,sessionLength,act[rat0ID],ina[rat0ID],rew[rat0ID], act_licks_when_empty[rat0ID]]
+            "ratID1":[rat1ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat1ID], ina[rat1ID], rew[rat1ID], act_licks_when_empty[rat1ID]],
+            "ratID2":[rat2ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat2ID], ina[rat2ID], rew[rat2ID], act_licks_when_empty[rat2ID]],
+            "ratID0":[rat0ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat0ID], ina[rat0ID], rew[rat0ID], act_licks_when_empty[rat0ID]]
             }
 datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
@@ -276,3 +277,5 @@ showData("final")
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
 print(ids.devID+  "Session"+ids.sesID + " Done!\n")
 showData("final")
+
+
