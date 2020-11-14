@@ -33,5 +33,5 @@ if __name__ == "__main__":
     #flashRewardLED(5)
     while times >= 1:
         print (str(times)+ " LED flashing left")
-        flashRewardLED(5)
+        flashRewardLED(0.5)
         times-=1
