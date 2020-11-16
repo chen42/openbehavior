@@ -28,6 +28,7 @@ command_ids = [
     "002ba76f",
     "002c7365",
     "002c94ef",
+    "002ceeb8",
     "0087739a",
     "002d54ff",
     "0084668e",
@@ -37,6 +38,7 @@ command_ids = [
     "002b51b9",
     "002d558c",
     "002d3da7",
+    "002b397e",
     "002c732f",
     "002b392d",
     "002cdfc3",
@@ -79,6 +81,12 @@ elif RatID[-2:] == "ef" or RatID[-2:] == "a7": #VR10, 1h
     ratio = 10
     timeout =  10
     sessionLength=60*60*1 #
+    nextratio=ratio
+elif RatID[-2:] == "b8" or RatID[-2:] == "7e": #VR10, 2h
+    schedule="vr"
+    ratio = 10
+    timeout =  10
+    sessionLength=60*60*2 #
     nextratio=ratio
 elif RatID[-2:] == "9a" or RatID[-2:] == "2f": #VR10, 4h
     schedule="vr"
