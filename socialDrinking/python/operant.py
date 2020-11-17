@@ -227,7 +227,7 @@ while lapsed < sessionLength:
                 if schedule == "fr":
                     nextratio[rat]=ratio
                 elif schedule == "vr":
-                    nextratio[ratio]=random.randint(1,ratio*2)
+                    nextratio[rat]=random.randint(1,ratio*2)
                 elif schedule == "pr":
                     breakpoint+=1.0
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
