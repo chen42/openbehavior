@@ -155,16 +155,10 @@ def set_empty_syringe_licks():
         act_licks_when_empty[rat] = act[rat]
 
 
-def get_rat_scantime(fname, thislick, lastlick):
-    # lastlick can be either lastInactiveLick or lastActiveLick
-    try:
-        with open(fname, "r") as f:
-            (rat, scantime, dummy1, dummy2) = f.read().strip().split("\t")
-            scantime = float(scantime)
-    except:
-        rat="ratUnknown"
-        scantime=0
-
+def get_rat_scantime(thislick, lastlick):
+    rat = "rat1"
+    scantime = time.time()
+    
     try:
         if rat is None or (thislick - lastlick[rat]["time"] > maxILI and thislick - scantime > maxISI):
             rat = "ratUnknown"
@@ -182,9 +176,12 @@ while lapsed < sessionLength:
     if GPIO.input(FORWARD_LIMIT_BTN):
         FORWARD_LIMIT_REACHED = True
         # dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
+
     if act1 == 1:
         thisActiveLick=time.time()
-        (rat, scantime)= get_rat_scantime(fname="/home/pi/_active", thislick=thisActiveLick, lastlick=lastActiveLick)
+        (rat, scantime)= get_rat_scantime(thislick=thisActiveLick, lastlick=lastActiveLick)
+
+        
         if(thisActiveLick - lastActiveLick[rat]["time"] > 1):
             lastActiveLick[rat]["time"] = thisActiveLick
             lastActiveLick[rat]["scantime"] = scantime
@@ -198,11 +195,11 @@ while lapsed < sessionLength:
                 dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
             else:
                 dlogger.logEvent(rat,time.time() - lastActiveLick[rat]["scantime"], "ACTIVE", lapsed, nextratio[rat])
-            lastActiveLick[rat]["time"]=thisActiveLick
-            lastActiveLick[rat]["scantime"]=scantime
+            # lastActiveLick[rat]["time"]=thisActiveLick
+            # lastActiveLick[rat]["scantime"]=scantime
 
             updateTime=showData()
-        #blinkCueLED(0.2)
+            #blinkCueLED(0.2)
         if not pumptimedout[rat]:
             touchcounter[rat] += 1 # for issuing rewards
             if touchcounter[rat] >= nextratio[rat]  and rat !="ratUnknown":
@@ -233,15 +230,12 @@ while lapsed < sessionLength:
                     nextratio[rat]=int(5*2.72**(breakpoint/5)-5)
     elif ina0 == 1:
         thisInactiveLick=time.time()
-        (rat, scantime)= get_rat_scantime(fname="/home/pi/_inactive", thislick=thisInactiveLick, lastlick=lastInactiveLick)
+        (rat, scantime)= get_rat_scantime(thislick=thisInactiveLick, lastlick=lastInactiveLick)
         if(thisInactiveLick - lastInactiveLick[rat]["time"] > 1):
             lastInactiveLick[rat]["time"] = thisInactiveLick
             lastInactiveLick[rat]["scantime"] = scantime
         else:
             ina[rat]+=1
-#            if FORWARD_LIMIT_REACHED:
-#                dlogger.logEvent(rat, time.time(), "syringe empty", time.time()-sTime)
-#            else:
             dlogger.logEvent(rat,time.time() - lastInactiveLick[rat]["scantime"], "INACTIVE", lapsed)
             lastInactiveLick[rat]["time"]=thisInactiveLick
             lastInactiveLick[rat]["scantime"]=scantime
@@ -254,28 +248,13 @@ while lapsed < sessionLength:
     if time.time()-updateTime > 60*1:
         updateTime=showData()
 
-# signal the motion script to stop recording
-#if schedule=='pr':
-#    with open("/home/pi/prend", "w") as f:
-#        f.write("yes")
-
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
-
-formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2ID
-schedule_to = schedule+str(ratio)+'TO'+str(timeout)
-finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(datetime,ids.devID,ids.sesID,formatted_schedule)
-data_dict = {
-            "ratID1":[rat1ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat1ID], ina[rat1ID], rew[rat1ID], act_licks_when_empty[rat1ID]],
-            "ratID2":[rat2ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat2ID], ina[rat2ID], rew[rat2ID], act_licks_when_empty[rat2ID]],
-            "ratID0":[rat0ID, date, session_start_time, ids.devID, ids.sesID, schedule_to, sessionLength, act[rat0ID], ina[rat0ID], rew[rat0ID], act_licks_when_empty[rat0ID]]
-            }
-datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
 subprocess.call('/home/pi/openbehavior/wifi-network/rsync.sh &', shell=True)
-print(ids.devID+  "Session"+ids.sesID + " Done!\n")
+# print(ids.devID+  "Session"+ids.sesID + " Done!\n")
 showData("final")
 
 
