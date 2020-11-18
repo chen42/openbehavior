@@ -20,6 +20,25 @@ ids.sessionIncrement()
 # file to store RFID scann times
 RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesID)+ "_RFID.csv"
 
+#### PUMP and BUTTON
+# start the pump after the command ID is scanned
+mover = PumpMove()
+forwardbtn = Button("GPIO5")
+backwardbtn = Button("GPIO27")
+
+BACKWARD_LIMIT_BTN = "GPIO23"
+BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+
+def forward():
+    while forwardbtn.value == 1:
+        mover.move("forward")
+
+def backward():
+    while BACKWARD_LIMIT.value != 1:
+        mover.move("backward")
+
+forwardbtn.when_pressed = forward
+backwardbtn.when_pressed = backward
 RatID=input("please scan a command RFID\n")[-8:]
 
 command_ids = [
@@ -44,25 +63,6 @@ command_ids = [
     "002cdfc3",
 ]
 
-#### PUMP and BUTTON
-# start the pump after the command ID is scanned
-mover = PumpMove()
-forwardbtn = Button("GPIO5")
-backwardbtn = Button("GPIO27")
-
-BACKWARD_LIMIT_BTN = "GPIO23"
-BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
-
-def forward():
-    while forwardbtn.value == 1:
-        mover.move("forward")
-
-def backward():
-    while BACKWARD_LIMIT.value != 1:
-        mover.move("backward")
-
-forwardbtn.when_pressed = forward
-backwardbtn.when_pressed = backward
 
 while RatID not in command_ids:
     RatID = input("command ID not found, please rescan the id: ")[-8:]
