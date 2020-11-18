@@ -44,6 +44,26 @@ command_ids = [
     "002cdfc3",
 ]
 
+#### PUMP and BUTTON
+# start the pump after the command ID is scanned
+mover = PumpMove()
+forwardbtn = Button("GPIO5")
+backwardbtn = Button("GPIO27")
+
+BACKWARD_LIMIT_BTN = "GPIO23"
+BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
+
+def forward():
+    while forwardbtn.value == 1:
+        mover.move("forward")
+
+def backward():
+    while BACKWARD_LIMIT.value != 1:
+        mover.move("backward")
+
+forwardbtn.when_pressed = forward
+backwardbtn.when_pressed = backward
+
 while RatID not in command_ids:
     RatID = input("command ID not found, please rescan the id: ")[-8:]
 
@@ -109,25 +129,6 @@ elif RatID[-2:] == "8e" or RatID[-2:] == "c3": # vr10 16h
     timeout = 10
     sessionLength=60*60*16
 
-#### PUMP and BUTTON
-# start the pump after the command ID is scanned
-mover = PumpMove()
-forwardbtn = Button("GPIO5")
-backwardbtn = Button("GPIO27")
-
-BACKWARD_LIMIT_BTN = "GPIO23"
-BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
-
-def forward():
-    while forwardbtn.value == 1:
-        mover.move("forward")
-
-def backward():
-    while BACKWARD_LIMIT.value != 1:
-        mover.move("backward")
-
-forwardbtn.when_pressed = forward
-backwardbtn.when_pressed = backward
 
 
 h=str(int(sessionLength/3600))
