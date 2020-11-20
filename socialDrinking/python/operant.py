@@ -221,7 +221,10 @@ while lapsed < sessionLength:
                 else:
                     dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
                     mover = PumpMove()
-                    mover.move("forward")
+                    if(float(sessionLength) / 3600  == 16.0):
+                        mover.move("forward", 130) # 20ML syringe 60µL solution
+                    else:
+                        mover.move("forward", 150) # 10ML syringe 60µL solution
                     del(mover)
                 updateTime=showData()
                 if schedule == "fr":
