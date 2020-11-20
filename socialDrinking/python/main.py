@@ -22,68 +22,35 @@ RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesI
 
 RatID=input("please scan a command RFID\n")[-8:]
 
+class SessionInfo():
+    def init(self, schedule, timeout, nextratio, sessionLength, ratio):
+        self.schedule = schedule
+        self.timeout = timeout
+        self.nextratio = nextratio
+        self.sessionLength = sessionLength
+        self.ratio = ratio
+        self.nextratio = nextratio
+
+
+command_ids = {
+    ('3c', '88'): SessionInfo(schedule="pr", timeout=10, nextratio=int(5*2.72**(2/5)-5), sessionLength=20*60, ratio=""), # PR
+    ('52', '8f'): SessionInfo(schedule="fr", timeout=10, nextratio=5, sessionLength=60*60*1, ratio=5), # FR5 1h
+    ('6f', 'b9'): SessionInfo(schedule="fr", timeout=10, nextratio=5, sessionLength=60*60*16, ratio=5), # FR5 16h
+    ('65', '8c'): SessionInfo(schedule="ext", timeout=0, nextratio=1000000, sessionLength=60*60*1, ratio=1000000), # extinction
+    ('ef', 'a7'): SessionInfo(schedule="vr", timeout=10, nextratio=10, sessionLength=60*60*1, ratio=10), # VR10, 1h
+    ('b8', '7e'): SessionInfo(schedule="vr", timeout=10, nextratio=10, sessionLength=60*60*2, ratio=10), # VR10, 2h
+    ('9a', '2f'): SessionInfo(schedule="vr", timeout=10, nextratio=10, sessionLength=60*60*4, ratio=10), # VR10, 4h
+    ('ff', '2d'): SessionInfo(schedule="vr", timeout=1, nextratio=5, sessionLength=60*60*4, ratio=5), # VRreinstate, 4h
+    ('8e', 'c3'): SessionInfo(schedule="vr", timeout=10, nextratio=10, sessionLength=60*60*16, ratio=10), # VR10 16h
+}
 
 while RatID not in COMMAND_IDS:
     RatID = input("command ID not found, please rescan the id: ")[-8:]
 
-# the default schedule is vr10 timeout10. Other reinforcemnt schedules can be started by using RFIDs.
-if RatID[-2:] == "3c" or RatID[-2:] == "88": # PR
-    schedule="pr"
-    breakpoint=2
-    timeout = 10
-    nextratio=int(5*2.72**(breakpoint/5)-5)
-    sessionLength=20*60 # session ends after 20 min inactivity
-    ratio=""
-    #signal motion sensor to keep recording until this is changed
-    with open ("ROOT/prend", "w") as f:
-        f.write("no")
-elif RatID[-2:] == "52" or RatID[-2:] == "8f":  #FR5 1h
-    schedule="fr"
-    ratio = 5
-    timeout =  10
-    sessionLength=60*60*1 # one hour assay
-    nextratio=ratio
-elif RatID[-2:] == "6f" or RatID[-2:] == "b9": # FR5, 16h 
-    schedule="fr"
-    ratio = 5
-    timeout =  10
-    sessionLength=60*60*16 # one hour assay
-    nextratio=ratio
-elif RatID[-2:] == "65" or RatID[-2:] == "8c": # extinction
-    schedule="ext"
-    timeout=0
-    ratio=1000000
-    nextratio=1000000
-    sessionLength=60*60*1
-elif RatID[-2:] == "ef" or RatID[-2:] == "a7": #VR10, 1h
-    schedule="vr"
-    ratio = 10
-    timeout =  10
-    sessionLength=60*60*1 #
-    nextratio=ratio
-elif RatID[-2:] == "9a" or RatID[-2:] == "2f": #VR10, 4h
-    schedule="vr"
-    ratio = 10
-    timeout =  10
-    sessionLength=60*60*4 #
-    nextratio=ratio
-elif RatID[-2:] == "ff" or RatID[-2:] == "2d": #VRreinstate, 4h
-    vreinstate=1
-    schedule="vr"
-    ratio = 5
-    timeout = 1
-    sessionLength=60*60*4 # one hour assay
-    nextratio=ratio
-    RatID=ReadRFID("/dev/ttyAMA0")
-elif RatID[-2:] == "8e" or RatID[-2:] == "c3": # vr10 16h
-    schedule="vr"
-    ratio=10
-    nextratio=ratio
-    timeout = 10
-    sessionLength=60*60*16
-
-#### PUMP and BUTTON
-# start the pump after the command ID is scanned
+for key in command_ids.keys():
+    if RatID[-2:] in key:
+        sess_info = command_ids[key]
+    
 mover = PumpMove()
 
 h=str(int(sessionLength/3600))
@@ -130,7 +97,14 @@ while lapsed < sessionLength:
             
 
     if (len(rfid)==8):
-        poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
+        try:
+            poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
+        except KeyError as e:
+            with open(ROOT + "/error.log", "a+") as f:
+                f.write("error - {}\n".format(e))
+                f.write("poke_counts - {}\n".format(poke_counts))
+                f.write("rfid - {}\n".format(rfid))
+
         record=rfid+"\t"+str(time.time())+ "\tactive\t" + str(lapsed)+ "\n"
         with open(ROOT+"/_active", "w+") as active:
             active.write(record)
