@@ -53,6 +53,11 @@ for key in command_ids.keys():
     
 mover = PumpMove()
 
+sessionLength = sess_info.sessionLength
+ratio = sess_info.ratio
+timeout = sess_info.timeout
+schedule = sess_info.schedule
+
 h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
