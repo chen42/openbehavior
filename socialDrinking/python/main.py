@@ -58,17 +58,24 @@ ratio = sess_info.ratio
 timeout = sess_info.timeout
 schedule = sess_info.schedule
 
-h=str(int(sessionLength/3600))
-print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
-rat1 = input("please scan rat1\n")[-8:]
-time.sleep(1) # delay for time to get the next rat
-rat2 = input("please scan rat2\n")[-8:]
+print("Run {} {} for {} hour \n".format(schedule, str(ratio), str(int(sessionLength/3600))))
 
-while(rat1 == rat2):
-    rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")[-8:]
 
-print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
+def scan_rats():
+    rat1 = input("please scan rat1\n")[-8:]
+    time.sleep(1) # delay for time to get the next rat
+    rat2 = input("please scan rat2\n")[-8:]
+
+    while(rat1 == rat2):
+        rat2 = input("The IDs of rat1 and rat2 are identical, please scan rat2 again\n")[-8:]
+
+    return rat1, rat2
+
+rat1, rat2 = scan_rats()
+
+print("Session started\nSchedule:{}{}TO{}\nSession Length:{}sec\n",schedule, str(ratio), str(timeout), str(sessionLength))
+
 # start time
 sTime=time.time()
 lapsed=0
@@ -80,6 +87,13 @@ subprocess.call("python3 operant.py -schedule " +schedule+ " -ratio " +str(ratio
 
 poke_counts = {rat1:{"act": 0, "inact": 0}, rat2:{"act":0, "inact":0}}
 
+
+
+def record_data(fname, mode ,record):
+    with open(fname, mode) as f:
+        f.write(record)
+
+
 while lapsed < sessionLength:
     lapsed=time.time()-sTime
     try:
@@ -90,33 +104,21 @@ while lapsed < sessionLength:
         temp_rfid = rfid[-8:]
         poke_counts[temp_rfid]["inact"] = poke_counts[temp_rfid]["inact"] + 1
         record=temp_rfid+"\t"+str(time.time())+ "\tinactive\t" + str(lapsed) +"\n"
-        with open(ROOT + "/_inactive", "w+") as inactive:
-            inactive.write(record)
-            inactive.close()
-        with open(RFIDFILE, "a+") as inactive:
-            print ("\n    inactive spout " + temp_rfid + "\t")
-            inactive.write(record)
-        fname = "{}/{}_inact_count.txt".format(DATA_DIR, temp_rfid)
-        with open(fname, "w+") as f:
-            f.write("{}:{}".format(temp_rfid, poke_counts[temp_rfid]["inact"]))
+        record_data(fname=ROOT+"/_inactive",mode="w+",record=record)
+        record_data(fname=RFIDFILE,mode="a+", record=record)
+        record_data(fname="{}/{}_inact_count.txt".format(DATA_DIR, temp_rfid), mode="w+",
+                    record="{}:{}".format(temp_rfid,poke_counts[temp_rfid]["inact"]))
             
 
     if (len(rfid)==8):
         try:
             poke_counts[rfid]["act"] = poke_counts[rfid]["act"] + 1
         except KeyError as e:
-            with open(ROOT + "/error.log", "a+") as f:
-                f.write("error - {}\n".format(e))
-                f.write("poke_counts - {}\n".format(poke_counts))
-                f.write("rfid - {}\n".format(rfid))
+            print("error occured: {}".format(e))
 
         record=rfid+"\t"+str(time.time())+ "\tactive\t" + str(lapsed)+ "\n"
-        with open(ROOT+"/_active", "w+") as active:
-            active.write(record)
-            active.close()
-        with open(RFIDFILE, "a+") as active:
-            print ("\n      active spout " + rfid + "\t")
-            active.write(record)
-        fname = "{}/{}_act_count.txt".format(DATA_DIR, rfid)
-        with open(fname, "w+") as f:
-            f.write("{}:{}".format(rfid,poke_counts[rfid]["act"]))
+        
+        record_data(fname=ROOT+"/_active",mode="w+",record=record)
+        record_data(fname=RFIDFILE,mode="a+", record=record)
+        record_data(fname="{}/{}_act_count.txt".format(DATA_DIR, temp_rfid), mode="w+",
+                    record="{}:{}".format(rfid,poke_counts[rfid]["act"]))
