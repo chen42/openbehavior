@@ -11,6 +11,7 @@ from gpiozero import DigitalInputDevice
 
 
 
+
 # get date and time 
 datetime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 date=time.strftime("%Y-%m-%d", time.localtime())

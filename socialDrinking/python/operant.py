@@ -172,8 +172,15 @@ def get_rat_scantime(fname, thislick, lastlick):
         print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
         
     return rat, scantime
+house_light_on = False
 
 while lapsed < sessionLength:
+    if time.localtime().tm_hour >= 21 and house_light_on is False:
+        # turn house light
+        subprocess.call('python ' + './blinkenlights.py &', shell=True)
+        house_light_on = True # to void keep execute the subprocess
+        
+
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
@@ -213,7 +220,9 @@ while lapsed < sessionLength:
                 pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
                 print ("timeout on " + rat)
                 pumpTimer.start()
-                subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                # subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                
+                subprocess.call('python ' + './blinkenlights.py -reward_happened True&', shell=True)
 
                 # if(not FORWARD_LIMIT.value):
                 if FORWARD_LIMIT_REACHED:
