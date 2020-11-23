@@ -8,7 +8,7 @@ import board
 import neopixel
 
 
-pixels = neopixel.NeoPixel(board.NEOPIXEL,1)
+pixels = neopixel.NeoPixel(board.D18,12)
 
 parser=argparse.ArgumentParser()
 # parser.add_argument('-times',  type=int)
@@ -19,20 +19,20 @@ reward_happened = args.reward_happened
     
 
 lights_on_hours = [21,22,23,0,1,2,3,4,5,6,7,8,9]
-def house_light_on():
+
+
+def turn_light(on=True):
     for i in range(len(pixels)):
-        pixels[i] = (255,255,255)
+        if on:
+            pixels[i] = (255,255,255)
+        else:
+            pixels[i] = (0,0,0)
 
 def reward_cue_light():
-    for i in range(len(pixels)):
-        pixels[i] = (0,0,0)
-        
-    time.slee(0.5)
+    turn_light()
+    time.sleep(0.5)
+    turn_light(on=False)
 
-    # if it's light on sessoin, turn back the house light
-    if time.localtime().tm_hour in lights_on_hours:
-        house_light_on()
-        
 
 # BEGIN CONSTANT DEFINITIONS
 # GREEN_LED_PIN = int(7)
@@ -48,9 +48,11 @@ def reward_cue_light():
 #     time.sleep(duration)
 
 if __name__ == "__main__":
-    house_light_on() 
     if reward_happened:
-        reward_cue_light()
+        reward_cue_light()    
+    # if the current hour is in light on period, turn the light on
+    if time.localtime().tm_hour in lights_on_hours:
+        turn_light()
 
     # # Initialize GPIO
     # gpio.setwarnings(False)
