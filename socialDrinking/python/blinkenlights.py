@@ -53,6 +53,8 @@ if __name__ == "__main__":
     # if the current hour is in light on period, turn the light on
     if time.localtime().tm_hour in lights_on_hours:
         turn_light()
+    else:
+        turn_light(on=False)
 
     # # Initialize GPIO
     # gpio.setwarnings(False)
