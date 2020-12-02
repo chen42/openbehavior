@@ -20,6 +20,7 @@ ids.sessionIncrement()
 # file to store RFID scann times
 RFIDFILE=DATA_DIR + DATA_PREFIX + date + "_" + str(ids.devID)+ "_S"+str(ids.sesID)+ "_RFID.csv"
 
+RatID=input("please scan a command RFID\n")[-8:]
 #### PUMP and BUTTON
 # start the pump after the command ID is scanned
 mover = PumpMove()
@@ -39,7 +40,6 @@ def backward():
 
 forwardbtn.when_pressed = forward
 backwardbtn.when_pressed = backward
-RatID=input("please scan a command RFID\n")[-8:]
 
 command_ids = [
     "0084cb3c",
@@ -62,6 +62,8 @@ command_ids = [
     "002b392d",
     "002cdfc3",
 ]
+
+endID = input("scan the same command RFID to start the program: ")
 
 
 while RatID not in command_ids:
