@@ -175,10 +175,15 @@ def get_rat_scantime(fname, thislick, lastlick):
 house_light_on = False
 
 while lapsed < sessionLength:
+    # turn on house light at exactly 9PM
     if time.localtime().tm_hour >= 21 and house_light_on is False:
-        # turn house light
         subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
         house_light_on = True # to void keep execute the subprocess
+    # turn off house light at exactly 9AM
+    if (time.localtime().tm_hour >= 9 and time.localtime().tm_hour < 21) and house_light_on:
+        subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
+        
+            
         
 
     time.sleep(0.05) # allow 20 licks per sec
