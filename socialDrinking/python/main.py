@@ -29,17 +29,22 @@ backwardbtn = Button("GPIO27")
 BACKWARD_LIMIT_BTN = "GPIO23"
 BACKWARD_LIMIT = DigitalInputDevice(BACKWARD_LIMIT_BTN)
 
-def forward():
-    while forwardbtn.value == 1:
-        mover.move("forward")
 
-def backward():
-    while BACKWARD_LIMIT.value != 1:
-        mover.move("backward")
+RatID = ""
+while RatID == "":
+   if forwardbtn.value == 1 and backwardbtn.value == 1:
+       print("You can now adjust the pump")
+       def forward():
+           while forwardbtn.value == 1:
+               mover.move("forward")
+        def backward():
+            while BACKWARD_LIMIT.value != 1:
+                mover.move("backward")
+        forwardbtn.when_pressed = forward
+        backwardbtn.when_pressed = backward
+    RatID = input("please scan a command RFID\n")[-8:]
 
-forwardbtn.when_pressed = forward
-backwardbtn.when_pressed = backward
-RatID=input("please scan a command RFID\n")[-8:]
+del(mover)
 
 command_ids = [
     "0084cb3c",
@@ -143,6 +148,6 @@ sTime=time.time()
 lapsed=0
 
 # delete mover to prevent overheating
-del(mover)
+# del(mover)
 
 subprocess.call("python3 operant.py -schedule " +schedule+ " -ratio " +str(ratio)+ " -sessionLength " + str(sessionLength) + " -rat1ID " + rat1 + " -rat2ID " + rat2 + " -timeout " + str(timeout) +   " & ", shell=True)
