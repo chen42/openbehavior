@@ -72,6 +72,8 @@ if user=="00fbb0b2":
     user="Mallory Udell"
 if user=="00fbf277" or user[-4:] =="fef0":
     user="Paige Lemen"
+if user=="002cdfea" or user[-4:] == "dfea":
+    user="Shuang Ying"
 print ("\nWelcome, " + user + "\n")
 targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
