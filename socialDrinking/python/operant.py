@@ -290,7 +290,7 @@ data_dict = {
 datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
 
-subprocess.call('sudo python ' + 'turnoff_light.py &', shell=True)
+subprocess.call('sudo python ' + './turnoff_light.py &', shell=True)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
