@@ -278,6 +278,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
+
 formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2ID
 schedule_to = schedule+str(ratio)+'TO'+str(timeout)
 finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(datetime,ids.devID,ids.sesID,formatted_schedule)
@@ -288,6 +289,8 @@ data_dict = {
             }
 datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
+
+subprocess.call('sudo python ' + 'turnoff_light.py &', shell=True)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")
