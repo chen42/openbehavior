@@ -136,7 +136,8 @@ elif RatID[-2:] == "8e" or RatID[-2:] == "c3": # vr10 16h
 h=str(int(sessionLength/3600))
 print("Run " + schedule + str(ratio) + "for "  + h + "h\n")
 
-rat1 = "rat1"
+rat1 = input("Please scan the rat: ")
+# rat1 = "rat1"
 rat2 = "rat2"
 
 print("Session started\nSchedule:"+schedule+str(ratio)+"TO"+str(timeout)+"\nSession Length:"+str(sessionLength)+"sec\n")
