@@ -176,12 +176,13 @@ house_light_on = False
 
 while lapsed < sessionLength:
     # turn on house light at exactly 9PM
-    if time.localtime().tm_hour >= 21 and house_light_on is False:
-        subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
-        house_light_on = True # to void keep execute the subprocess
-    # turn off house light at exactly 9AM
-    if (time.localtime().tm_hour >= 9 and time.localtime().tm_hour < 21) and house_light_on:
-        subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
+    if not FORWARD_LIMIT_REACHED:
+        if time.localtime().tm_hour >= 21 and house_light_on is False:
+            subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
+            house_light_on = True # to void keep execute the subprocess
+        # turn off house light at exactly 9AM
+        if (time.localtime().tm_hour >= 9 and time.localtime().tm_hour < 21) and house_light_on:
+            subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
         
             
         
@@ -227,7 +228,8 @@ while lapsed < sessionLength:
                 pumpTimer.start()
                 # subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
                 
-                subprocess.call('sudo python ' + './blinkenlights.py -reward_happened True&', shell=True)
+                if not FORWARD_LIMIT_REACHED:
+                    subprocess.call('sudo python ' + './blinkenlights.py -reward_happened True&', shell=True)
 
                 # if(not FORWARD_LIMIT.value):
                 if FORWARD_LIMIT_REACHED:
