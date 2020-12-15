@@ -78,8 +78,8 @@ print ("\nWelcome, " + user + "\n")
 targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
     targettemp=48
-templo=int(targettemp)-0.50
-temphi=int(targettemp)+0.50
+templo=int(targettemp)-0.25
+temphi=int(targettemp)+0.25
 
 print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
 print ("Data are saved in " + datafile+"\n")
