@@ -66,6 +66,7 @@ def read_temp():
 Tail=12
 setupGPIO()
 
+spin_speed = input("Please enter a mixing speed (1-7): ")[-4:]
 user=input("TailTimer started.\nPlease enter your name:\n")[-4:]
 if user in USER_RFIDs.keys():
     user = USER_RFIDs[user]
@@ -111,7 +112,7 @@ while True:
         temp=round((temp1+temp2)/2, 3)
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
-        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
+        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\t" + spin_speed + "\n"
         if (ratid in latency.keys()):
             latency[ratid] += str(elapsed) + ", "
         else:
