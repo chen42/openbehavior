@@ -147,8 +147,8 @@ while True:
             print ("Data deleted as requested\n")
             next_id="a" # then test the same rat again
             savedata=0
-        if elapsed<1.0:
-            print ("!!! latency < 1.0 sec, Data not saved");
+        if elapsed<1.5:
+            print ("!!! latency < 1.5 sec, Data not saved");
             savedata=0
             next_id="a"
         if temp> temphi or temp<templo:
