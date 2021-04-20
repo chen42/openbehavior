@@ -1,2 +1,3 @@
 .pyc
 .stl
+__pycache__/
