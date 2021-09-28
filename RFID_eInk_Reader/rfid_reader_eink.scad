@@ -89,8 +89,8 @@ module rfidholder(){
 }
 
 
-case();
+//case();
 
-//topCover();
+topCover();
 //translate([0,10,34])rfidholder();
 
