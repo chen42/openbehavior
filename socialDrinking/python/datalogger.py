@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import os
 import time
 import string
 from ids import *
@@ -44,6 +44,8 @@ class LickLogger:
                                 poke_counts[rfid]["act"] = poke_count
                             else:
                                 poke_counts[rfid]["inact"] = poke_count
+                        # remove file after reading
+                        os.remove(DATA_DIR + "/" + file)
                     except FileNotFoundError:
                         continue
 

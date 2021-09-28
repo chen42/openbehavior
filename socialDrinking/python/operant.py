@@ -172,8 +172,21 @@ def get_rat_scantime(fname, thislick, lastlick):
         print("\nrat={}\t thislick={}\t lastlick={}\t".format(rat, thislick, lastlick))
         
     return rat, scantime
+house_light_on = False
 
 while lapsed < sessionLength:
+    # turn on house light at exactly 9PM
+    if not FORWARD_LIMIT_REACHED:
+        if time.localtime().tm_hour >= 21 and house_light_on is False:
+            subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
+            house_light_on = True # to void keep execute the subprocess
+        # turn off house light at exactly 9AM
+        if (time.localtime().tm_hour >= 9 and time.localtime().tm_hour < 21) and house_light_on:
+            subprocess.call('sudo python ' + './blinkenlights.py &', shell=True)
+        
+            
+        
+
     time.sleep(0.05) # allow 20 licks per sec
     ina0 = mpr121.touched_pins[0]
     act1 = mpr121.touched_pins[1]
@@ -213,7 +226,10 @@ while lapsed < sessionLength:
                 pumpTimer = Timer(timeout, resetPumpTimeout, [rat])
                 print ("timeout on " + rat)
                 pumpTimer.start()
-                subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                # subprocess.call('python ' + './blinkenlights.py -times 1&', shell=True)
+                
+                if not FORWARD_LIMIT_REACHED:
+                    subprocess.call('sudo python ' + './blinkenlights.py -reward_happened True&', shell=True)
 
                 # if(not FORWARD_LIMIT.value):
                 if FORWARD_LIMIT_REACHED:
@@ -221,7 +237,10 @@ while lapsed < sessionLength:
                 else:
                     dlogger.logEvent(rat, time.time()-scantime, "REWARD", time.time()-sTime)
                     mover = PumpMove()
-                    mover.move("forward")
+                    if(float(sessionLength) / 3600  == 16.0):
+                        mover.move("forward", 130) # 20ML syringe 60µL solution
+                    else:
+                        mover.move("forward", 150) # 10ML syringe 60µL solution
                     del(mover)
                 updateTime=showData()
                 if schedule == "fr":
@@ -261,6 +280,7 @@ while lapsed < sessionLength:
 
 dlogger.logEvent("", time.time(), "SessionEnd", time.time()-sTime)
 
+
 formatted_schedule = schedule+str(ratio)+'TO'+str(timeout)+"_"+ rat1ID+"_"+rat2ID
 schedule_to = schedule+str(ratio)+'TO'+str(timeout)
 finallog_fname = "Soc_{}_{}_S{}_{}_summary.tab".format(datetime,ids.devID,ids.sesID,formatted_schedule)
@@ -271,6 +291,8 @@ data_dict = {
             }
 datalogger.LickLogger.finalLog(finallog_fname, data_dict)
 
+
+subprocess.call('sudo python ' + './turnoff_light.py &', shell=True)
 
 print(str(ids.devID) +  "Session" + str(ids.sesID) + " Done!\n")
 showData("final")

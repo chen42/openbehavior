@@ -7,7 +7,8 @@ import serial
 import sys
 import datetime
 import operator
-import subprocess
+from config import COMMAND_RFIDs, USER_RFIDs, SPEED_RFIDs
+
 
 ## disable saving data if keys are detected as RFID
 ## check within rat variability before continue to next rat
@@ -65,25 +66,31 @@ def read_temp():
 Tail=12
 setupGPIO()
 
-user=input("TailTimer started.\nPlease enter your name:\n")
-if user=="00fb4fb3":
-    user="Hao Chen"
-if user=="00fbb0b2":
-    user="Mallory Udell"
-if user=="00fbf277" or user[-4:] =="fef0":
-    user="Paige Lemen"
+spin_speed = input("Please enter a mixing speed (1-7): ")[-4:]
+if spin_speed in SPEED_RFIDs.keys():
+    spin_speed = SPEED_RFIDs[spin_speed]
+user=input("TailTimer started.\nPlease enter your name:\n")[-4:]
+if user in USER_RFIDs.keys():
+    user = USER_RFIDs[user]
+
 print ("\nWelcome, " + user + "\n")
 targettemp=input("Please enter the target temp in C,  or scan any key for 48C.\n")
 if not targettemp.isdigit():
     targettemp=48
-templo=int(targettemp)-0.50
-temphi=int(targettemp)+0.50
+templo=int(targettemp)-0.25
+temphi=int(targettemp)+0.25
 
 print ("\n\nProgram started, user is " + user + " target temp range: (" + str(templo) + " - " + str(temphi) + ")\n" )
 print ("Data are saved in " + datafile+"\n")
 
 print ("Please test the wire.")
 ratid="00fbtest"
+
+
+def save_data(fname, line):
+    with open(fname, "a") as f:
+        f.write(line)
+    print("data saved to " + fname)
 
 while True:
     time.sleep(0.01)
@@ -113,50 +120,54 @@ while True:
         temp=round((temp1+temp2)/2, 3)
         now0=datetime.datetime.now()
         now=now0.strftime("%Y-%m-%d\t%H:%M")
-        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\n"
+        line=ratid+"\t" + now + "\t"+ str(elapsed) + "\t"+ str(temp) + "\t" + str(user) + "\t" + spin_speed + "\n"
         if (ratid in latency.keys()):
             latency[ratid] += str(elapsed) + ", "
         else:
             latency[ratid] = str(elapsed) + ", "
+
+            
         print ("Rat is "+ ratid+", latency = "+ latency[ratid])
-        next=input("Choose one of the following:\n \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")
+        
+        ind_latency = latency[ratid].split(", ")
+        if (len(ind_latency) == 2) and (abs(float(ind_latency[0]) - float(ind_latency[1])) > 1):
+            print("the latency difference between the first and second test is greater than 1 seconds. please test the same rat again.")
+            force_test = True
+        
+        if force_test:
+            next_id = ""
+        else:
+            next_id=input("Choose one of the following:\n \"n\" for new rat,\n\"d\" to delete this trial,\n\"a\" to test the current rat again\n\"e\" to end the run\n")[-4:]
+
         ## RFID equivalants
-        if next=="00fbf27e" or next[-2:]=="71":
-            next="n"
-        if next=="00fb2588" or next[-2:]=="92":
-            next="d"
-        if next=="00fb8874" or next[-2:]=="5a":
-            next="e"
-        if next=="00fb3131" or next[-2:]=="6c":
-            next="a"
-        ## 
-        if (next =="d"):
+        if next_id in COMMAND_RFIDs.keys():
+            next_id = COMMAND_RFIDs[next_id]
+
+        if (next_id =="d"):
             print ("Data deleted as requested\n")
-            next="a" # then test the same rat again
+            next_id="a" # then test the same rat again
             savedata=0
         if elapsed<1.5:
             print ("!!! latency < 1.5 sec, Data not saved");
             savedata=0
-            next="a"
+            next_id="a"
         if temp> temphi or temp<templo:
             print ("!!! temperature not in target range, Data not saved")
-            next="a"
+            next_id="a"
             savedata=0
         if ratid[0:4]=="00fb" or ratid[0:4]=="3200":
             print ("!!! RFID is not a valid rat ID, Data not saved");
-            next="n"
+            next_id="n"
             savedata=0
         if savedata:
-            with open(datafile, "a") as f:
-                f.write(line)
-            print ("Data saved to " + datafile)  
-        if (next=="e"):
+            save_data(datafile, line)
+        if (next_id=="e"):
             print ("Exit prgram\n")
             sys.exit()
         savedata=1
         print ("Please wait 10 seconds\n")
         time.sleep(10)
-        if (next=="n"):
+        if (next_id=="n"):
             ratid=input("Please enter new rat ID\n")
         else:
             print ("Please test the same rat again\n")
